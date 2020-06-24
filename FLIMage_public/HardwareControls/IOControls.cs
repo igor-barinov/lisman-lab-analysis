@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
+using NationalInstruments;
 
 namespace FLIMage.HardwareControls
 {
