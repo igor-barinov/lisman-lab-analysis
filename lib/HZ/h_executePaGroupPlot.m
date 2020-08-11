@@ -1,0 +1,244 @@
+function h_executePaGroupPlot
+
+global h_img
+
+handles = h_img.currentHandles;
+
+fig = findobj('Tag','h_imstackPlot','Selected','on');
+if isempty(fig)
+    fig = figure('Tag','h_imstackPlot','ButtonDownFcn','h_selectCurrentPlot');
+    h_selectCurrentPlot;
+end
+figure(fig);
+set(fig,'Name',['PA Analysis for ',h_img.activeGroup.groupName]);
+
+holdOpt = get(handles.paHoldOnOpt,'Value');
+if holdOpt
+    hold on;
+else
+    hold off;
+end
+
+for i = 1:length(h_img.activeGroup.groupFiles)
+    [pathname, filename] = h_analyzeFilename(h_img.activeGroup.groupFiles(i).name);
+    dataFilename = fullfile(pathname,'Analysis',[filename(1:end-4),'_roim.mat']);
+    if exist(dataFilename)
+        data = load(dataFilename);
+        Aout(i) = data.Aout;
+        UData(i).filename = Aout(i).filename;
+    end
+end
+
+if ~isempty(Aout(1).PA_frames)
+    time = Aout(1).time - Aout(1).time(Aout(1).PA_frames(1));
+else
+    time = Aout(1).time - Aout(1).time(1);
+end
+
+plotRoiOpt = get(handles.paPlotRoiOpt,'String');
+if ~isempty(strfind(lower(plotRoiOpt),'all'))
+    rois = 1:length(Aout(1).roi);
+else
+    rois = eval(['[',plotRoiOpt,']']);
+    rois = rois(rois<=length(Aout(1).roi));
+end
+
+
+plotOpt = get(handles.paPlotChannelOpt,'Value');
+switch plotOpt
+    case {1}
+        ydata = cell(1,length(rois));
+        for i = 1:length(rois)
+            for j = 1:length(Aout)
+                ydata{i} = vertcat(ydata{i},Aout(j).green{i});
+            end
+        end
+        h = h_paGroupPlot_plot(time,ydata,handles);
+        xlabel('Time (s)');
+        ylabel('Green Intensity');
+        title(['Green Intensity for ',h_img.activeGroup.groupName]);
+        set(fig,'Name',['Green Intensity for ',h_img.activeGroup.groupName]);
+    case {2}
+        ydata = cell(1,length(rois));
+        for i = 1:length(rois)
+            for j = 1:length(Aout)
+                ydata{i} = vertcat(ydata{i},Aout(j).red{i});
+            end
+        end
+        h = h_paGroupPlot_plot(time,ydata,handles);
+        xlabel('Time (s)');
+        ylabel('Red Intensity');
+        title(['Red Intensity for ',h_img.activeGroup.groupName]);
+        set(fig,'Name',['Red Intensity for ',h_img.activeGroup.groupName]);
+    case {4}
+        ydata = cell(1,length(rois));
+        for i = 1:length(rois)
+            for j = 1:length(Aout)
+                ratio = Aout(j).green{i}./Aout(j).red{i};
+                ydata{i} = vertcat(ydata{i},ratio);
+            end
+        end
+        h = h_paGroupPlot_plot(time,ydata,handles);
+        xlabel('Time (s)');
+        ylabel('G/R Ratio');
+        title(['G/R Ratio for ',h_img.activeGroup.groupName]);
+        set(fig,'Name',['G/R Ratio for ',h_img.activeGroup.groupName]);
+    case {5}
+        ydata = cell(1,length(rois));
+        for i = 1:length(rois)
+            for j = 1:length(Aout)
+                ratio = Aout(j).green{i}./Aout(j).red{i};
+                ydata{i} = vertcat(ydata{i},ratio);
+            end
+            avgy = mean(ydata{i},1);
+            baseline = mean(avgy(1:Aout(1).PA_frames(1)-1));
+            amplitude = max(avgy) - baseline;
+            ydata{i} = (ydata{i} - baseline) / amplitude;
+        end
+        h = h_paGroupPlot_plot(time,ydata,handles);
+        xlabel('Time (s)');
+        ylabel('G/R Ratio');
+        title(['G/R Ratio for ',h_img.activeGroup.groupName]);
+        set(fig,'Name',['G/R Ratio for ',h_img.activeGroup.groupName]);
+    case {6}
+        ydata = cell(1,length(rois));
+        for i = 1:length(rois)
+            for j = 1:length(Aout)
+                ratio = Aout(j).green{i}./mean(Aout(j).red{i}(1:Aout(j).PA_frames(1)-1));
+                ydata{i} = vertcat(ydata{i},ratio);
+            end
+            avgy = mean(ydata{i},1);
+            baseline = mean(avgy(1:Aout(1).PA_frames(1)-1));
+            amplitude = max(avgy) - baseline;
+            ydata{i} = (ydata{i} - baseline) / amplitude;
+        end
+        h = h_paGroupPlot_plot(time,ydata,handles);
+        xlabel('Time (s)');
+        ylabel('G/R Ratio');
+        title(['G/R Ratio for ',h_img.activeGroup.groupName]);
+        set(fig,'Name',['G/R Ratio for ',h_img.activeGroup.groupName]);
+    case {7}
+        ydata = cell(1,length(rois));
+        for i = 1:length(rois)
+            for j = 1:length(Aout)
+                green = Aout(j).green{i}(3:end) - mean(Aout(j).green{i}(1:2));
+                red = Aout(j).red{i}(3:end) - mean(Aout(j).red{i}(1:2));
+                ratio = green./red;
+                ydata{i} = vertcat(ydata{i},ratio);
+            end
+        end
+        time = time(3:end) - time(3);
+        h = h_paGroupPlot_plot(time,ydata,handles);
+        xlabel('Time (s)');
+        ylabel('G/R Ratio');
+        title(['G/R Ratio for ',h_img.activeGroup.groupName]);
+        set(fig,'Name',['G/R Ratio for ',h_img.activeGroup.groupName]);
+end
+
+if ~get(handles.paAverageOpt,'Value')
+    for i = 1:length(h)
+        for j = 1:length(Aout)
+            set(h{i}(j),'UserData',UData(j));
+        end
+    end
+end
+        
+%         ydata = cell2mat({Aout.red}');
+%         ydata = ydata(:,rois);
+%         h = h_plotGroupFcn_plot(time,ydata,handles);
+%         xlabel('Time (min)');
+%         ylabel('Red Intensity');
+%         title(['Red Intensity for ',h_img.activeGroup.groupName]);
+%         set(fig,'Name',['Red Intensity for ',h_img.activeGroup.groupName]);
+%     case {4}
+%         ydata = cell2mat({Aout.red}');
+%         ydata = ydata(:,rois);
+%         for i = 1:size(ydata,2)
+%             ydata(:,i) = ydata(:,i)/ydata(1,i);
+%         end
+%         h = h_plotGroupFcn_plot(time,ydata,handles);
+%         xlabel('Time (min)');
+%         ylabel('Normalized Red Intensity');
+%         title(['Normalized Red Intensity for ',h_img.activeGroup.groupName]);
+%         set(fig,'Name',['Red Intensity for ',h_img.activeGroup.groupName]);
+%     case {5}
+%         ydata = cell2mat({Aout.ratio}');
+%         ref = ydata(1,end);
+%         ydata = ydata(:,rois)/ref;
+%         h = h_plotGroupFcn_plot(time,ydata,handles);
+%         xlabel('Time (min)');
+%         ylabel('Normalized Green/Red Ratio');
+%         title(['Normalized Green/Red Ratio for ',h_img.activeGroup.groupName]);
+%         set(fig,'Name',['Normalized Green/Red Ratio for ',h_img.activeGroup.groupName]);
+%     case {6}
+%         ydata = cell2mat({Aout.ratio}');
+%         for i = 1:size(ydata,1)
+%             ydata(i,:) = ydata(i,:)/ydata(i,end);
+%         end
+%         ydata = ydata(:,rois);
+%         h = h_plotGroupFcn_plot(time,ydata,handles);
+%         xlabel('Time (min)');
+%         ylabel('Normalized Green/Red Ratio');
+%         title(['Normalized Green/Red Ratio for ',h_img.activeGroup.groupName]);
+%         set(fig,'Name',['Normalized Green/Red Ratio for ',h_img.activeGroup.groupName]);
+% 
+% 
+% LineData.groupFiles = h_img.activeGroup.groupFiles;
+% LineData.timeLastClick = clock;
+% set(h,'UserData',LineData);
+% 
+% 
+% x = time(end)*1.02;
+% if get(handles.averageOpt,'Value')
+%     y = mean(ydata(end,:));
+%     text(x,y,'avg');
+% else
+%     for i = 1:length(rois)
+%         y = ydata(end,i);
+%         text(x,y,num2str(rois(i)));
+%     end
+% end
+% set(handles.xLimSetting,'String','Auto');
+% set(handles.yLimSetting,'String','Auto');
+% hold off;
+% 
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function h = h_paGroupPlot_plot(time,ydata,handles);
+
+cstr(1,:) = {[1 0 0], [0 0 1], [0 1 0], [1 0 1], [0 1 1], [0 0 0]};
+
+UserData = get(handles.morePlotOpt,'UserData');
+if isfield(UserData,'lineStyle')
+    lineStyle = UserData.lineStyle;
+else
+    lineStyle = '-o';
+end
+
+h = {};  
+for i = 1:length(ydata)
+    if get(handles.paAverageOpt,'Value')
+        errorBarOpt = get(handles.paErrorBarOpt,'Value');
+        switch errorBarOpt
+            case {1}
+                h{i} = plot(time,mean(ydata{i},1),lineStyle);
+            case {2}
+                h{i} = errorbar(time,mean(ydata{i},1),std(ydata{i},0,1),lineStyle);
+            case {3}
+                h{i} = errorbar(time,mean(ydata{i},1),std(ydata{i},0,1)/sqrt(size(ydata{i},1)),lineStyle);
+        end
+        set(h{i},'ButtonDownFcn','h_selectPALine');
+    else
+        h{i} = plot(time,ydata{i},lineStyle,'ButtonDownFcn','h_selectPALine');
+    end
+    
+    set(gca, 'ButtonDownFcn','h_selectPALine');
+    
+    if isfield(UserData,'lineColor') & isempty(strfind(lower(UserData.lineColor),'auto'))
+        set(h{i},'Color',UserData.lineColor);
+    elseif length(ydata)>1
+        set(h{i},'Color',cstr{mod(i,6)+1});
+    end
+    hold on;
+end
+hold off;

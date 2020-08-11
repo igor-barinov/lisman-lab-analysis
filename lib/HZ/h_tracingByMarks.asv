@@ -1,0 +1,195 @@
+function Aout = h_tracingByMarks
+
+global h_img
+
+handles = h_img.currentHandles;
+
+cstr = {'red', 'blue', 'green', 'magenta', 'cyan', 'black'};
+
+info = h_quickInfo(h_img.header);
+% [xFOV yFOV] = calculateFieldOfView(info.zoom);
+xFOV = 40;%temp - no calculateFieldOfView
+yFOV = 40;
+xScale = xFOV / h_img.header.acq.pixelsPerLine;
+yScale = yFOV / h_img.header.acq.linesPerFrame;%pixel size in micron
+zScale = h_img.header.acq.zStepSize;
+scale = [xScale yScale zScale];
+
+%find all the marking points
+tracingMarkObj = h_findobj(handles.h_imstack,'Tag','h_tracingMark');
+UData = get(tracingMarkObj,'UserData');
+if iscell(UData)
+    UData = cell2mat(UData);
+end
+Aout.tracingMarks = UData;
+
+%%%%%%% make a skeleton %%%%%%%%%
+% skeletonInPixel = zeros(10000, 4);%x, y, z and length to first position
+skeletonInMicron = zeros(10000, 5);%x, y, z, length to first flag position in micron and flag
+j = 0;
+
+if ~isempty(UData)
+    flag = [UData.flag];
+    flag2 = flag;%flag2 is the one that will change within the loop, flag does not change.
+    while ~isempty(flag2)
+        currentFlag = min(flag2);
+        currentUData = UData(flag==currentFlag);
+
+        %sort the ROIs just in case.
+        num = [currentUData.number];
+        [num,I] = sort(num);
+        currentUData = currentUData(I);
+
+        % skeletonInPixel(1,1:3) = UData(1).pos;
+        j = j + 1;
+        skeletonInMicron(j,1:3) = currentUData(1).pos .* scale;
+        skeletonInMicron(j,5) = currentFlag;
+
+        for i = 2:length(num)
+            currentMarkPosInMicron = currentUData(i).pos .* scale;
+            distance = h_calcDistance(skeletonInMicron(j,1:3), currentMarkPosInMicron);
+            steps = ([1:floor(distance*10),distance*10]/10)';%0.1 um steps, marking point always in.
+            temp = zeros(length(steps),5);
+            previousPos = repmat(skeletonInMicron(j,1:3),[length(steps), 1]);
+            currentPos = repmat(currentMarkPosInMicron,[length(steps), 1]);
+            temp(:,1:3) = previousPos + (currentPos - previousPos) .* repmat(steps, [1 3]) / distance;
+            temp(:,4) = skeletonInMicron(j,4) + steps;
+            temp(:,5) = currentFlag;
+            skeletonInMicron((1:length(steps))+j,:) = temp;
+            j = j + length(steps);
+        end
+        flag2(flag2==currentFlag) = [];
+    end
+end
+
+skeletonInMicron(j+1:end,:) = [];
+skeletonInPixel = skeletonInMicron;
+skeletonInPixel(:,1:3) = skeletonInPixel(:,1:3) ./ repmat(scale, [size(skeletonInPixel,1), 1]);
+
+Aout.skeletonInPixel = skeletonInPixel;
+Aout.skeletonInMicron = skeletonInMicron;
+
+%write in this way so that in the future it will become an independent
+%functional module.
+axes(handles.imageAxes);
+hold on;
+flag = Aout.skeletonInPixel(:,5);
+flag2 = flag;%flag2 is the one that will change within the loop, flag does not change.
+while ~isempty(flag2)
+    currentFlag = min(flag2);
+    ind = find(flag==currentFlag);    
+    plot(Aout.skeletonInPixel(ind,1),Aout.skeletonInPixel(ind,2),'-', 'Color', cstr{mod(currentFlag-1,6)+1},...
+        'tag', 'h_dendriteSkeleton');
+    flag2(flag2==currentFlag) = [];
+end
+hold off;
+
+%%%%%%%%% calc ROI %%%%%%%%%
+Aout.calcRoi = h_executecalcRoi(handles);
+
+
+%%%%%%%% find intensity center of each ROI %%%%%%%%
+siz = size(h_img.data);
+green_data = h_img.data(:,:,1:2:end);
+red_data = h_img.data(:,:,2:2:end);
+Aout.roiCentroid_g = zeros(length(Aout.calcRoi.roi),3);% x, y, z in pixels
+Aout.roiCentroid_r = zeros(length(Aout.calcRoi.roi),3);% x, y, z 
+Aout.roiCentroidInMicron_g = zeros(length(Aout.calcRoi.roi),3);% x, y, z in microns
+Aout.roiCentroidInMicron_r = zeros(length(Aout.calcRoi.roi),3);% x, y, z 
+
+Aout.roiPos = zeros(length(Aout.calcRoi.roi),1); % the closest position in the skeleton.
+
+for i = 1:length(Aout.calcRoi.roi)
+    BW = Aout.calcRoi.roi(i).BW;
+    z = Aout.calcRoi.roi(i).z;
+    xi = Aout.calcRoi.roi(i).xi;
+    yi = Aout.calcRoi.roi(i).yi;
+    
+    fitZRange = [z(1)-1, z, z(end)+1];
+    fitZRange = fitZRange(fitZRange > 0);
+    fitZRange = fitZRange(fitZRange <= siz(3)/2);
+
+
+    %     BW2 = repmat(BW, [1, 1, length(z)]);
+    %fit x, y
+    avgGreenImg = mean(green_data(:,:,z),3);%average to reduce noice.
+    greenRoiImg = avgGreenImg.*BW;
+    greenRoiImgToBeFit = greenRoiImg(round(min(yi)):round(max(yi)),...
+        round(min(xi)):round(max(xi))) - Aout.calcRoi.green_bg(i);
+    fit = h_gauss2DFitWithIntegration(greenRoiImgToBeFit);
+    Aout.roiCentroid_g(i,1) = fit.mu(1) + round(min(xi)) - 1;
+    Aout.roiCentroid_g(i,2) = fit.mu(2) + round(min(yi)) - 1;
+    
+    avgRedImg = mean(red_data(:,:,z),3);%average to reduce noice.
+    redRoiImg = avgRedImg.*BW;
+    redRoiImgToBeFit = redRoiImg(round(min(yi)):round(max(yi)),...
+        round(min(xi)):round(max(xi))) - Aout.calcRoi.red_bg(i);
+    fit = h_gauss2DFitWithIntegration(redRoiImgToBeFit);
+    Aout.roiCentroid_r(i,1) = fit.mu(1) + round(min(xi)) - 1;
+    Aout.roiCentroid_r(i,2) = fit.mu(2) + round(min(yi)) - 1;
+    
+    %fit z.
+    intensity = zeros(1,siz(3)/2);
+    for j = 1:siz(3)/2
+        imr = green_data(:,:,j) - Aout.calcRoi.green_bg(i);
+        intensity(j) = mean(imr(BW));
+    end
+    gaussianFit = h_fitGaussian(fitZRange, intensity(fitZRange));% h_fitGaussian has a floating baseline.
+    if gaussianFit.converge
+        Aout.roiCentroid_g(i,3) = gaussianFit.mu;
+    else
+        Aout.roiCentroid_g(i,3) = sum(intensity(fitZRange).*fitZRange)/sum(intensity(fitZRange));
+    end
+    
+    intensity = zeros(1,siz(3)/2);
+    for j = 1:siz(3)/2
+        imr = red_data(:,:,j) - Aout.calcRoi.red_bg(i);
+        intensity(j) = mean(imr(BW));
+    end
+    gaussianFit = h_fitGaussian(fitZRange, intensity(fitZRange));% h_fitGaussian has a floating baseline.
+    if gaussianFit.converge
+        Aout.roiCentroid_r(i,3) = gaussianFit.mu;
+    else
+        Aout.roiCentroid_r(i,3) = sum(intensity(fitZRange).*fitZRange)/sum(intensity(fitZRange));
+    end
+    
+    Aout.roiCentroidInMicron_r(i,:) = Aout.roiCentroid_r(i,:) .* scale;
+    Aout.roiCentroidInMicron_g(i,:) = Aout.roiCentroid_g(i,:) .* scale;
+
+    
+    %%% association with skeleton %%%
+    if h_img.state.roiControl.channelForZ.value
+        roiCentroidInMicron = Aout.roiCentroidInMicron_r(i,:);
+    else
+        roiCentroidInMicron = Aout.roiCentroidInMicron_g(i,:);
+    end
+    roiCentroid2 = repmat(roiCentroidInMicron, [size(skeletonInMicron,1), 1]);
+    distance = sqrt(sum((skeletonInMicron(:,1:3) - roiCentroid2).^2,2));
+    [minD, I] = min(distance); % I is the position in skeleton that the ROI is associated with.
+    Aout.roiPos(i) = I;
+end
+
+    
+
+fname = get(handles.currentFileName,'String');
+[filepath, filename, fext] = fileparts(fname);
+Aout.filename = [filename, fext];
+
+%%%%%%%% Save %%%%%%%%%%%%%%%%%%%%
+
+if ~exist(fullfile(filepath,'Analysis'),'file')
+    currpath = pwd;
+    cd (filepath);
+    mkdir('Analysis');
+    cd (currpath);
+end
+analysisNumber = h_img.state.analysisNumber.Value;
+if analysisNumber == 1
+    analysisNumber = [];
+end
+fname = fullfile(filepath,'Analysis',[filename,'_tracing',num2str(analysisNumber)]);
+save(fname, 'Aout');
+
+
+
+

@@ -1,0 +1,58 @@
+function h_reCalcAllInGrp
+
+global h_img;
+handles = h_img.currentHandles;
+
+for i = 1:length(h_img.activeGroup.groupFiles)
+    %open file
+    [newPath,newFilename] = h_analyzeFilename(h_img.activeGroup.groupFiles(index).name);
+    if exist(h_img.activeGroup.groupFiles(index).name,'file')
+        h_openFile(newFilename,newPath);
+    elseif exist(fullfile(fileparts(h_img.activeGroup.groupPath(1:end-1)), newFilename),'file') %in case the entire folder is moved
+        h_openFile(newFilename,fileparts(h_img.activeGroup.groupPath(1:end-1)));
+    elseif exist(fullfile(h_img.activeGroup.groupPath(1:end-1), newFilename),'file') %in case the entire folder is moved
+        h_openFile(newFilename,h_img.activeGroup.groupPath(1:end-1));
+    elseif exist(newFilename,'file')
+        h_openFile(newFilename,pwd);
+    end
+    
+    %load analyzed ROI info
+    h_loadAnalyzedRoiData(handles);
+    
+    %set z limit if available
+    if isfield(h_img.lastCalcROI,'zLim')
+        value = h_img.lastCalcROI.zLim(1);
+        [xlim,ylim,zlim] = h_getLimits(handles);
+        zstacklow = round(value*(diff(zlim))+1);
+        set(handles.zStackControlLow,'String',num2str(zstacklow));
+        
+        h_zStackQuality;
+        h_replot;
+    
+    
+    
+    
+    
+    
+    [pathname, filename] = h_analyzeFilename(h_img.activeGroup.groupFiles(i).name);
+    roi_UData = get(handles.roiControl,'UserData');
+    analysisNumber = roi_UData.analysisNumber.Value;
+    if analysisNumber == 1
+        analysisNumber = [];
+    end
+    dataFilename = fullfile(pathname,'Analysis',[filename(1:end-4),'_zroi',num2str(analysisNumber),'.mat']);
+    if exist(dataFilename, 'file')
+        data = load(dataFilename);
+        Aout(i) = data.Aout;
+    else
+        dataFilename = fullfile(fileparts(h_img.activeGroup.groupPath(1:end-1)), 'Analysis',[filename(1:end-4),'_zroi',num2str(analysisNumber),'.mat']);
+        if exist(dataFilename, 'file')
+            data = load(dataFilename);
+            Aout(i) = data.Aout;
+        elseif exist(fullfile('Analysis',[filename(1:end-4),'_zroi',num2str(analysisNumber),'.mat']), 'file')
+            dataFilename = fullfile('Analysis',[filename(1:end-4),'_zroi',num2str(analysisNumber),'.mat']);
+            data = load(dataFilename);
+            Aout(i) = data.Aout;     
+        end
+    end
+end

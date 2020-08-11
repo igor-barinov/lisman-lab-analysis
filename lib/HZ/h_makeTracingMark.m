@@ -1,0 +1,142 @@
+function h_makeTracingMark(mark_size)
+
+% to make a white cross mark on h_imstack image and find the x, y, z
+% position of the central point. These marks will be used in
+% h_traceDendriteSkeleton.m.
+
+global h_img;
+
+handles = h_img.currentHandles;
+
+if ~exist('mark_size', 'var')||isempty(mark_size)
+    mark_size = 9; %size of the cross
+end
+
+UData.flag = get(handles.markFlag,'value');
+
+cstr = {'red', 'blue', 'green', 'magenta', 'cyan', 'black'};
+
+t0 = clock;
+point0 = [-1000, -1000]; %the previous position
+keepLooping = 1; %make it bigger than 0.5s;
+numPoints = 0; %counter for the number of points in this run.
+imageAxesOriginalHitTest = get(handles.imageAxes, 'HitTest');
+set(handles.imageAxes, 'HitTest', 'off');
+childrenOfImageAxes = get(handles.imageAxes, 'Children');
+childrenOfImageAxesOriginalHitTest = get(childrenOfImageAxes, 'HitTest');
+set(childrenOfImageAxes, 'HitTest', 'off');
+
+try %Use Try to make sure that the HitTest properties are reset even if there is an error.
+    while keepLooping % add after the program is in place. The current way may not be most efficient
+        axes(handles.imageAxes);
+        waitforbuttonpress;
+        point1 = get(gca,'CurrentPoint');    % button down detected
+        point1 = point1(1,1:2);              % extract x and y
+
+        t1 = clock;
+%         disp(etime(t1, t0))
+
+        if etime(t1, t0) > 0.4 && h_calcDistance(point0, point1) > 1
+%             disp(h_calcDistance(point0, point1))
+            t0 = t1;
+            point0 = point1;
+
+            %To find the brightest Z within 3 pixels.
+            siz = size(h_img.data);
+            [Y X] = ndgrid(1:siz(1), 1:siz(2));
+            BW = ((Y - point1(2)).^2 + (X - point1(1)).^2) <= 3^2;%note: x correspond to dimension 2
+
+            green_data = h_img.data(:,:,1:2:end);
+            red_data = h_img.data(:,:,2:2:end);
+            zLim(1) = str2num(get(handles.zStackControlLow,'String'));
+            zLim(2) = str2num(get(handles.zStackControlHigh,'String'));
+
+            intensity = zeros(1,size(red_data,3));
+            if h_img.state.roiControl.channelForZ.value
+                for j = 1:siz(3)/2
+                    imr = red_data(:,:,j);
+                    intensity(j) = mean(imr(BW));
+                end
+            else
+                for j = 1:siz(3)/2
+                    imr = green_data(:,:,j);
+                    intensity(j) = mean(imr(BW));
+                end
+            end
+
+            intensity2 = intensity(zLim(1):zLim(2));
+            zi = find(intensity2==max(intensity2));
+            zi = zi(1) + zLim(1) - 1;
+            % disp(zi);
+
+            fitZRange = zi-3:zi+3;
+            fitZRange = fitZRange(fitZRange > 0);
+            fitZRange = fitZRange(fitZRange <= siz(3)/2);
+
+            gaussianFit = h_fitGaussian(fitZRange, intensity(fitZRange));
+
+            if gaussianFit.converge
+                UData.pos = [point1, gaussianFit.mu];
+            else
+                UData.pos = [point1,sum(intensity(fitZRange).*fitZRange)/sum(intensity(fitZRange))];%if no converge, use gravity center.
+            end
+
+            % disp(UData.pos);
+
+            %find out the previous ROI info
+            tracingMarkObj = h_findobj(handles.h_imstack,'Tag','h_tracingMark');
+            previousUData = get(tracingMarkObj,'UserData');
+            if iscell(previousUData)
+                previousUData = cell2mat(previousUData);
+            end
+
+            if ~isempty(previousUData)
+                previousFlag = [previousUData.flag];
+                previousUData = previousUData(previousFlag==UData.flag); %only count those with the same flag
+            end
+
+            %plot
+            hold on;
+            h = plot(point1(1),point1(2),'.','MarkerSize',mark_size, 'Tag', 'h_tracingMark',...
+                'Color',cstr{mod(UData.flag-1,6)+1}, 'EraseMode','xor', 'HitTest', 'off');
+            hold off;
+
+            i = length(previousUData)+1;
+            x = point1(1);% + h_img.header.acq.pixelsPerLine/64;
+            y = point1(2);% + h_img.header.acq.pixelsPerLine/64;
+            h2 = text(x,y,[' ', num2str(UData.flag), '.', num2str(i)],'HorizontalAlignment', 'Left', 'VerticalAlignment', 'Middle',...
+                'Tag', 'h_tracingMarkText', 'Color',cstr{mod(UData.flag-1,6)+1}, 'EraseMode', 'xor',  'HitTest', 'off');
+
+            UData.number = i;
+            UData.markHandle = h;
+            UData.textHandle = h2;
+            UData.timeLastClick = clock;
+            UData.timeLastClick(end) = UData.timeLastClick(end)-1;%to make sure that the new mark would not get deleted when double click to quit the loop
+
+            numPoints = numPoints + 1;
+            markHandles(numPoints) = h;
+            markTextHandles(numPoints) = h2;
+
+            set(h,'UserData',UData);
+            set(UData.textHandle,'UserData',UData);
+
+            h_setDendriteTracingVis;
+        else
+            keepLooping = 0;
+        end
+    end
+end %Use Try to make sure that the HitTest properties are reset even if there is an error.
+
+set(markHandles, 'ButtonDownFcn', 'h_dragTracingMark', 'HitTest', 'on');
+set(markTextHandles, 'ButtonDownFcn', 'h_dragTracingMarkText', 'HitTest', 'on');
+
+set(handles.imageAxes, 'HitTest', imageAxesOriginalHitTest);
+if ~isempty(childrenOfImageAxes)
+    if iscell(childrenOfImageAxesOriginalHitTest)
+        for i = 1:length(childrenOfImageAxes)
+            set(childrenOfImageAxes(i), 'HitTest', childrenOfImageAxesOriginalHitTest{i});
+        end
+    else
+        set(childrenOfImageAxes, 'HitTest', childrenOfImageAxesOriginalHitTest);
+    end
+end

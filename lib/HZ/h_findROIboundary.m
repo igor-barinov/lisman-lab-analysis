@@ -1,0 +1,41 @@
+function roi_pos = h_findROIboundary(y,pks,vals,boundaryThresh);
+
+if ~exist('boundaryThresh')|isempty(boundaryThresh)
+    boundaryThresh = 0.5;
+end
+
+
+len     =   length(y);
+roi_pos(1:2, 1:length(pks)) = 0;
+
+for i=1:length(pks)
+    level       =   fix(boundaryThresh*(y(pks(i))));
+    intStart    =   1;
+    intStop     =   len;
+    va11        =   find(vals<pks(i));
+    val2        =   find(vals>pks(i));
+    if ~isempty(va11)
+        intStart    =   vals(va11(length(va11)));
+    end
+    if ~isempty(val2)
+        intStop     =   vals(val2(1));
+    end
+    %[intStart intStop]
+    %determine left edge
+    roi_pos(1,i)= ...
+        h_findThInd(y(intStart:intStop), pks(i)-intStart+1, level,-1)+intStart-1;
+    %determine right edge
+    roi_pos(2,i)= ...
+        h_findThInd(y(intStart:intStop), pks(i)-intStart+1, level,1)+intStart-1;
+end
+
+%set gap between ROIs
+ROIgap = 5;
+for i=2:length(pks)
+    delta   =   roi_pos(1,i) - roi_pos(2,i-1);
+    if delta < ROIgap
+        epsilon = fix((ROIgap-delta)/2+0.5);
+        roi_pos(2,i-1)  =   roi_pos(2,i-1) - epsilon;
+        roi_pos(1,i)    =   roi_pos(1,i) + epsilon;
+    end
+end

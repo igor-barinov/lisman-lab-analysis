@@ -1,0 +1,24 @@
+function h_removeFromCurrentGroup(filename)
+
+global h_img
+
+[pname,fname,fExt] = fileparts(filename);
+groupInfoFile = fullfile(pname,'Analysis',[fname,'_grp.mat']);
+if exist(groupInfoFile) == 2
+    load(groupInfoFile,'-mat');
+    [groupPath2, groupName2] = h_analyzeFilename(groupName);
+    if strcmp(groupName2,h_img.activeGroup.groupName)
+        for i = 1:length(h_img.activeGroup.groupFiles)
+            [pname2, fname2] = h_analyzeFilename(h_img.activeGroup.groupFiles(i).name);
+            groupFileNames(i) = {fname2};
+        end
+        [pathname2, filename2] = h_analyzeFilename(filename);
+
+
+        index = strmatch(filename2,groupFileNames,'exact');
+        h_img.activeGroup.groupFiles(index) = [];
+        groupFiles = h_img.activeGroup.groupFiles;
+        save(fullfile(h_img.activeGroup.groupPath,h_img.activeGroup.groupName),'groupFiles');
+        delete(groupInfoFile);
+    end
+end

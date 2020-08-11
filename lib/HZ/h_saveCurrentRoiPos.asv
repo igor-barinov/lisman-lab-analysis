@@ -1,0 +1,7 @@
+function h_saveCurrentRoiPos
+
+global h_img
+
+hand
+roiobj = sort(findobj(handles.imageAxes,'Tag', 'HROI'));
+UserData = get(roiobj,'UserData');
