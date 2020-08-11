@@ -1,0 +1,6 @@
+SelectROI
+ROI-type,Rectangle,Roi-ID,0
+Rect,0,0,128,128
+MultiROI
+ROI-type,Elipsoid,Roi-ID,1
+Rect,37,99,20,15

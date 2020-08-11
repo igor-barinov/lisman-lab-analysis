@@ -1,0 +1,7 @@
+function FLIM_SetPage
+
+global state;
+
+pageNumber=0;
+
+out1=calllib('spcm32','SPC_set_page',state.spc.acq.module,pageNumber);

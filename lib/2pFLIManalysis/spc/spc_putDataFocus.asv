@@ -1,0 +1,10 @@
+function spc_putDataFocus
+global state;
+
+if state.spc.init.spc_on == 1;
+    state.acq.mirrorDataOutput = rotateMirrorData(1/state.acq.zoomFactor*state.acq.mirrorDataOutputOrg);
+    putdata(state.init.ao2F, state.acq.mirrorDataOutput);
+    putdata(state.spc.init.spc_aoF, spc_makeDataOutput); %state.spc.acq.spc_DataOutput);
+    pause(0.01);
+    
+end

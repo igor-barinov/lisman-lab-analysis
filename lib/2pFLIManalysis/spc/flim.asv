@@ -1,0 +1,76 @@
+   
+structure state
+    structure spc
+        structure acq
+		    spc_outputRate=312500 %Ryohei 1/28/03 inputRate / 4 ** for fast board.
+		    spc_amplitude=5.0   %Digital output.
+		    spc_pixel=0
+		    spc_image=0
+		    spc_dll=1
+		    uncaBox=0
+		    spc_binning=0
+		    binFactor=1
+		    spc_DataOutput		    
+		    SPCModInfo
+		    module
+            mData
+            SPCdata
+            SPCMemConfig
+		    ifInactive
+            ifStart=0	      
+            mt
+            structure timer
+                timerRates
+                timerRatesEver
+            endstructure
+		endstructure
+		structure init
+		    spc_on=1
+		    spc_ao
+		    spc_aoF
+		    spc_dio
+		    spc_boardIndex=1
+		    spc_triggerBoardIndex=2
+		    spc_lineChannelIndex=0
+		    spc_frameChannelIndex=1
+		    spc_pixelChannelIndex=2
+		    pockelsChannelIndex=3
+		    pockelsChannel2Index=4
+		    pockelsChannel3Index=5
+		    spc_line
+		    spc_lineIndex=4                       		    
+		    spc_lineChannelF                        
+		    spc_frameChannelF                       
+		    spc_pixelChannelF
+		    pockelsChannelF
+		    pockelsChannel2F
+		    pockelsChannel3F
+		    spc_lineChannel                         
+		    spc_frameChannel          
+		    spc_pixelChannel
+		    pockelsChannel
+		    pockelsChannel2
+		    pockelsChannel3
+		endstructure
+		structure internal
+			spc_delay=.005                    %Ryohei 9/17/2, Time for line/frame clock to begin
+			ifstart=0
+		endstructure
+        structure files
+            savePath=''
+            autoSave=1
+            automaticOverwrite=0
+            fullFileName='001'
+        endstructure
+    endstructure
+endstructure
+
+structure spc
+    structure fit
+        range=[5,59]
+    endstructure
+    structure switches
+        lifetime_limit=[2,4]
+        lutlim=[10,200]
+    endstructure
+endstructure

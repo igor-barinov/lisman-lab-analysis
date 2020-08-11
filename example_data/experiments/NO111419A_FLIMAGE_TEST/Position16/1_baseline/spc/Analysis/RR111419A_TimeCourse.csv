@@ -1,0 +1,24 @@
+Select-ROI
+Time (ms),437672370526,
+FileNumber,1,
+Time (s),0,
+meanIntensity-ch1,11.0178833007813,
+sumIntensity-ch1,180517,
+nPixels-ch1,16384,
+Lifetime-ch1,2.81722988931549,
+Fraction2-ch1,1.16919275840728,
+Lifetime_fit-ch1,2.15552713150088,
+Fraction2_fit-ch1,26.8083046576745,
+
+Multi-ROI
+nROIs,0,
+Time (ms),437672370526,
+FileNumber,1,
+Time (s),0,
+
+
+
+
+
+
+

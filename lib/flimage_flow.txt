@@ -1,0 +1,64 @@
+FLIMAGE FLOW
+
+Plotting
+
+
+
+'TCF.<data>' = 'Roi.<data>'
+
+
+"File -> Open"
+
+OpenFLIM() 
+	-> OpenFLIM(str, bool)
+		-> OpenFLIMTiffFilePage(str, short, int, FLIMData, bool, bool)
+			-> decodeHeader(str, str)
+			^^^^^^^^^^^^^^^^^^^^^^^^^
+				"spc.SPCdata.scan_rout_x = 1;" --> 'nChannels' = 1
+				
+		-> calcZProjection()
+			-> calcZProject(FLIMData.porjectionType, int[])
+				-> gotoPage(int)
+					-> calculateProject()
+						-> calculateProjectCh(int)
+						^^^^^^^^^^^^^^^^^^^^^^^^^^
+							'Project[ch]' = 'ImageProcessing.GetProjectFromFLIM(FLIMRaw[ch])'
+							
+		-> CalculateTimecourse(bool)
+			-> CalculateCurrentPage(int, bool, bool)
+				-> calculate_MeanLifetime()
+					-> calculate_MeanLifetime(int)
+						-> calculate_MeanLifetime_General(ROI, int, bool)
+						^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+							'sumi' = sum('intensity')
+							'roi.intensity[ch]' = 'sumi' / 'pixi'
+							'roi.sumIntensity[ch]' = 'sumi'
+							
+				-> ImageInfo(FLIMData)
+					-> 'getData(Roi')
+					^^^^^^^^^^^^^^^^^
+						'TCF.<data>' = 'Roi.<data>'
+
+					
+"Fit"
+
+FitData(bool, bool)
+	-> calculateLifetime()
+		-> calculateLifetimeCh(int)
+			-> calculateLifetimeChRoi(int, ROI, int[], bool)
+			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+				'threeD' is false
+				'img' = 'Project[ch]'
+				'intensity' = 'img[y,x]'
+				'if (intensity >= low_threshold[ch])'
+				
+	-> UpdateImages(bool, bool, bool, bool)
+		-> UpdateImages(bool, bool, bool, bool, bool)
+			-> plotNow_noRealtime(TimeCourse_Files, TimeCourse, Image_Display, int)
+				-> updatePlot()
+					-> plotTimeCourse()
+					^^^^^^^^^^^^^^^^^^^
+						'if (meanIntensity_radio.Checked)'
+						tau_m = 'TCF.Lifetime_fit[c]', 'TC.Lifetime_fit[c]'
+						sumInt = 'TCF.sumIntensity[c]', 'TC.sumIntensity[c]'
+						meanInt = 'TCF.Intensity[c]', 'TC.Intensity[c]'

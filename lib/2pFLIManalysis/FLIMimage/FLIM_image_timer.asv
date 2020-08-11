@@ -1,0 +1,17 @@
+function FLIM_image_timer
+global state;
+global gh;
+
+measure = FLIM_draw_state;
+
+if state.spc.acq.spc_image
+	if state.spc.internal.ifstart
+        FLIM_UpdateTimeDisplay;
+	end
+else
+    FLIM_UpdateTimeDisplay;
+end
+    
+if ~strcmp(get(gh.spc.FLIMimage.loop, 'String'), 'STOP')
+    set(gh.mainControls.focusButton, 'Visible', 'off');
+end

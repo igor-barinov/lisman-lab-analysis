@@ -1,0 +1,39 @@
+function FLIM_Close
+global spc;
+global state;
+global gui;
+global gh;
+
+
+
+try
+	if state.spc.acq.timer.timerRatesEVER
+        if isvalid(state.spc.acq.timer.timerRates)==1
+            stop(state.spc.acq.timer.timerRates);
+            delete(state.spc.acq.timer.timerRates);
+        end
+	end
+    disp('Timers are disabled');
+catch
+end
+
+try
+    FLIM_getParameters;
+catch
+    erro
+end
+
+SPCdata = state.spc.acq.SPCdata;
+fid = fopen('spcm.ini');
+[fileName,permission, machineormat] = fopen(fid);
+[pathstr,name,ext,versn] = fileparts(fileName);
+fclose(fid);
+save([pathstr, '\spc_init.mat'], 'SPCdata');
+
+%spc_saveSPCSetting;
+
+calllib('spcm32','SPC_close');
+
+unloadlibrary spcm32;
+
+closereq;

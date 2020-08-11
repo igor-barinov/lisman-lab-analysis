@@ -1,0 +1,68 @@
+[10-Aug-2020 17:01:40]: Index in position 2 exceeds array bounds.
+
+Error in SampleTable/sample_labels (line 66)
+            labels = obj.info(:, 1);
+
+Error in stats_IB_080420>menuMSE_Callback (line 461)
+    sampleList = sampleData.sample_labels();
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in stats_IB_080420 (line 45)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)stats_IB_080420('menuMSE_Callback',hObject,eventdata,guidata(hObject))
+
+
+[10-Aug-2020 17:01:42]: Index in position 2 exceeds array bounds.
+
+Error in SampleTable/sample_labels (line 66)
+            labels = obj.info(:, 1);
+
+Error in stats_IB_080420>menuMSE_Callback (line 461)
+    sampleList = sampleData.sample_labels();
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in stats_IB_080420 (line 45)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)stats_IB_080420('menuMSE_Callback',hObject,eventdata,guidata(hObject))
+
+
+[10-Aug-2020 17:01:45]: Index in position 2 exceeds array bounds.
+
+Error in SampleTable/sample_labels (line 66)
+            labels = obj.info(:, 1);
+
+Error in stats_IB_080420>menuPValue_Callback (line 497)
+    sampleList = sampleData.sample_labels();
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in stats_IB_080420 (line 45)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)stats_IB_080420('menuPValue_Callback',hObject,eventdata,guidata(hObject))
+
+
+[10-Aug-2020 17:03:34]: Index in position 2 exceeds array bounds.
+
+Error in SampleTable/sample_labels (line 66)
+            labels = obj.info(:, 1);
+
+Error in stats_IB_080420>menuMSE_Callback (line 461)
+    sampleList = sampleData.sample_labels();
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in stats_IB_080420 (line 45)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)stats_IB_080420('menuMSE_Callback',hObject,eventdata,guidata(hObject))
+
+

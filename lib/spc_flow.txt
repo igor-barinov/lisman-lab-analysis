@@ -1,0 +1,39 @@
+SPC Flow
+
+Open -> ... -> im2_opentif -> ... -> "calcRois" -> ... -> spc_calcROI_internal
+	- Loads non-max tif
+	- Image loaded into Aout as [128x128][...]
+	- 'spc.state.img.greenImgF' = Aout[1,3, ..., frames - 1]
+	- 'spc.state.img.redImgF' = Aout[2,4, ..., frames]
+	- 'spc.project' = Max(Mean(spc.state.greenImgF))
+	
+	- Mean BG Int = mean of 'spc.project'
+	- BG Green Int = 'spc.state.img.greenImgF'
+	- BG Red Int = 'spc.state.img.redImgF'
+	- All ROI Means = Mean(Data) - BG Mean
+	- Mean ROI Int = mean of 'spc.project'
+	- ROI Green Int = 'spc.state.img.greenImgF'
+	- ROI Red Int = 'spc.state.img.redImgF'
+	
+
+spc_loadTiff: (/spc/*.tif) => 
+	spc.stack.project (128x128x10) <-- TIF[1] + TIF[2] + ... + TIF[64]
+
+im2_opentif: (/baseline/*.tif) => 
+	spc.state.img.greenImgF (128x128x30) <-- TIF[1, 3, ..., 30]
+	spc.state.img.redImgF	(128x128x30) <-- TIF[2, 4, ..., 30]
+	
+spc_calcROI_internal: (spc) =>
+	bg.mean_int <-- mean(spc.project)
+	bg.green_int <-- sum(spc.state.img.greenImgF)
+	bg.green_mean <-- mean(spc.state.img.greenImgF)
+	bg.red_int <-- sum(spc.state.img.redImgF)
+	bg.red_mean <-- mean(spc.state.img.redImgF)
+	ROI.mean_int <-- mean(spc.project) - bg.mean_int
+	ROI.green_int <-- sum(spc.state.img.greenImgF)
+	ROI.green_mean <-- mean(spc.state.img.greenImgF) - bg.green_mean
+	ROI.red_int <-- sum(spc.state.img.redImgF)
+	ROI.red_mean <-- mean(spc.state.img.redImgF) - bg.red_mean
+	
+spc.project SOURCE?
+	

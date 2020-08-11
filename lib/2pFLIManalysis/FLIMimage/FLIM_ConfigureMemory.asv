@@ -1,0 +1,10 @@
+function FLIM_ConfigureMemory
+
+global module;
+global SPCdata;
+global SPCMemConfig;
+
+data=libstruct('s_SPCMemConfig');
+data.max_block_no=0;
+[out1 SPCMemConfig]=calllib('spcm32','SPC_configure_memory',state.spc.acq.module,state.spc.acq.SPCdata.adc_resolution,0,data);
+%disp(SPCMemConfig);

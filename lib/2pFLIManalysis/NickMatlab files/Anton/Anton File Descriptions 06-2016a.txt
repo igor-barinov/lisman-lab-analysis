@@ -1,0 +1,138 @@
+﻿Changes made by Anton Zverev during 06/2016
+
+____________________________________________
+
+
+
+
+Haining Zhong Analysis(h_imstack files):
+
+
+
+	*FILE*					*DESCRIPTION OF EDIT*
+
+	h_plotGroupFcn.m			Added the line ‘plottools;’, which shows the plottools toolbar after plotting
+
+						the figure. This makes it easier to see plots together in the same window, as
+
+						well as change line properties, titles, legends, etc.
+
+	h_groupPlotGUI.m			Same as above.
+
+	h_generalAnalysisGUI.fig		Added a button and a text field. When pressed, the button ‘Show current header’
+
+						displays the header information from the current TIFF image in the text field.
+
+	h_generalAnalysisGUI.m			Created callback for the ‘Show current header’ button, which updates the text
+
+						field right below it called ‘headerText’.
+
+	h_LSAnalysisGUI.fig			Added a checkbox called ‘subtract background’.
+
+	h_LSAnalysis.m				This is the callback for the ‘Calculate’ button of LS Analysis. I added an if
+
+						statement to handle the ‘subtract bg’ checkbox: if it is checked, the mean of
+
+						the green and red backgrounds are subtracted from their respective Rois. The
+
+						subtraction conditional is placed before the ‘normalize baseline’ conditional,
+
+						so that in case both are checked, normalization occurs after subtraction. The
+
+						resulting data, regardless of what boxes are checked, is stored in the struct
+
+						‘lastLSAnalysis’, which is sent to the MATLAB workspace after calculation.
+
+	h_plotLSAnalysis.m			This is the callback for the ‘Plot’ button of LS Analysis. I add an if statement
+
+						to handle the ‘subtract bg’ checkbox: if it is checked, the background will not
+
+						be plotted anymore because it has already been subtracted.
+
+
+
+FLIMAnalysis(spc files):
+
+
+
+	*FILE*					*DESCRIPTION OF EDIT*
+
+	n_thresholds.fig			Added a button and a text field. When pressed, the button ‘Show current header’
+
+						displays the header information from the current TIFF image in the text field.
+
+						Also, added a drop-down menu and an edit-text box to select which ROI2 file to
+
+						save to.
+
+	n_thresholds.m				Created callback for the ‘Show current header’ button, which updates the text
+
+						field right below it called ‘headerText’.
+
+						Also, created callback for the ‘destination’ drop-down menu, which updates the
+
+						global variable ‘extension’ with the correct ROI2 file extension.
+
+	plotFigure.m				This file did not exist before. Created this function to make plotting easier
+
+						and more universal. Essentially took the plotting code that was at the end of
+
+						spc_calcRoi.m and put it in its own function, adding declarations for variables
+
+						so that the data is taken from the ROI2 file instead of being recalculated. Now
+
+						to plot, you don’t have to click ‘Recover ROIs’ and do calcRoi, because this
+
+						plotting function can be called from anywhere (currently spc_openCurves and
+
+						spc_calcRoi). ALSO, plotting now displays the image numbers in a subplot at the
+
+						top. This makes it easier to see which images were used for this plot. However,
+
+						to get the right spacing, the number of subplots becomes complicated, so just
+
+						trust that the way it’s done is right (it works and looks good).
+
+	spc_calcRoi.m				Deleted the whole end section which was for plotting. Now plotFigure takes care
+
+						of that. The end of calcRoi just calls plotFigure, passing ‘a’ and ‘ana’ as
+
+						arguments so that the right things will be plotted. I could have made plotFigure
+
+						retrieve ‘a’ and ‘ana’ by itself from the ROI2 file, but that would be extra
+
+						memory load, since those variables are already present wherever plotFigure is
+
+						called from (at least usually that’s the case).
+
+						Also, added conditions when loading files and saving files to load the file with
+
+						the extension if that’s what was selected in n_thresholds.
+
+	spc_recoverRois.m			Added two lines at the end which take the background red and green thresholds
+
+						that were saved to the ROI2 file and display them in the n_thresholds figure.
+
+	spc_openCurves.m			This function is called whenever a file is opened from spc_main, either using
+
+						‘open’ or using the ‘<‘ ’>’ buttons. So, this is where I called plotFigure to
+
+						do the plotting, since Nick wanted to plot the figure right when a new image
+
+						is opened.
+
+						Also, added a section to refresh the drop-down menu of ROI2 file in n_thresholds.
+
+						This is so that you see an updated list every time you open a new image.
+
+Instructions/tips for FLIMAnalysis:
+
+	Before you open a .tif file, make sure that there is at least one *ROI2.mat file in the same directory as the image. Then,
+after opening the image, the available ROI2 files will show up in the drop-down menu in n_thresholds. When opening an image, the
+figure that will be plotted will come from whatever ROI2 file is selected in the drop-down menu, and if you are opening from a
+directory for the first time, that will be the standard ROI2 file (not a file with extensions). But after the first one, you can
+select the ROI2 file from the drop down.
+	If you want to save to a new ROI2 file, select 'New File' in the drop down menu and type in an extension, such as '_AZ'.
+After pressing calcRoi, the data will be saved to both the standard ROI2 file and the new one with your extension.
+	To automatically retrieve the background red and green thresholds from the ROI2 file, click Roi>Recover Rois. This will also
+recover the Rois, as it did before my edits.

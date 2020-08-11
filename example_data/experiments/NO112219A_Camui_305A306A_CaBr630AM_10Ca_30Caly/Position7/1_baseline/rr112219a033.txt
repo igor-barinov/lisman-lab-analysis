@@ -1,0 +1,29 @@
+Capture type: GRAB
+Date (y/m/d): 2019/11/22
+Time: 13:10:31
+
+Main Controls Settings:
+
+Zoom: 2
+Number of frames averaged: 6
+Repeat period: 15
+Number of Z slices: 10
+µm/Slice: 1
+
+yphys_stimScope parameters:
+
+
+FLIM Parameters:
+
+Flim: 1
+Binning: 0
+Bin factor: 1
+Page acq mode: 0
+
+Scanning Configuration:
+
+Configuration Name: 2ch_128_nick_FLIM
+Pixels / Line: 128
+Lines / Frame: 128
+Ms / Line: 2.96
+Bidirectional Scan: 0
