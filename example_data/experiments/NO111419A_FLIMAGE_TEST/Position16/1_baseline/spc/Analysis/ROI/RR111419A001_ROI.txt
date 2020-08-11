@@ -1,4 +1,0 @@
-SelectROI
-ROI-type,Rectangle,Roi-ID,0
-Rect,0,0,128,128
-MultiROI

@@ -1,6 +1,0 @@
-SelectROI
-ROI-type,Elipsoid,Roi-ID,1
-Rect,37,99,20,15
-MultiROI
-ROI-type,Elipsoid,Roi-ID,1
-Rect,37,99,20,15
