@@ -2,11 +2,12 @@
 ## Programs
 - analysis_1_2_IB
 - stats_IB
-## Installation (for IB Programs)
-1. Go to "Analysis/Igor B"
-2. Under the program's directory you will find a "release.zip"
-3. Download the "release.zip" and make sure the "deps" folder is in MATLAB's path
-4. For "analsysis_1_2_IB" make sure you have "spc_drawInit", "h_imstack", "stats_IB" and their dependenicies in the MATLAB path
+## Program Installation
+1. Dowload the "lib.zip" in the root directory
+2. Download the "release.zip" under the programs director (e.g. './analysis_1_2_IB/release.zip')
+3. Add the 'lib' folder in "lib.zip" to the MATLAB path
+4. If you have a different/preferred version of "spc_drawInit" or "h_imstack", remove "lib/2pFLIM..." and "lib/HZ" from the MATLAB path and use your existing files
+5. For FLIMage to work, you need to add "FLIMage.exe" to the Windows "PATH" environment variable. You can do this by adding the directory which contains "FLIMage.exe" to the system path
 ## Usage
 Either run the relevant '.m' file or open the '.fig' file via MATLAB
 ## analysis_1_2_IB
@@ -85,7 +86,7 @@ You can plot the averages of the ROI data by going to "Plot->Averages". The aver
 You can plot any information along with data by checking "Plot->Annotations". For raw and prepared files, For averages, DNA type will be in the legend. Solutions timings will appear as bars on the top. There will be a bar for each solution, and solutions with the same timing will be stacked vertically.
 ### Saving Files
 You must have the minimum amount of information added before saving (DNA type and 2 solutions).
-Once all data is editted and plots are acceptable, you can save the data by going to "File->Save". You will have options to save as either "Prepared ROI Files" or "Averaged ROI Files". Select the file type, enter the filename and the file will be saved. If any ROIs are disabled, you can choose to either keep them or not save them.
+Once all data is editted and plots are acceptable, you can save the data by going to "File->Save". You will have options to save as either "Raw ROI Files", "Prepared ROI Files", or "Averaged ROI Files". Select the file type, enter the filename and the file will be saved. If any ROIs are disabled, you can choose to either keep them or not save them.
 ### Closing Files
 To clear the workspace, you can go to "File->Close". You will be prompted to confirm before closing the file.
 ### Tools
