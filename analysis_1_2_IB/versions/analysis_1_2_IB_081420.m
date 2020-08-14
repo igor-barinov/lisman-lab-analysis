@@ -83,12 +83,6 @@ varargout{1} = handles.output;
 %% App State Methods ----------------------------------------------------------------------------------------------
 % -----------------------------------------------------------------------------------------------------------------
 
-%% ----------------------------------------------------------------------------------------------------------------
-% 'script_version' Method
-%
-function [str] = script_version()
-str = 'analysis_1_2_IB_081420';
-
 
 %% ----------------------------------------------------------------------------------------------------------------
 % 'logdlg' Method
@@ -96,7 +90,7 @@ str = 'analysis_1_2_IB_081420';
 function logdlg(lastErr)
 % Try making/adding to log
 try
-    version = script_version();
+    version = Analysis_1_2_Versions.release();
     scriptFilePath = which(version);
     [path, ~, ~] = fileparts(scriptFilePath);
     logFile = [version, '_LOG.txt'];
@@ -283,7 +277,7 @@ function update_win_title(handles)
 % Get program state
 openFile = get_open_files(handles);
 
-title = script_version();
+title = Analysis_1_2_Versions.release();
 if ~isempty(openFile)
     srcFiles = openFile.source_files();
     [~, firstFile, ext] = fileparts(srcFiles{1});
@@ -2078,7 +2072,8 @@ spc_drawInit;
 function menuImstack_Callback(~, ~, ~)
 h_imstack;
 function menuStatsIB_Callback(~, ~, ~)
-stats_IB_061020
+version = Stats_IB_Versions.release();
+evalc(version);
 function menuFLIMage_Callback(~, ~, ~)
 failed = system('start FLIMage');
 if failed
