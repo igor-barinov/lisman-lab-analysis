@@ -9,16 +9,16 @@ For "analysis_1_2" this would be under "lisman-lab-analysis/analysis_1_2/release
 For "stats_IB" this would be under "lisman-lab-analysis/stats_IB/release.zip".
 3. Add the 'lib' folder in "lib.zip" to the MATLAB path
 4. If you have a different/preferred version of "spc_drawInit" or "h_imstack", remove "lib/2pFLIM..." and "lib/HZ" from the MATLAB path and use your existing files
-5. For FLIMage to work, you need to add "FLIMage.exe" to the Windows "PATH" environment variable. You can do this by adding the directory which contains "FLIMage.exe" to the system path. Here are the steps to do this:
-  1. Find environment variable settings by searching 'path' in the Windows search bar
+5. For FLIMage to work, you need to add "FLIMage.exe" to the Windows "PATH" environment variable. You can do this by adding the directory which contains "FLIMage.exe" to the system path. Here are the steps to do this:  
+  1. Find environment variable settings by searching 'path' in the Windows search bar  
   ![flim_install_1](https://user-images.githubusercontent.com/23390420/90286615-3a91d680-de44-11ea-93a7-922f13dd2297.png)
-  2. Click on 'Environment Variables' in the window that opens
+  2. Click on 'Environment Variables' in the window that opens  
   ![flim_install_2](https://user-images.githubusercontent.com/23390420/90286616-3a91d680-de44-11ea-83f4-089c34a862f0.png)
-  3. Under 'System Variables', select 'Path' and click on 'Edit'
+  3. Under 'System Variables', select 'Path' and click on 'Edit'  
   ![flim_install_3](https://user-images.githubusercontent.com/23390420/90286612-39f94000-de44-11ea-9afa-9a20463da4ee.png)
-  4. Click 'New' in the opened window then click 'Browse'
+  4. Click 'New' in the opened window then click 'Browse'  
   ![flim_install_4](https://user-images.githubusercontent.com/23390420/90286613-39f94000-de44-11ea-8708-d0624b4fe77f.png)
-  5. Find the directory that contains "FLIMage.exe" and then save all changes. Here is what the directory should look like
+  5. Find the directory that contains "FLIMage.exe" and then save all changes. Here is what the directory should look like  
   ![flim_install_5](https://user-images.githubusercontent.com/23390420/90286614-3a91d680-de44-11ea-8f01-a9a86658eb29.png)
   6. Restart MATLAB if was open already
 ## Usage
