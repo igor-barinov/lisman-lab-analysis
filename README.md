@@ -4,7 +4,9 @@
 - stats_IB
 ## Program Installation
 1. Dowload the "lib.zip" in the root directory
-2. Download the "release.zip" under the programs director (e.g. './analysis_1_2_IB/release.zip')
+2. Download the "release.zip" under the program's directory.
+For "analysis_1_2" this would be under "lisman-lab-analysis/analysis_1_2/release.zip".
+For "stats_IB" this would be under "lisman-lab-analysis/stats_IB/release.zip".
 3. Add the 'lib' folder in "lib.zip" to the MATLAB path
 4. If you have a different/preferred version of "spc_drawInit" or "h_imstack", remove "lib/2pFLIM..." and "lib/HZ" from the MATLAB path and use your existing files
 5. For FLIMage to work, you need to add "FLIMage.exe" to the Windows "PATH" environment variable. You can do this by adding the directory which contains "FLIMage.exe" to the system path
