@@ -9,7 +9,18 @@ For "analysis_1_2" this would be under "lisman-lab-analysis/analysis_1_2/release
 For "stats_IB" this would be under "lisman-lab-analysis/stats_IB/release.zip".
 3. Add the 'lib' folder in "lib.zip" to the MATLAB path
 4. If you have a different/preferred version of "spc_drawInit" or "h_imstack", remove "lib/2pFLIM..." and "lib/HZ" from the MATLAB path and use your existing files
-5. For FLIMage to work, you need to add "FLIMage.exe" to the Windows "PATH" environment variable. You can do this by adding the directory which contains "FLIMage.exe" to the system path
+5. For FLIMage to work, you need to add "FLIMage.exe" to the Windows "PATH" environment variable. You can do this by adding the directory which contains "FLIMage.exe" to the system path. Here are the steps to do this:
+  1. Find environment variable settings by searching 'path' in the Windows search bar
+  ![path search](https://ibb.co/CVbgZgT)
+  2. Click on 'Environment Variables' in the window that opens
+  ![env var button](https://ibb.co/6ynmr1x)
+  3. Under 'System Variables', select 'Path' and click on 'Edit'
+  ![path select](https://ibb.co/V3ZLS46)
+  4. Click 'New' in the opened window then click 'Browse'
+  ![new browse](https://ibb.co/Thy8NCv)
+  5. Find the directory that contains "FLIMage.exe" and then save all changes. Here is what the directory should look like
+  ![flimage dir](https://ibb.co/ph81B4t)
+  6. Restart MATLAB if was open already
 ## Usage
 Either run the relevant '.m' file or open the '.fig' file via MATLAB
 ## analysis_1_2_IB
