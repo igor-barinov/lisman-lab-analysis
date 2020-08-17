@@ -234,10 +234,16 @@ namespace FLIMage
                 FLIM_Pages = new ushort[nFastZ][][,,];
                 for (int z = 0; z < nFastZ; z++)
                     FLIM_Pages[z] = new ushort[nChannels][,,];
+                /*                
                 if (currentPage >= 0 && currentPage < nFastZ)
                     ;
                 else
                     currentPage = -1;
+                */
+                if (currentPage < 0 || currentPage >= nFastZ)
+                {
+                    currentPage = -1;
+                }
             }
             else
             {

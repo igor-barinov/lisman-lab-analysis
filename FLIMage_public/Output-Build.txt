@@ -1,0 +1,3 @@
+﻿1>------ Build started: Project: FLIMage, Configuration: Debug Any CPU ------
+1>C:\Development\Desktop\c#\lisman-lab-analysis\FLIMage_public\HardwareControls\IOControls.cs(1972,26,1972,38): error CS0426: The type name 'CounterInput' does not exist in the type 'NiDaq'
+========== Build: 0 succeeded, 1 failed, 0 up-to-date, 0 skipped ==========

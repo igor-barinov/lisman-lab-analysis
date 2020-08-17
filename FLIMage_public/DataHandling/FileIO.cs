@@ -1967,6 +1967,20 @@ namespace FLIMage
             return objectOut;
         }
 
+        /*
+         * Begin IB edits
+         */
+
+        public static bool IsOnlySPCFile(String fileName)
+        {
+            return false;
+        }
+
+        /*
+         * End IB edits
+         */
+
+
         public enum FileFormat
         {
             Time_ChYX = 0,

@@ -132,14 +132,14 @@
     </Reference>
     <Reference Include="MathLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libraries\Debug\MathLibrary.dll</HintPath>
+      <HintPath>Libraries\Release\MathLibrary.dll</HintPath>
     </Reference>
     <Reference Include="MathNet.Numerics, Version=4.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\MathNet.Numerics.4.11.0\lib\net461\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="MicroscopeHardwareLibs, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libraries\Debug\MicroscopeHardwareLibs.dll</HintPath>
+      <HintPath>Libraries\Release\MicroscopeHardwareLibs.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="NationalInstruments.Common, Version=17.5.40.49153, Culture=neutral, PublicKeyToken=dc6ad606294fc298, processorArchitecture=MSIL">
@@ -165,7 +165,11 @@
     </Reference>
     <Reference Include="PhysiologyCSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libraries\Debug\PhysiologyCSharp.dll</HintPath>
+      <HintPath>Libraries\Release\PhysiologyCSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="StageController, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\Release\StageController.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -189,15 +193,15 @@
     <Reference Include="System.Xml" />
     <Reference Include="TagLensController, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libraries\Debug\TagLensController.dll</HintPath>
+      <HintPath>Libraries\Release\TagLensController.dll</HintPath>
     </Reference>
     <Reference Include="TCSPC_controls, Version=1.1.0.30, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libraries\Debug\TCSPC_controls.dll</HintPath>
+      <HintPath>Libraries\Release\TCSPC_controls.dll</HintPath>
     </Reference>
     <Reference Include="Utilities, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libraries\Debug\Utilities.dll</HintPath>
+      <HintPath>Libraries\Release\Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -331,6 +335,7 @@
     </Compile>
     <Compile Include="FlowControls\TextServer.cs" />
     <Compile Include="Analysis\TimeCourse.cs" />
+    <Compile Include="ScanParameters.cs" />
     <Compile Include="Uncaging\UncagingCalib.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -486,6 +491,7 @@
     <Content Include="Libraries\Debug\PhysiologyCSharp.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Libraries\Debug\StageController.dll" />
     <Content Include="Libraries\Debug\System.Numerics.Vectors.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -495,6 +501,8 @@
     <Content Include="Libraries\Debug\TCSPC_controls.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Libraries\Debug\TCSPC_Decode.dll" />
+    <Content Include="Libraries\Debug\ThorlabController.dll" />
     <Content Include="Libraries\Debug\Utilities.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
