@@ -57,9 +57,8 @@ function analysis_1_2_IB_test(version)
         
         %% Try opening the file
         try
-            handles = guidata(hInst);
-            openFileCmd = sprintf('%s(''menuOpen_Callback'', handles.menuOpen, [])', version);
-            evalc(openFileCmd);
+            handles = guidata(hInst
+            openFileCmd = sprintf('%s(''menuOpen_Callback''
         catch
         end
     end
