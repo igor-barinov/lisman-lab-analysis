@@ -447,7 +447,7 @@ try
     % Get file paths and store them in a cell
     fileFilter = {'*.mat', 'MATLAB ROI Files (*.mat)'; ...
                   '*.csv', 'FLIMage ROI Files (*.csv)'};
-    
+
     [file, path] = uigetfile(fileFilter, 'Multiselect', 'on');
     if isequal(file, 0) || isequal(path, 0)
         return;
@@ -456,7 +456,7 @@ try
     if ~iscell(filepaths)
         filepaths = { filepaths };
     end
-    
+
     % Move to chosen directory
     cd(path);
     
@@ -483,6 +483,9 @@ try
     elseif all(RawFile.follows_format(filepaths))           % <-- Raw is checked after prep since prep can be raw
         openFile = RawFile(filepaths);
     else
+        if calledExternally
+        else
+        end
         warndlg('Please select files of the same type');
         return;
     end

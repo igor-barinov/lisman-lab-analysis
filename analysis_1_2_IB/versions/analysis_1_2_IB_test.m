@@ -9,7 +9,7 @@ function analysis_1_2_IB_test(version)
     cd(path);
     [~, pathFolders] = files_and_folders_in(path);
     
-    possibleMatFiles = {};
+    matFileGroups = {};
     for i = 1:numel(pathFolders)
         expFolder = pathFolders{i};
         fprintf('Finding files in ''%s'':\n', expFolder);
@@ -19,13 +19,15 @@ function analysis_1_2_IB_test(version)
             rootDir = dirQueue{1};
             dirQueue = dirQueue(2:end);
             [files, folders] = files_and_folders_in(rootDir);
+            matFiles = {};
             for j = 1:numel(files)
                 [~,name, ext] = fileparts(files{j});
                 if strcmp(ext, '.mat')
                     fprintf('\tAdded ''%s'' as possibility\n', [name,ext]);
-                    possibleMatFiles{end+1} = files{j};
+                    matFiles{end+1} = files{j};
                 end
-            end            
+            end 
+            matFileGroups{end+1} = matFiles;
             
             for j = 1:numel(folders)
                 dirQueue = [dirQueue, folders];
@@ -35,7 +37,7 @@ function analysis_1_2_IB_test(version)
     end
     
     %% Setup output folder
-    fprintf('Collected %d possible experiment files. Choosing output folder...', numel(possibleMatFiles));
+    fprintf('Collected %d possible experiment file groups. Choosing output folder...', numel(matFileGroups));
     outputPath = uigetdir();
     fprintf('\tdone\n\n');
     
@@ -50,17 +52,19 @@ function analysis_1_2_IB_test(version)
     end
     
     %% Go through each file
-    for i = 1:numel(possibleMatFiles)
-        currentFile = possibleMatFiles{i};
+    for i = 1:numel(matFileGroups)
+        expFiles = matFileGroups{i};
         
-        fprintf('File #%d: ''%s'':', i, currentFile);
+        fprintf('Group #%d:\n', i);
         
         %% Try opening the file
         try
             handles = guidata(hInst);
-            openFileCmd = sprintf('%s(''menuOpen_Callback'', handles.menuOpen, [])', version);
+            openFileCmd = sprintf('%s(''menuOpen_Callback'', handles.menuOpen, expFiles, [])', version);
             evalc(openFileCmd);
-        catch
+        catch err
         end
+        
+        fprintf('\n');
     end
 end
