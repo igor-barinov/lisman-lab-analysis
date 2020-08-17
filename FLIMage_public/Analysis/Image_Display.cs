@@ -3785,6 +3785,8 @@ namespace FLIMage.Analysis
              * Check if SPC only here
              */
 
+            bool isOnlySPC = FileIO.IsOnlySPCFile(fn);
+
             ret = FileIO.OpenFLIMTiffFilePage(fn, 0, 0, FLIM_ImgData, true, true); //Save In Mmeory for the first page --- we don't know the format yet.                
 
             if (ret != FileIO.FileError.Success)

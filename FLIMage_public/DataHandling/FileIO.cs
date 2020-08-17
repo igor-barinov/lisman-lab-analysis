@@ -1974,6 +1974,12 @@ namespace FLIMage
         public static bool IsOnlySPCFile(String fileName)
         {
             return false;
+            //TODO
+        }
+
+        public void OpenNonSPCTiff(String fileName, FLIMData flim)
+        {
+            //TODO
         }
 
         /*
