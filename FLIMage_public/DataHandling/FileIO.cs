@@ -1973,8 +1973,38 @@ namespace FLIMage
 
         public static bool IsOnlySPCFile(String fileName)
         {
+
+            /*
+             * Desired structure:
+             * baseline -> spc -> file
+             *          -> non-spc files
+             */
+
+            FileInfo baseFileInfo = new FileInfo(fileName);
+
+            Regex fileFormatRgx = new Regex(@"\d{3}(max)*.(tiff|tif|txt)"); // Matches: [3 digits][0+ 'max']['.tif', 'tiff', or 'txt']
+            String[] fileParts = fileFormatRgx.Split(baseFileInfo.Name);
+            if (fileParts.Length == 0)
+            {
+                return true;
+            }
+
+            String baseName = fileParts[0];
+
+            DirectoryInfo spcDir = Directory.GetParent(baseFileInfo.FullName);
+            DirectoryInfo baselineDir = spcDir.Parent;
+            var nonSPCFiles = baselineDir.EnumerateFiles();
+
+            foreach (FileInfo fInfo in nonSPCFiles)
+            {
+                fileParts = fileFormatRgx.Split(fInfo.Name);
+                if (fileParts.Length == 0 || !fileParts[0].Equals(baseName))
+                {
+                    return true;
+                }
+            }
+
             return false;
-            //TODO
         }
 
         public void OpenNonSPCTiff(String fileName, FLIMData flim)
