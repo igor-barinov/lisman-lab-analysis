@@ -1,0 +1,72 @@
+FLIMAGE FLOW
+
+"File -> Open"
+
+OpenFLIM() 
+	-> OpenFLIM(str, bool)
+		-> OpenFLIMTiffFilePage(str, short, int, FLIMData, bool, bool)
+			-> decodeHeader(str, str)
+			^^^^^^^^^^^^^^^^^^^^^^^^^
+				"spc.SPCdata.scan_rout_x = 1;" --> 'nChannels' = 1
+				
+			-> PutToPageOnly_Linear(ushort[][], System.DateTime, int)
+			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+				'Buffer.BlockCopy(FLIM_page[ch], 0, flim3d[ch], 0, FLIM_page[ch].Length * sizeof(ushort))'
+				'PutToPageOnly(flim3d, acqTime, page)'
+				^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+					'FLIM_Pages[page]' = 'FLIM_page' (flim3d)
+				
+		-> calcZProjection()
+			-> calcZProject(FLIMData.projectionType, int[])
+				-> gotoPage(int)
+				^^^^^^^^^^^^^^^^
+					'FLIMRawZProjection' = '(ushort[][,,])Copier.DeepCopyArray(FLIM_Pages[startPage])'
+					
+					-> calculateProject()
+						-> calculateProjectCh(int)
+						^^^^^^^^^^^^^^^^^^^^^^^^^^
+							'Project[ch]' = 'ImageProcessing.GetProjectFromFLIM(FLIMRaw[ch])'
+			
+			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+				'Array.Copy(FLIM_Pages[page][ch], (y * width + x) * n_time[ch], FLIMRawZProjection[ch], (y * width + x) * n_time[ch], n_time[ch])'
+				'FLIMRaw' = '(ushort[][,,])Copier.DeepCopyArray(FLIMRawZProjection)'
+				'calculateProject()'
+							
+		-> CalculateTimecourse(bool)
+			-> CalculateCurrentPage(int, bool, bool)
+				-> calculate_MeanLifetime()
+					-> calculate_MeanLifetime(int)
+						-> calculate_MeanLifetime_General(ROI, int, bool)
+						^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+							'sumi' = sum('intensity')
+							'roi.intensity[ch]' = 'sumi' / 'pixi'
+							'roi.sumIntensity[ch]' = 'sumi'
+							
+				-> ImageInfo(FLIMData)
+					-> 'getData(Roi')
+					^^^^^^^^^^^^^^^^^
+						'TCF.<data>' = 'Roi.<data>'
+
+					
+"Fit"
+
+FitData(bool, bool)
+	-> calculateLifetime()
+		-> calculateLifetimeCh(int)
+			-> calculateLifetimeChRoi(int, ROI, int[], bool)
+			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+				'threeD' is false
+				'img' = 'Project[ch]'
+				'intensity' = 'img[y,x]'
+				'if (intensity >= low_threshold[ch])'
+				
+	-> UpdateImages(bool, bool, bool, bool)
+		-> UpdateImages(bool, bool, bool, bool, bool)
+			-> plotNow_noRealtime(TimeCourse_Files, TimeCourse, Image_Display, int)
+				-> updatePlot()
+					-> plotTimeCourse()
+					^^^^^^^^^^^^^^^^^^^
+						'if (meanIntensity_radio.Checked)'
+						'tau_m' = 'TCF.Lifetime_fit[c]', 'TC.Lifetime_fit[c]'
+						'sumInt' = 'TCF.sumIntensity[c]', 'TC.sumIntensity[c]'
+						'meanInt' = 'TCF.Intensity[c]', 'TC.Intensity[c]'

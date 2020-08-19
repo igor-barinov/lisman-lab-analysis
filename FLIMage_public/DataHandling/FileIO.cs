@@ -1971,15 +1971,16 @@ namespace FLIMage
          * Begin IB edits
          */
 
+        /// <summary>
+        /// Checks if an SPC file comes with non-SPC image files
+        /// </summary>
+        /// <param name="fileName"> String containing the absolute path to the opened file </param>
+        /// <returns>
+        /// <para> True if the basename cannot be parsed or if the corresponding non-SPC file does not have the same basename </para>
+        /// <para> False otherwise </para>
+        /// </returns>
         public static bool IsOnlySPCFile(String fileName)
         {
-
-            /*
-             * Desired structure:
-             * baseline -> spc -> file
-             *          -> non-spc files
-             */
-
             FileInfo baseFileInfo = new FileInfo(fileName);
 
             Regex fileFormatRgx = new Regex(@"\d{3}(max)*.(tiff|tif|txt)"); // Matches: [3 digits][0+ 'max']['.tif', 'tiff', or 'txt']
@@ -2007,9 +2008,304 @@ namespace FLIMage
             return false;
         }
 
-        public void OpenNonSPCTiff(String fileName, FLIMData flim)
+        public FileError OpenNonSPCTiff(String fileName, FLIMData flim)
         {
-            //TODO
+            return FileError.Success;
+
+            /*
+            if (String.Compare(fileName, "") == 0)
+            {
+                return FileError.NotFound;
+            }
+
+            using (Tiff image = Tiff.Open(fileName, "r"))
+            {
+                if (image == null)
+                {
+                    //MessageBox.Show("Could not open this image");
+                    return FileError.UnKnown;
+                }
+
+                int nPages = image.NumberOfDirectories();
+
+                if (read_page < nPages)
+                    image.SetDirectory(read_page);
+
+                int stride = image.ScanlineSize();
+                byte[] scanline = new byte[stride];
+                FieldValue[] value;
+
+                Compression compression = (Compression)image.GetField(TiffTag.COMPRESSION)[0].ToInt();
+                value = image.GetField(TiffTag.IMAGEDESCRIPTION);
+                String Description = "";
+                if (value != null)
+                    Description = value[0].ToString();
+                //Debug.WriteLine(Description); //For Debug.
+
+                value = image.GetField(TiffTag.IMAGEWIDTH);
+                int widthAll = value[0].ToInt(); //Everything else;
+
+                value = image.GetField(TiffTag.IMAGELENGTH);
+                int image_length = value[0].ToInt();
+
+                value = image.GetField(TiffTag.BITSPERSAMPLE);
+                int depth = value[0].ToInt() / 8;
+
+                //FLIM.clearPages();
+                //FLIM.acquiredTime = new DateTime();
+
+                if (compression == Compression.LZW || compression == Compression.PACKBITS || compression == Compression.NONE)
+                {
+                    // LZW and PackBits compression schemes do not allow 
+                    // scanlines to be read in a random fashion. 
+                    // So, we need to read all scanlines from start of the image. 
+
+                    value = image.GetField(TiffTag.IMAGEDESCRIPTION);
+
+                    DateTime dt = new DateTime();
+                    if (value != null)
+                    {
+                        Description = value[0].ToString();
+                        if (read_page == 0 && newFile)
+                        {
+                            FLIM.decodeHeader(Description, fileName);
+                            dt = FLIM.acquiredTime;
+                        }
+                        else
+                            dt = FLIM.decodeAcquiredTimeOnly(Description);
+                    }
+
+                    int height = FLIM.height;
+                    int nCh = FLIM.nChannels;
+                    int width = FLIM.width;
+                    int nfastZ = FLIM.nFastZ;
+
+                    FileFormat fm = FLIM.format;
+
+                    if (fm == FileFormat.None)
+                    {
+                        if (widthAll == FLIM.n_time.Sum() && image_length == width * height)
+                            fm = FileFormat.ChTime_YX;
+                        else if (image_length == FLIM.n_time[0] && widthAll == width * height * nCh) //This can happen only if all channels have the same t.
+                            fm = FileFormat.ChYX_Time;
+                        else if (image_length == width * height * nCh && widthAll == FLIM.n_time[0]) //This can happen only if all channels have the same t.
+                            fm = FileFormat.Time_ChYX;
+                        else if (image_length == 1)
+                            fm = FileFormat.Linear;
+                        else if (image_length == nfastZ)
+                            fm = FileFormat.ZLinear;
+                        else
+                        {
+                            MessageBox.Show("This file is not FLIMage file.");
+                            return FileError.FormatError;
+                        }
+                    }
+
+                    int[] n_time = FLIM.n_time;
+
+                    int zPerFile = 1;
+                    if (fm == FileFormat.ZLinear)
+                        zPerFile = image_length;
+
+                    if (height < 1 || nCh < 0)
+                        return FileError.FormatError;
+
+                    FLIM.AssureFLIMRawSize();
+                    //var img = FLIM.FLIMRaw;
+                    //Making linear model.
+
+                    var imgZ = new ushort[zPerFile][][];
+                    var bimgZ = new byte[zPerFile][][];
+
+                    for (int z = 0; z < zPerFile; z++)
+                    {
+                        imgZ[z] = new ushort[nCh][];
+                        bimgZ[z] = new byte[nCh][];
+                        if (depth == 2)
+                            for (int i = 0; i < nCh; i++)
+                                imgZ[z][i] = new ushort[height * width * n_time[i]];
+
+                        else if (depth == 1)
+                            for (int i = 0; i < nCh; i++)
+                                bimgZ[z][i] = new byte[height * width * n_time[i]];
+                    }
+
+                    if (fm == FileFormat.Linear || fm == FileFormat.ZLinear)
+                    {
+                        for (int z = 0; z < zPerFile; z++)
+                        {
+                            var img = imgZ[z];
+                            var bimg = bimgZ[z];
+
+                            image.ReadScanline(scanline, z);
+
+                            int offset = 0;
+                            for (int chnnl = 0; chnnl < nCh; ++chnnl)
+                            {
+                                if (n_time[chnnl] != 0)
+                                {
+                                    if (depth == 2)
+                                        Buffer.BlockCopy(scanline, offset, img[chnnl], 0, img[chnnl].Length * depth);
+                                    else
+                                        Buffer.BlockCopy(scanline, offset, bimg[chnnl], 0, bimg[chnnl].Length * depth);
+                                }
+                                offset += n_time[chnnl] * width * height * depth;
+                            }
+                        }
+                    }
+                    else if (fm == FileFormat.ChTime_YX) //Standard 
+                    {
+                        var img = imgZ[0];
+                        var bimg = bimgZ[0];
+                        for (int y = 0; y < height; ++y)
+                            for (int x = 0; x < width; ++x)
+                            {
+                                image.ReadScanline(scanline, y * width + x);
+                                int offset = 0;
+                                for (int chnnl = 0; chnnl < nCh; ++chnnl)
+                                {
+                                    if (n_time[chnnl] != 0)
+                                    {
+                                        if (depth == 2)
+                                            Buffer.BlockCopy(scanline, offset, img[chnnl], (y * width + x) * n_time[chnnl] * depth, n_time[chnnl] * depth);
+                                        else
+                                            Buffer.BlockCopy(scanline, offset, bimg[chnnl], (y * width + x) * n_time[chnnl] * depth, n_time[chnnl] * depth);
+                                    }
+                                    offset += n_time[chnnl] * depth;
+                                }
+                            }
+                    }
+                    else if (fm == FileFormat.Time_ChYX)
+                    {
+                        var img = imgZ[0];
+                        var bimg = bimgZ[0];
+
+                        int nT = n_time.Max();
+                        for (int chnnl = 0; chnnl < nCh; ++chnnl)
+                            for (int y = 0; y < height; ++y)
+                                for (int x = 0; x < width; ++x)
+                                {
+                                    image.ReadScanline(scanline, chnnl * width * height + y * width + x);
+                                    if (depth == 2)
+                                        Buffer.BlockCopy(scanline, 0, img[chnnl], (y * width + x) * nT * depth, nT * depth);
+                                    else
+                                        Buffer.BlockCopy(scanline, 0, bimg[chnnl], (y * width + x) * nT * depth, nT * depth);
+                                }
+                    }
+                    else if (fm == FileFormat.ChYX_Time)
+                    {
+                        var img = imgZ[0];
+                        var bimg = bimgZ[0];
+
+                        int nT = n_time.Max();
+
+                        for (int i = 0; i < n_time[0]; i++)
+                        {
+                            image.ReadScanline(scanline, i);
+
+                            //byte[] buf = new byte[height * nCh * width * depth]; //Do line-by-line!
+
+                            for (int y = 0; y < height; ++y)
+                            {
+                                for (int x = 0; x < width; ++x)
+                                {
+                                    //Ch1
+                                    for (int chnnl = 0; chnnl < nCh; ++chnnl)
+                                    {
+
+                                        byte[] byteArray = new byte[depth];
+
+                                        for (int k = 0; k < depth; ++k)
+                                        {
+                                            int index = chnnl * width * height * depth + y * width * depth + x * depth + k;
+                                            byteArray[k] = scanline[index];
+                                        }
+                                        if (depth == 1)
+                                            bimg[chnnl][(y * width + x) * nT + i] = byteArray[0];
+                                        else
+                                            img[chnnl][(y * width + x) * nT + i] = BitConverter.ToUInt16(byteArray, 0);
+                                    }
+                                }
+                            }
+                        }//i
+                         //image.ReadDirectory();
+                         //}//page
+                    }
+
+
+                    if (newFile)
+                    {
+                        FLIM.clearMemory();
+                        if (zPerFile == 1)
+                            FLIM.n_pages = nPages; //put in page first.
+                        else
+                            FLIM.n_pages = zPerFile; //put all files in page.
+                    }
+
+                    FLIM.KeepPagesInMemory = SavePagesInMemory;
+
+                    if (depth == 1)
+                    {
+                        for (int z = 0; z < bimgZ.Length; z++)
+                            for (int i = 0; i < bimgZ[z].Length; i++)
+                            {
+                                if (bimgZ[z][i] != null)
+                                    imgZ[z][i] = MatrixCalc.changeDepthFrom8To16(bimgZ[z][i]);
+                                else
+                                    imgZ[z][i] = null;
+                            }
+                    }
+
+                    for (int z = 0; z < bimgZ.Length; z++)
+                        for (int ch = 0; ch < nCh; ch++)
+                            if (n_time[ch] == 0)
+                            {
+                                imgZ[z][ch] = null;
+                            }
+
+                    FLIM.imagesPerFile = zPerFile;
+                    if (zPerFile == 1)
+                    {
+                        FLIM.PutToPageOnly_Linear(imgZ[0], dt, into_page);
+                    }
+                    else
+                    {
+                        FLIM.Add_AllFLIM_PageFormat_To_FLIM_Pages5D(imgZ, dt, into_page);
+                    }
+
+                } //COMPRESSION
+            }
+
+            String filePath = Path.GetDirectoryName(fileName);
+            String fName = Path.GetFileName(fileName);
+            String fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+            FLIM.State.Files.pathName = filePath;
+
+            if (newFile)
+            {
+                FLIM.pathName = filePath;
+
+
+                if (FLIM.State.Files.numberedFile)
+                {
+                    FLIM.baseName = FLIM.State.Files.baseName;
+                    FLIM.fileCounter = FLIM.State.Files.fileCounter;
+                    FLIM.numberedFile = true;
+                    FLIM.fileName = FLIM.State.Files.fileName;
+                    FLIM.fileExtension = FLIM.State.Files.extension;
+                    FLIM.fullFileName = Path.Combine(filePath, FLIM.fileName);
+                }
+                else
+                {
+                    FLIM.baseName = fileName;
+                    FLIM.fileCounter = 0;
+                    FLIM.fileName = fName;
+                    FLIM.numberedFile = false;
+                    FLIM.fullFileName = fileName;
+                }
+            }
+
+            return FileIO.FileError.Success;*/
         }
 
         /*
