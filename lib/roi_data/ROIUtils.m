@@ -339,9 +339,9 @@ classdef ROIUtils
                     timing = uniqueTimings(j);
                     names = solNames(solTimings == timing);
 
-                    % x = ((t(i) - xMin) / (xMax - xMin)) * axisW + axisX
+                    % x = ((t(i+1) - xMin) / (xMax - xMin)) * axisW + axisX
                     if j < numel(uniqueTimings)
-                        xPos = ((time(timing) - xLimits(1)) /  diff(xLimits)) * axisPos(3) + axisPos(1);
+                        xPos = ((time(timing + 1) - xLimits(1)) /  diff(xLimits)) * axisPos(3) + axisPos(1);
                     else
                         xPos = axisPos(1) + axisPos(3);
                     end
