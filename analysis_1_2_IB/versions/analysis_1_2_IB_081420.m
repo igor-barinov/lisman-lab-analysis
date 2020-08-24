@@ -1810,6 +1810,22 @@ catch err
 end
 
 
+%% ----------------------------------------------------------------------------------------------------------------
+% 'menuShowRed' Callback 
+%
+function menuPlotDefaults_Callback(hObject, ~, ~)
+try
+    % Get program state
+    handles = guidata(hObject);
+    
+    % Let user choose new defaults
+    
+    
+catch err
+    logdlg(err);
+end
+
+
 
 
 %% Experiment Info Methods ----------------------------------------------------------------------------------------
@@ -2070,6 +2086,8 @@ end
 %% Tools Menu Methods ---------------------------------------------------------------------------------------------
 % -----------------------------------------------------------------------------------------------------------------
 
+function menuPreferences_Callback(hObject, eventdata, handles)
+analysis_1_2_user_options
 function menuSPC_Callback(~, ~, ~)
 spc_drawInit;
 function menuImstack_Callback(~, ~, ~)
@@ -2096,3 +2114,4 @@ function inputNumBase_Callback(~, ~, ~)
 function menuPlot_Callback(~, ~, ~)
 function menuTools_Callback(~, ~, ~) 
 %#ok<*DEFNU>
+
