@@ -27,5 +27,37 @@ classdef IOUtils
             end
             fclose(fileID);
         end
+        
+        %% --------------------------------------------------------------------------------------------------------
+        % 'clear_log' Method
+        %        
+        function clear_log(filepath)
+            fileID = fopen(filepath, 'w');
+            fprintf(fileID, '\0');
+            fclose(fileID);
+        end
+        
+        %% --------------------------------------------------------------------------------------------------------
+        % 'log_error' Method
+        %           
+        function log_error(exception, filepath)
+            dateStr = datestr(datetime());
+            errReport = getReport(exception, 'extended', 'hyperlinks', 'off');
+
+            fileID = fopen(filepath, 'a');
+            fprintf(fileID, '[%s]: %s\n\n\n', dateStr, errReport);
+            fclose(fileID);
+        end
+        
+        %% --------------------------------------------------------------------------------------------------------
+        % 'read_word_file' Method
+        %        
+        function [text] = read_word_file(filepath)
+            wordClient = actxserver('Word.Application');
+            wordDoc = wordClient.Documents.Open(filepath);
+            text = wordDoc.Content.Text;
+            wordDoc.Close();
+            wordClient.Quit();
+        end
     end
 end

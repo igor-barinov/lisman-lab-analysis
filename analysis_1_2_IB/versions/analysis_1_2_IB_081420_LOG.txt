@@ -1,0 +1,28 @@
+[24-Aug-2020 18:04:20]: Undefined function or variable 'calledExternally'.
+
+Error in analysis_1_2_IB_081420>menuOpen_Callback (line 526)
+        if calledExternally
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+
+[24-Aug-2020 18:04:31]: Undefined function or variable 'calledExternally'.
+
+Error in analysis_1_2_IB_081420>menuOpen_Callback (line 526)
+        if calledExternally
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+

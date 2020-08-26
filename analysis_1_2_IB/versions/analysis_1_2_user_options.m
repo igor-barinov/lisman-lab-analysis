@@ -92,7 +92,7 @@ try
     filepath = fullfile(path, logFile);
 
     errordlg(['An error occured. See log at ', filepath]);
-    log_error(lastErr, filepath);
+    IOUtils.log_error(lastErr, filepath);
 catch
     errordlg('Could not log error. See console for details');
     error(getReport(lastErr));

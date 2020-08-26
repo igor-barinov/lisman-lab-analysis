@@ -97,11 +97,23 @@ try
     filepath = fullfile(path, logFile);
 
     errordlg(['An error occured. See log at ', filepath]);
-    log_error(lastErr, filepath);
+    IOUtils.log_error(lastErr, filepath);
 catch
     errordlg('Could not log error. See console for details');
     error(getReport(lastErr));
 end
+
+
+%% ----------------------------------------------------------------------------------------------------------------
+% 'get_user_preferences' Method
+%
+function [settingsMap] = get_user_preferences()
+version = Analysis_1_2_Versions.release();
+filename = [version, '_SETTINGS.ini'];
+[path, ~, ~] = fileparts(which(version));
+iniFile = fullfile(path, filename);
+[settings, values] = IOUtils.read_ini_file(iniFile);
+settingsMap = containers.Map(settings, values);
 
 
 %% ----------------------------------------------------------------------------------------------------------------
@@ -229,6 +241,17 @@ set_ui_access(handles.('menuToggle'), true, true, false);   % Data -> Toggle -> 
 set_ui_access(handles.('menuPlot'), true, true, false);     % Plot -> *
 set_ui_access(handles.('menuTools'), true, true, false);    % Tools -> *
 
+% Disable all plotting options
+if menu_is_toggled(handles.('menuShowLifetime'))
+    toggle_menu(handles.('menuShowLifetime'));
+end
+if menu_is_toggled(handles.('menuShowGreen'))
+    toggle_menu(handles.('menuShowGreen'));
+end
+if menu_is_toggled(handles.('menuShowRed'))
+    toggle_menu(handles.('menuShowRed'));
+end
+
 switch fileType        
     case ROIFileType.Averaged
         % Disable info inputs
@@ -269,6 +292,23 @@ switch fileType
         % And tools
         set_ui_access(handles.('menuTools'), true, true, false);
 end
+
+% Change plotting options based on preferences
+[settingsMap] = get_user_preferences();
+showLifetime = settingsMap('show_lifetime');
+showGreen = settingsMap('show_green_int');
+showRed = settingsMap('show_red_int');
+
+if strcmp(showLifetime, 'true')
+    toggle_menu(handles.('menuShowLifetime'));
+end
+if strcmp(showGreen, 'true')
+    toggle_menu(handles.('menuShowGreen'));
+end
+if strcmp(showRed, 'true')
+    toggle_menu(handles.('menuShowRed'));
+end
+
 
 %% ----------------------------------------------------------------------------------------------------------------
 % 'update_win_title' Method
@@ -483,9 +523,6 @@ try
     elseif all(RawFile.follows_format(filepaths))           % <-- Raw is checked after prep since prep can be raw
         openFile = RawFile(filepaths);
     else
-        if calledExternally
-        else
-        end
         warndlg('Please select files of the same type');
         return;
     end
@@ -1810,22 +1847,6 @@ catch err
 end
 
 
-%% ----------------------------------------------------------------------------------------------------------------
-% 'menuShowRed' Callback 
-%
-function menuPlotDefaults_Callback(hObject, ~, ~)
-try
-    % Get program state
-    handles = guidata(hObject);
-    
-    % Let user choose new defaults
-    
-    
-catch err
-    logdlg(err);
-end
-
-
 
 
 %% Experiment Info Methods ----------------------------------------------------------------------------------------
@@ -2021,7 +2042,8 @@ try
             statusdlg = waitbar(0, 'Reading Word Doc...');
             
             % Try getting info from Word file
-            [notes, newDNAType, newSolutions] = info_of_word_file(filePath);
+            [notes] = IOUtils.read_word_file(filePath);
+            [newDNAType, newSolutions] = ROIUtils.exp_info_from_notes(notes);
             waitbar(1, statusdlg, 'Done');
     
             % Show results
@@ -2086,8 +2108,8 @@ end
 %% Tools Menu Methods ---------------------------------------------------------------------------------------------
 % -----------------------------------------------------------------------------------------------------------------
 
-function menuPreferences_Callback(hObject, eventdata, handles)
-analysis_1_2_user_options
+function menuPreferences_Callback(~, ~, ~)
+uiwait(analysis_1_2_user_options);
 function menuSPC_Callback(~, ~, ~)
 spc_drawInit;
 function menuImstack_Callback(~, ~, ~)
