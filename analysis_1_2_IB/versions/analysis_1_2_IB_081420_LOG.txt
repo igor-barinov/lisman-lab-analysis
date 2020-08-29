@@ -26,3 +26,506 @@ Error in analysis_1_2_IB_081420 (line 43)
 Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuOpen_Callback',hObject,eventdata,guidata(hObject))
 
 
+[28-Aug-2020 18:21:00]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 440)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 18:48:35]: Error using horzcat
+Dimensions of arrays being concatenated are not consistent.
+
+Error in ROIUtils.plot_annotations (line 442)
+                    lineWidth = [xOffset, xPos];
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 18:48:58]: Error using horzcat
+Dimensions of arrays being concatenated are not consistent.
+
+Error in ROIUtils.plot_annotations (line 442)
+                    lineWidth = [xOffset, xPos];
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 18:51:05]: Error using horzcat
+Dimensions of arrays being concatenated are not consistent.
+
+Error in ROIUtils.plot_annotations (line 442)
+                    lineWidth = [xOffset, xPos];
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 18:51:17]: Error using horzcat
+Dimensions of arrays being concatenated are not consistent.
+
+Error in ROIUtils.plot_annotations (line 442)
+                    lineWidth = [xOffset, xPos];
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 18:53:47]: Error using horzcat
+Dimensions of arrays being concatenated are not consistent.
+
+Error in ROIUtils.plot_annotations (line 442)
+                    lineWidth = [xOffset, xPos];
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 18:55:24]: Error using horzcat
+Dimensions of arrays being concatenated are not consistent.
+
+Error in ROIUtils.plot_annotations (line 442)
+                    lineWidth = [xOffset, xPos];
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 18:55:33]: Error using horzcat
+Dimensions of arrays being concatenated are not consistent.
+
+Error in ROIUtils.plot_annotations (line 442)
+                    lineWidth = [xOffset, xPos];
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 18:57:45]: Error using horzcat
+Dimensions of arrays being concatenated are not consistent.
+
+Error in ROIUtils.plot_annotations (line 447)
+                    lineWidth = [xOffset, xPos];
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 18:57:56]: Error using horzcat
+Dimensions of arrays being concatenated are not consistent.
+
+Error in ROIUtils.plot_annotations (line 447)
+                    lineWidth = [xOffset, xPos];
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 18:57:59]: Error using horzcat
+Dimensions of arrays being concatenated are not consistent.
+
+Error in ROIUtils.plot_annotations (line 447)
+                    lineWidth = [xOffset, xPos];
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 18:59:47]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 450)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 19:01:26]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 451)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 19:01:30]: Error using annotation (line 118)
+position values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 461)
+                    annotation('textbox', txtBoxPos, 'String', nameStr, txtBoxOpts{:});
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 19:17:19]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 446)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[28-Aug-2020 19:58:22]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 449)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 15:33:18]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 456)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 15:33:32]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 456)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 15:35:09]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 456)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 15:36:04]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 456)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 15:36:33]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 456)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 15:37:18]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 457)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 15:37:38]: Error using annotation (line 118)
+position values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 467)
+                    annotation('textbox', txtBoxPos, 'String', nameStr, txtBoxOpts{:});
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 15:43:35]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 456)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 15:48:06]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 441)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 15:49:24]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 441)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 15:51:31]: Error using annotation (line 111)
+X and Y values must be between 0 and 1
+
+Error in ROIUtils.plot_annotations (line 439)
+                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[29-Aug-2020 17:15:06]: Array indices must be positive integers or logical values.
+
+Error in ROIUtils.plot_annotations (line 431)
+                    xEnd = timeMap(time(endTiming));
+
+Error in analysis_1_2_IB_081420>menuPlotAll_Callback (line 1365)
+            ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_081420 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_081420('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+

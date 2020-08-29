@@ -1354,7 +1354,7 @@ try
         
         title(titleStr, 'Interpreter', 'none');
         xlabel('Time');
-        ylabel('Lifetime');
+        ylabel('Lifetime (Ch #1)');
         legend(legendEntries);
         legend('boxoff');
         
@@ -1386,7 +1386,7 @@ try
         
         title(titleStr, 'Interpreter', 'none');
         xlabel('Time');
-        ylabel('Intensity');
+        ylabel('Mean Intensity (Ch #1)');
         legend(legendEntries);
         legend('boxoff');
         
@@ -1404,7 +1404,7 @@ try
     if isRedPlot
         
         figure('Name', 'Red Int. Over Time');
-        switch openFile.type()
+        switch openFile.type()  
             case ROIFileType.Averaged
                 averages = red(:, 2*enabledIndices - 1);
                 errors = red(:, 2*enabledIndices);
@@ -1418,7 +1418,7 @@ try
         
         title(titleStr, 'Interpreter', 'none');
         xlabel('Time');
-        ylabel('Intensity');
+        ylabel('Mean Intensity (Ch #2)');
         legend(legendEntries);
         legend('boxoff');
         
@@ -1540,7 +1540,7 @@ try
         
         title(titleStr, 'Interpreter', 'none');
         xlabel('Time');
-        ylabel('Lifetime');
+        ylabel('Lifetime (Ch #1)');
         legend(legendEntries);
         legend('boxoff');
         
@@ -1572,7 +1572,7 @@ try
         
         title(titleStr, 'Interpreter', 'none');
         xlabel('Time');
-        ylabel('Intensity');
+        ylabel('Mean Intensity (Ch #1)');
         legend(legendEntries);
         legend('boxoff');
         
@@ -1604,7 +1604,7 @@ try
         
         title(titleStr, 'Interpreter', 'none');
         xlabel('Time');
-        ylabel('Intensity');
+        ylabel('Mean Intensity (Ch #1)');
         legend(legendEntries);
         legend('boxoff');
         
@@ -1695,7 +1695,7 @@ try
         
         title(titleStr, 'Interpreter', 'none');
         xlabel('Time');
-        ylabel('Lifetime');
+        ylabel('Lifetime (Ch #1)');
         legend(legendEntries);
         legend('boxoff');
         
@@ -1718,7 +1718,7 @@ try
         
         title(titleStr, 'Interpreter', 'none');
         xlabel('Time');
-        ylabel('Intensity');
+        ylabel('Mean Intensity (Ch #1)');
         legend(legendEntries);
         legend('boxoff');
         
@@ -1741,7 +1741,7 @@ try
         
         title(titleStr, 'Interpreter', 'none');
         xlabel('Time');
-        ylabel('Intensity');
+        ylabel('Mean Intensity (Ch #2)');
         legend(legendEntries);
         legend('boxoff');
         

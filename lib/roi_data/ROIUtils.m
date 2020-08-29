@@ -398,11 +398,17 @@ classdef ROIUtils
             txtBoxOpts = {'LineStyle', 'none'};
 
             % Get axis positioning
-            xLimits = get(axis, 'xlim');
             axisPos = get(axis, 'position');
-            xOffset = axisPos(1);
+            axisR = axisPos(1) + axisPos(3);
+            axisL = axisPos(1);
             yOffset = 0.9;
             txtBoxHeight = 0.07;
+            
+            % Do a regression to map time to axis position
+            time_mat = [ones(numel(time), 1), time];
+            x_mat = linspace(axisL, axisR, numel(time))';
+            coefs = time_mat\x_mat;
+            timeMap = @(x) coefs(2)*x + coefs(1);
 
             % Plot each solution series, stacking vertically
             for i = 1:numel(allSolutions)
@@ -413,41 +419,40 @@ classdef ROIUtils
                 % Plot each timing once
                 uniqueTimings = unique(solTimings);
                 for j = 1:numel(uniqueTimings)
-                    timing = uniqueTimings(j);
-                    names = solNames(solTimings == timing);
-                    
-                    
-
-                    % x = ((t(i+1) - xMin) / (xMax - xMin)) * axisW + axisX
+                    % Get the start and end times/positions
+                    startTiming = uniqueTimings(j);
                     if j < numel(uniqueTimings)
-                        xPos = ((time(timing + 1) - xLimits(1)) /  diff(xLimits)) * axisPos(3) + axisPos(1);
-                        fprintf('X @ %d: %f\n', j, xPos);
+                        endTiming = uniqueTimings(j+1);
                     else
-                        xPos = axisPos(1) + axisPos(3);
+                        endTiming = numel(time);
                     end
+                    
+                    xStart = timeMap(time(startTiming));
+                    xEnd = timeMap(time(endTiming));
 
                     % Plot line
-                    lineWidth = [xOffset, xPos];
+                    lineWidth = [xStart, xEnd];
                     lineHeight = [yOffset yOffset];
                     styleIdx = mod(j, 2) + 1;
                     annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
 
                     % Combine solution names into a single string
+                    names = solNames(solTimings == startTiming);
                     nameStr = names{1};
                     for s = 2:numel(names)
                         nameStr = [nameStr, ' ', names{s}];
                     end
 
                     % Plot solution name
-                    txtBoxPos = [xOffset, yOffset - 0.07, diff(lineWidth), txtBoxHeight];
+                    txtBoxPos = [xStart, yOffset - 0.07, diff(lineWidth), txtBoxHeight];
                     annotation('textbox', txtBoxPos, 'String', nameStr, txtBoxOpts{:});
 
-                    % Move x-offset to end of plotted annotation
-                    xOffset = xPos;
+                    % Move x-start to end of plotted annotation
+                    %xStart = xEnd;
                 end
 
                 % Reset x-offset
-                xOffset = axisPos(1);
+                %xStart = axisPos(1);
 
                 % Move offset down for next series
                 yOffset = yOffset - txtBoxHeight;
