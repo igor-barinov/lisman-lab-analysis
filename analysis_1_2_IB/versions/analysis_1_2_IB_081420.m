@@ -90,14 +90,9 @@ varargout{1} = handles.output;
 function logdlg(lastErr)
 % Try making/adding to log
 try
-    version = Analysis_1_2_Versions.release();
-    scriptFilePath = which(version);
-    [path, ~, ~] = fileparts(scriptFilePath);
-    logFile = [version, '_LOG.txt'];
-    filepath = fullfile(path, logFile);
-
-    errordlg(['An error occured. See log at ', filepath]);
-    IOUtils.log_error(lastErr, filepath);
+    logFile = IOUtils.path_to_log(Analysis_1_2_Versions.v081420);
+    errordlg(['An error occured. See log at ', logFile]);
+    IOUtils.log_error(lastErr, logFile);
 catch
     errordlg('Could not log error. See console for details');
     error(getReport(lastErr));
@@ -1487,6 +1482,23 @@ try
         red = roiData.red();
     end
     
+    % Check if necessary data exists
+    if isLifetimePlot && ~ROIUtils.data_exists(lifetime)
+        warndlg('There is no lifetime data to plot');
+        toggle_menu(handles.('menuShowLifetime'));
+        return;
+    end
+    if isIntPlot && ~ROIUtils.data_exists(int)
+        warndlg('There is no green intensity data to plot');
+        toggle_menu(handles.('menuShowGreen'));
+        return;
+    end
+    if isRedPlot && ~ROIUtils.data_exists(red)
+        warndlg('There is no red intensity data to plot');
+        toggle_menu(handles.('menuShowRed'));
+        return;
+    end
+    
     % Get appropriate time values
     if time_is_adjusted(handles)
         solutions = get_solution_info(handles);
@@ -1655,6 +1667,23 @@ try
         red = roiData.red();
     end
     
+    % Check if necessary data exists
+    if isLifetimePlot && ~ROIUtils.data_exists(lifetime)
+        warndlg('There is no lifetime data to plot');
+        toggle_menu(handles.('menuShowLifetime'));
+        return;
+    end
+    if isIntPlot && ~ROIUtils.data_exists(int)
+        warndlg('There is no green intensity data to plot');
+        toggle_menu(handles.('menuShowGreen'));
+        return;
+    end
+    if isRedPlot && ~ROIUtils.data_exists(red)
+        warndlg('There is no red intensity data to plot');
+        toggle_menu(handles.('menuShowRed'));
+        return;
+    end
+    
     % Get appropriate time values
     if time_is_adjusted(handles)
         solutions = get_solution_info(handles);
@@ -1794,7 +1823,7 @@ try
     roiData = get_roi_data(handles);
     
     % Check if there are lifetime values to plot
-    if ROIUtils.data_exists(roiData.lifetime())
+    if menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.lifetime())
         toggle_menu(hObject);
     else
         warndlg('This file has no lifetime intensity data to plot');
@@ -1815,7 +1844,7 @@ try
     roiData = get_roi_data(handles);
     
     % Check if there are int values to plot
-    if ROIUtils.data_exists(roiData.green())
+    if menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.green())
         toggle_menu(hObject);
     else
         warndlg('This file has no green intensity data to plot');
@@ -1836,7 +1865,7 @@ try
     roiData = get_roi_data(handles);
     
     % Check if there are red values to plot
-    if ROIUtils.data_exists(roiData.red())
+    if menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.red())
         toggle_menu(hObject);
     else
         warndlg('This file has no red intensity data to plot');
