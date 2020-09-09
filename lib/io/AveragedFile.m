@@ -285,7 +285,7 @@ classdef AveragedFile < ROIFile
         end
         
         %% --------------------------------------------------------------------------------------------------------
-        % 'follows_format' Method
+        % 'save' Method
         % 
         % <filepath> = {dest, src1, src2, ...}
         %

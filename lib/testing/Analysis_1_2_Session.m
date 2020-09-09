@@ -47,7 +47,7 @@ classdef Analysis_1_2_Session
                 fprintf('There are no logs to print for the current session\n');
             end
         end
-        
+                
         %% --------------------------------------------------------------------------------------------------------
         % 'print_open_files' Method
         %

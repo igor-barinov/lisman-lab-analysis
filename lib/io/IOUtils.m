@@ -85,6 +85,8 @@ classdef IOUtils
                 currentErr = sprintf('%s\n%s', currentErr, currentLine);
                 currentLine = fgetl(fileID);
             end
+            
+            logs = [logs; {currentTimestamp, currentErr}];
             fclose(fileID);
         end
         

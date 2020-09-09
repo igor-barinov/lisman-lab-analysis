@@ -343,6 +343,7 @@ tf = get(handles.('btnToggleNormVals'), 'Value');
 % 'get_enabled_rois' Method
 %
 function [tf] = get_enabled_rois(handles)
+[openFiles] = get_open_files(handles);
 [roiData] = get_roi_data(handles);
 roiCount = roiData.roi_count();
 
@@ -352,12 +353,12 @@ for i = 1:roiCount
     tf(i) = menu_is_toggled(handles.(tagStr));
 end
 
-
 %% ----------------------------------------------------------------------------------------------------------------
 % 'update_data_table' Method
 %
 function update_data_table(handles)
 % Get new program state
+openFiles = get_open_files(handles);
 newTableData = get_roi_data(handles);
 
 % Just clear table if necessary
@@ -391,9 +392,16 @@ end
 
 % Enable/Disable ROIs if necessary
 enabledROIs = get_enabled_rois(handles);
-lifetime = ROIUtils.enable(lifetime, enabledROIs);
-int = ROIUtils.enable(int, enabledROIs);
-red = ROIUtils.enable(red, enabledROIs);
+if openFiles.type() == ROIFileType.Averaged
+    lifetime = ROIUtils.enable_averages(lifetime, enabledROIs);
+    int = ROIUtils.enable_averages(int, enabledROIs);
+    red = ROIUtils.enable_averages(red, enabledROIs);
+else
+    lifetime = ROIUtils.enable(lifetime, enabledROIs);
+    int = ROIUtils.enable(int, enabledROIs);
+    red = ROIUtils.enable(red, enabledROIs);
+end
+
 
 set(handles.('dataTable'), 'Data', [time, lifetime, int, red]);
 set(handles.('dataTable'), 'ColumnName', newTableData.roi_labels());
@@ -518,7 +526,7 @@ try
     elseif all(RawFile.follows_format(filepaths))           % <-- Raw is checked after prep since prep can be raw
         openFile = RawFile(filepaths);
     else
-        warndlg('Please select files of the same type');
+        warndlg('The selected files are not supported or are not of the same type.');
         return;
     end
     
@@ -634,8 +642,7 @@ try
     if ~ROIUtils.has_number_of_baseline_pts(solutions)
         warndlg('Please enter at least 2 solutions with different timings before saving');
         return;
-    end
-    
+    end    
     
     % Let user choose to not save disabled ROIs
     if ~all(enabledROIs)
@@ -646,9 +653,10 @@ try
         switch choice
             case 'No'
                 % Leave only enabled ROIs
-                saveData = saveData.set_lifetime(ROIUtils.enable(saveData.lifetime(), enabledROIs));
-                saveData = saveData.set_green(ROIUtils.enable(saveData.green(), enabledROIs));
-                saveData = saveData.set_red(ROIUtils.enable(saveData.red(), enabledROIs));
+                enabledLt = ROIUtils.select(saveData.lifetime(), enabledROIs);
+                enabledInt = ROIUtils.select(saveData.green(), enabledROIs);
+                enabledRed = ROIUtils.select(saveData.red(), enabledROIs);
+                saveData = ROITable(saveData.time(), enabledLt, enabledInt, enabledRed);
             case 'Cancel'
                 return;
         end
@@ -674,7 +682,7 @@ try
         case 2
             PreparedFile.save(savepath, saveData, dnaType, solutions);
         case 3
-            AveragedFile.save(savepath, saveData, dnaType, solutions);
+            AveragedFile.save(savepath, saveData, ROIUtils.trim_dna_type(dnaType), solutions);
         otherwise
             warndlg('Cannot save the file under this type');
     end

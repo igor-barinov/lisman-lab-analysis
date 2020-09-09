@@ -49,6 +49,35 @@ classdef ROIUtils
         end
         
         %% --------------------------------------------------------------------------------------------------------
+        % 'enable_averages' Method
+        %
+        %
+        function [averages] = enable_averages(ROIs, enabledROIs)
+            averages = NaN(size(ROIs));
+            enabledIndices = find(enabledROIs);
+            averages(:, 2*enabledIndices - 1) = ROIs(:, 2*enabledIndices - 1);
+            averages(:, 2*enabledIndices) = ROIs(:, 2*enabledIndices);
+        end
+        
+        %% --------------------------------------------------------------------------------------------------------
+        % 'select' Method
+        %
+        %        
+        function [values] = select(ROIs, selectedROIs)
+            values = ROIs(:, selectedROIs);
+        end
+        
+        %% --------------------------------------------------------------------------------------------------------
+        % 'select_averages' Method
+        %
+        %
+        function [averages] = select_averages(ROIs, selectedROIs)
+            selectedIndices = find(selectedROIs);
+            averages(:, 2*selectedIndices - 1) = ROIs(:, 2*selectedIndices - 1);
+            averages(:, 2*selectedIndices) = ROIs(:, 2*selectedIndices);
+        end
+        
+        %% --------------------------------------------------------------------------------------------------------
         % 'fix' Method
         %
         % Converts 0s and NaNs in <ROIs> to valid data points by either
@@ -257,6 +286,14 @@ classdef ROIUtils
         %
         function [allDNA] = split_dna_type(dnaType)
             allDNA = strsplit(dnaType, ';');
+        end
+        
+        %% --------------------------------------------------------------------------------------------------------
+        % 'trim_dna_type' Method
+        %
+        %
+        function [dnaType] = trim_dna_type(dnaType)
+            dnaType = erase(strtrim(dnaType), ';');
         end
         
         %% --------------------------------------------------------------------------------------------------------

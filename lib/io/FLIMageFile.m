@@ -157,14 +157,20 @@ classdef FLIMageFile < ROIFile
         % 'lifetime' Accessor
         %
         function [values] = lifetime(obj)
-            roiCount = obj.roi_count();
-            maxPointCount = max(obj.point_counts());
+            roiCounts = obj.file_roi_counts();
+            totalROICount = obj.roi_count();
+            pointCounts = obj.point_counts();
+            maxPointCount = max(pointCounts);
             
-            values = NaN(maxPointCount, roiCount);
+            values = NaN(maxPointCount, totalROICount);
+            roiIdx = 1;
             for i = 1:numel(obj.filedata)
                 csv = obj.filedata{i};
+                nPoints = pointCounts(i);
+                nROI = roiCounts(i);
                 % LT = [3*roiCount + 5]...[4*roiCount + 4]
-                values(:, roiCount*(i-1)+1 : roiCount*i) = csv(3*roiCount + 5 : 4*roiCount + 4, :)';
+                values(1:nPoints, roiIdx:roiIdx+nROI-1) = csv(3*nROI + 5 : 4*nROI + 4, :)';
+                roiIdx = roiIdx + nROI;
             end
         end
         
@@ -179,14 +185,20 @@ classdef FLIMageFile < ROIFile
         % 'green' Accessor
         %
         function [values] = green(obj)
-            roiCount = obj.roi_count();
-            maxPointCount = max(obj.point_counts());
+            roiCounts = obj.file_roi_counts();
+            totalROICount = obj.roi_count();
+            pointCounts = obj.point_counts();
+            maxPointCount = max(pointCounts);
             
-            values = NaN(maxPointCount, roiCount);
+            values = NaN(maxPointCount, totalROICount);
+            roiIdx = 1;
             for i = 1:numel(obj.filedata)
                 csv = obj.filedata{i};
+                nPoints = pointCounts(i);
+                nROI = roiCounts(i);
                 % Green = [5]...[roiCount + 4]
-                values(:, roiCount*(i-1)+1 : roiCount*i) = csv(5 : roiCount + 4, :)';
+                values(1:nPoints, roiIdx:roiIdx+nROI-1) = csv(5 : nROI + 4, :)';
+                roiIdx = roiIdx + nROI;
             end
         end
         
