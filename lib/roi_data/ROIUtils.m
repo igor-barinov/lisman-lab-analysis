@@ -4,11 +4,11 @@ classdef ROIUtils
         %% --------------------------------------------------------------------------------------------------------
         % 'data_exists' Method
         %
-        % True if <ROIs> are not empty and have at least one non-NaN value.
+        % True if <ROIs> are not empty and have at least one non-NaN/non-zero value.
         % False otherwise
         %        
         function [tf] = data_exists(ROIs)
-            tf = ~isempty(ROIs) && ~all(isnan(ROIs), 'all');
+            tf = ~isempty(ROIs) && ~all(isnan(ROIs), 'all') && any(ROIs, 'all');
         end
         
         %% --------------------------------------------------------------------------------------------------------

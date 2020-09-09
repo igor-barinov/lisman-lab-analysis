@@ -4,33 +4,33 @@
 %% ----------------------------------------------------------------------------------------------------------------
 % Entry Point - DO NOT EDIT
 %
-%      ANALYSIS_1_2_IB_081420, by itself, creates a new ANALYSIS_1_2_IB_081420 or raises the existing
+%      ANALYSIS_1_2_IB_090920, by itself, creates a new ANALYSIS_1_2_IB_090920 or raises the existing
 %      singleton*.
 %
-%      H = ANALYSIS_1_2_IB_081420 returns the handle to a new ANALYSIS_1_2_IB_081420 or the handle to
+%      H = ANALYSIS_1_2_IB_090920 returns the handle to a new ANALYSIS_1_2_IB_090920 or the handle to
 %      the existing singleton*.
 %
-%      ANALYSIS_1_2_IB_081420('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in ANALYSIS_1_2_IB_081420.M with the given input arguments.
+%      ANALYSIS_1_2_IB_090920('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in ANALYSIS_1_2_IB_090920.M with the given input arguments.
 %
-%      ANALYSIS_1_2_IB_081420('Property','Value',...) creates a new ANALYSIS_1_2_IB_081420 or raises the
+%      ANALYSIS_1_2_IB_090920('Property','Value',...) creates a new ANALYSIS_1_2_IB_090920 or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before analysis_1_2_IB_081420_OpeningFcn gets called.  An
+%      applied to the GUI before analysis_1_2_IB_090920_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to analysis_1_2_IB_081420_OpeningFcn via varargin.
+%      stop.  All inputs are passed to analysis_1_2_IB_090920_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 %
-function varargout = analysis_1_2_IB_081420(varargin)
+function varargout = analysis_1_2_IB_090920(varargin)
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @analysis_1_2_IB_081420_OpeningFcn, ...
-                   'gui_OutputFcn',  @analysis_1_2_IB_081420_OutputFcn, ...
+                   'gui_OpeningFcn', @analysis_1_2_IB_090920_OpeningFcn, ...
+                   'gui_OutputFcn',  @analysis_1_2_IB_090920_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -51,10 +51,10 @@ end
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to analysis_1_2_IB_081420 (see VARARGIN)
+% varargin   command line arguments to analysis_1_2_IB_090920 (see VARARGIN)
 %
-function analysis_1_2_IB_081420_OpeningFcn(hObject, eventdata, handles, varargin)
-% Choose default command line output for analysis_1_2_IB_081420
+function analysis_1_2_IB_090920_OpeningFcn(hObject, eventdata, handles, varargin)
+% Choose default command line output for analysis_1_2_IB_090920
 handles.output = hObject;
 
 % Update handles structure
@@ -72,7 +72,7 @@ update_ui_access(handles, ROIFileType.None);
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 %
-function varargout = analysis_1_2_IB_081420_OutputFcn(hObject, eventdata, handles) 
+function varargout = analysis_1_2_IB_090920_OutputFcn(hObject, eventdata, handles) 
 % Get default command line output from handles structure
 
 varargout{1} = handles.output;
@@ -271,7 +271,7 @@ switch fileType
         end
         if values_are_normalized(handles)
             toggle_button(handles.('btnToggleNormVals'));
-            toggle_button(handles.('menuToggleNormVals'));
+            toggle_menu(handles.('menuToggleNormVals'));
         end
         
         
@@ -1468,7 +1468,6 @@ try
     % Get which ROIs are selected and enabled
     enabledROIs = get_enabled_rois(handles);
     selectedROIs = roiData.select_rois(selection) & enabledROIs;
-    selectedIndices = find(selectedROIs);
     
     % Check that a valid selection was made
     if ~any(selectedROIs)
@@ -1548,12 +1547,13 @@ try
         figure('Name', 'Lifetime Over Time');
         switch openFile.type()
             case ROIFileType.Averaged
-                averages = lifetime(:, 2*selectedIndices - 1);
-                errors = lifetime(:, 2*selectedIndices);
+                lifetime = ROIUtils.select_averages(lifetime, selectedROIs);
+                averages = lifetime(:, 1);
+                errors = lifetime(:, 2);
                 
                 ROIUtils.plot_averages(time, averages, errors);
             otherwise
-                values = lifetime(:, selectedIndices);
+                values = ROIUtils.select(lifetime, selectedROIs);
                 ROIUtils.plot_values(time, values);
                 
         end
@@ -1580,12 +1580,13 @@ try
         figure('Name', 'Green Int. Over Time');
         switch openFile.type()
             case ROIFileType.Averaged
-                averages = int(:, 2*selectedIndices - 1);
-                errors = int(:, 2*selectedIndices);
+                int = ROIUtils.select_averages(int, selectedROIs);
+                averages = int(:, 1);
+                errors = int(:, 2);
                 
                 ROIUtils.plot_averages(time, averages, errors);
             otherwise
-                values = int(:, selectedIndices);
+                values = ROIUtils.select(int, selectedROIs);
                 ROIUtils.plot_values(time, values);
                 
         end
@@ -1612,12 +1613,13 @@ try
         figure('Name', 'Red Int. Over Time');
         switch openFile.type()
             case ROIFileType.Averaged
-                averages = red(:, 2*selectedIndices - 1);
-                errors = red(:, 2*selectedIndices);
+                red = ROIUtils.select_averages(red, selectedROIs);
+                averages = red(:, 1);
+                errors = red(:, 2);
                 
                 ROIUtils.plot_averages(time, averages, errors);
             otherwise
-                values = red(:, selectedIndices);
+                values = ROIUtils.select(red, selectedROIs);
                 ROIUtils.plot_values(time, values);
                 
         end
@@ -1709,7 +1711,7 @@ try
     end
     
     % Generate legend
-    allDNA = ROIUtils.split_dna_type(get_dna_type(handles));
+    allDNA = { ROIUtils.trim_dna_type(get_dna_type(handles)) }; % ROIUtils.split_dna_type(get_dna_type(handles));
     roiCounts = numel(find(enabledROIs));
     legendEntries = ROIUtils.averages_legend(allDNA, roiCounts);
     
