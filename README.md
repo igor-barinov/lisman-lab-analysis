@@ -72,10 +72,10 @@ Once *analysis_1_2* is added to MATLAB's path along with all dependencies, you c
 
 | ROI File Format | Extension | Uneditted Data | Adjusted Data | Averaged Data | Experiment Info |
 | - | - | - | - | - | - |
-| FLIMage   | .csv | [X]  |     |     |     |     |
-| Raw       | .mat | [X]  |     |     |     |
-| Prepared  | .mat | [X]  | [X] |     | [X] |
-| Averaged  | .mat |      |     |     | [X] | [X] |
+| FLIMage   | .csv | ✔️ | ❌ | ❌ | ❌ | ❌ |
+| Raw       | .mat | ✔️ | ❌ | ❌ | ❌ | ❌ |
+| Prepared  | .mat | ✔️ | ✔️ | ❌ | ✔️ | ❌ |
+| Averaged  | .mat | ❌ | ❌ | ❌ | ✔️ | ✔️ |
 
 ##### Opening Files
 
