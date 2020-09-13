@@ -79,7 +79,9 @@ Once *analysis_1_2* is added to MATLAB's path along with all dependencies, you c
 
 ##### Opening Files
 
-Files can be opened by going to `File -> Open` in the menu. You will be presented with a dialog to choose the file. If you
+Files can be opened by going to `File -> Open` in the menu. You will be presented with a dialog to choose the file. If you select a *prepared* ROI file, you will be prompted to choose either raw or prepared data. Selecting raw will treat the file as a *raw* ROI file, otherwise the file will open as a *prepared* ROI file.
+
+Multiple files can be opened at once, as long as they have the same format. If you select multiple *prepared* or *averaged* ROI files, you will be notified of any experiment information discrepancies (e.g. missing information or different DNA types)
 
 #### **Experiment Information**
 #### **Data Editting**
