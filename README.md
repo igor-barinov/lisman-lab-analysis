@@ -13,7 +13,11 @@
       - [**Running analysis_1_2**](#running-analysis_1_2)
       - [**Supported Files**](#supported-files)
         - [Opening Files](#opening-files)
+        - [Multiple Files](#multiple-files)
       - [**Experiment Information**](#experiment-information)
+        - [DNA Type](#dna-type)
+        - [Solutions](#solutions)
+        - [Importing Information](#importing-information)
       - [**Data Editting**](#data-editting)
       - [**Data Modifiers**](#data-modifiers)
       - [**Plotting**](#plotting)
@@ -26,17 +30,22 @@
 ## MATLAB Analysis: analysis_1_2
 ### Installation
 #### **Environment Setup**
-MATLAB is required to run these scripts. These scripts were developed in MATLAB release 2018b, but they should be backwards compatible up to release 2012. MATLAB keeps track of files with a path variable. Make a directory that will contain all of the scripts. Here is an example directory structure:
+MATLAB is required to run these scripts. These scripts were developed in MATLAB release 2018b, but they should be backwards compatible up to release 2012. 
+
+MATLAB keeps track of files with a path variable. Make a directory that will contain all of the scripts. Here is an example directory structure:
 ```
 -> .../lisman-lab-scripts/
   -> analysis_1_2/
   -> depenedencies/
 ```
 Add the directory and subfolders to MATLAB's path
+
 #### **Downloading analysis_1_2**
 Navigate to [lisman-lab-analysis/analysis_1_2](https://github.com/igor-barinov/lisman-lab-analysis/tree/master/analysis_1_2_IB). Download the file called [release.zip](https://github.com/igor-barinov/lisman-lab-analysis/blob/master/analysis_1_2_IB/release.zip) and extract the contents into the directory you made.
+
 #### **Downloading Dependencies**
 Navigate to [lisman-lab-analysis](https://github.com/igor-barinov/lisman-lab-analysis). Download the file called [lib.zip](https://github.com/igor-barinov/lisman-lab-analysis/blob/master/lib.zip) and extract the contents into the directory you made.
+
 #### **Downloading FLIMage**
 Download FLIMage using the [installer](https://github.com/ryoheiyasuda/FLIMage_Installer) made by [ryoheiyasuda](https://github.com/ryoheiyasuda). After installing FLIMage, you need to add it to the system path. Follow these steps for Windows:
 
@@ -78,12 +87,28 @@ Once *analysis_1_2* is added to MATLAB's path along with all dependencies, you c
 | Averaged  | .mat | ❌ | ❌ | ❌ | ✔️ | ✔️ |
 
 ##### Opening Files
-
 Files can be opened by going to `File -> Open` in the menu. You will be presented with a dialog to choose the file. If you select a *prepared* ROI file, you will be prompted to choose either raw or prepared data. Selecting raw will treat the file as a *raw* ROI file, otherwise the file will open as a *prepared* ROI file.
 
+##### Multiple Files
 Multiple files can be opened at once, as long as they have the same format. If you select multiple *prepared* or *averaged* ROI files, you will be notified of any experiment information discrepancies (e.g. missing information or different DNA types)
 
 #### **Experiment Information**
+##### DNA Type
+You can add experiment information such as the DNA type and solutions used in the experiment. To change the DNA type, add/edit the text box labeled `DNA Type`. To describe multiple DNA types, delimit each type with semi-colons (`;`), ex: `Camui; mlsn2b`. Otherwise, any character sequence is a valid DNA type.
+
+##### Solutions
+You can add solution information such as name and time of application using the solution table. To add a solution click on `Add Solution` and enter both the solution name and timing. Solution timing is measured in number of data points ranging from 1 to the total number of data points.
+
+You can edit solutions by directly editting the solution table. Both the name and timing can be editted. If the name is deleted, you will be prompted to either keep or delete the solution entry.
+
+Multiple solutions with the same timing can be described like DNA types by using semi-colons (`;`). You can omit entries before and after semi-colons to describe only some solutions occuring at a certain timing, ex: `solutionA; ; solutionC`.
+
+To remove some or all solutions, click on `Remove Solution` and select which solution entries you want to remove.
+
+##### Importing Information
+
+
+
 #### **Data Editting**
 #### **Data Modifiers**
 #### **Plotting**
