@@ -28,11 +28,16 @@
         - [Normalizing Values](#normalizing-values)
         - [Enabling/Disabling ROIs](#enablingdisabling-rois)
       - [**Plotting**](#plotting)
+        - [Selecting What to Plot](#selecting-what-to-plot)
+        - [Plotting All Data](#plotting-all-data)
+        - [Plotting Selected Data](#plotting-selected-data)
+        - [Plotting Averages](#plotting-averages)
       - [**Saving/Closing Data**](#savingclosing-data)
       - [**Tools and Preferences**](#tools-and-preferences)
   - [MATLAB Statistics: stats_IB](#matlab-statistics-stats_ib)
     - [Installation](#installation-1)
     - [Usage](#usage-1)
+  - [Contributers and Contact Information](#contributers-and-contact-information)
 
 ## MATLAB Analysis: analysis_1_2
 ### Installation
@@ -166,9 +171,24 @@ To toggle a single ROI between being enabled and disabled, go to `Data -> Toggle
 To revert all disabled ROIs, go to `Data -> Toggle -> ROI -> Enable All`. All ROIs will then have their original values
 
 #### **Plotting**
+> You can plot data, averages, and experiment information
+
+##### Selecting What to Plot
+Under the `Plot` menu, you can choose to toggle `Show Lifetime`, `Show Green Intensity`, `Show Red Intensity`, and `Show Annotations`. By default, `Show Lifetime`, `Show Green Intensity`, and `Show Red Intensity` will be toggled on. However, if one of the data types are missing (e.g. no valid red intensity values), then you will not be able to plot that data type. `Show Annotations` is toggled off by default, and can only be toggled on once a [DNA type](#dna-type) is present and the [number of baseline points](#solutions) is set.
+
+##### Plotting All Data
+To plot all data based on your preferences, go to `Plot -> All`. A figure for each data type will appear. For lifetime values, you will see `Mean Lifetime` over `Time`. For green intensity values, you will see `Mean Green Intensity` over `Time`. For red intensity values, you will see `Mean Red Intensity` over `Time`. Any [data modifiers](#data-modifiers) that are enabled will also affect the plots.
+
+##### Plotting Selected Data
+To plot a selection from the data table, make a selection, then go to `Plot -> Selected`. You will see the same thing as plotting all data, except only the selected ROIs will appear.
+
+##### Plotting Averages
+
 #### **Saving/Closing Data**
 #### **Tools and Preferences**
 
 ## MATLAB Statistics: stats_IB
 ### Installation
 ### Usage
+
+## Contributers and Contact Information
