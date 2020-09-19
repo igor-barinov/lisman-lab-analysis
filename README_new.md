@@ -41,7 +41,14 @@
         - [Preferences](#preferences)
   - [MATLAB Statistics: stats_IB](#matlab-statistics-stats_ib)
     - [Installation](#installation-1)
+      - [**Environment Setup**](#environment-setup-1)
+      - [**Downloading stats_IB**](#downloading-stats_ib)
+      - [**Downloading Dependencies**](#downloading-dependencies-1)
     - [Usage](#usage-1)
+      - [**Running analysis_1_2**](#running-analysis_1_2-1)
+      - [**Supported Files**](#supported-files-1)
+        - [Opening Files](#opening-files-1)
+        - [Multiple Files](#multiple-files-1)
   - [Contributers and Contact Information](#contributers-and-contact-information)
 
 ## MATLAB Analysis: analysis_1_2
@@ -213,6 +220,41 @@ To edit preferences, go to `Tools -> Preferences`. Currently, only default [plot
 
 ## MATLAB Statistics: stats_IB
 ### Installation
+#### **Environment Setup**
+MATLAB is required to run these scripts. These scripts were developed in MATLAB release 2018b, but they should be backwards compatible up to release 2012. 
+
+MATLAB keeps track of files with a path variable. Make a directory that will contain all of the scripts. Here is an example directory structure:
+```
+-> .../lisman-lab-scripts/
+  -> stats_IB/
+  -> depenedencies/
+```
+Add the directory and subfolders to MATLAB's path
+
+#### **Downloading stats_IB**
+Navigate to [lisman-lab-analysis/stats_IB](https://github.com/igor-barinov/lisman-lab-analysis/tree/master/stats_IB). Download the file called [release.zip](https://github.com/igor-barinov/lisman-lab-analysis/blob/master/stats_IB/release.zip) and extract the contents into the directory you made.
+
+#### **Downloading Dependencies**
+Navigate to [lisman-lab-analysis](https://github.com/igor-barinov/lisman-lab-analysis). Download the file called [lib.zip](https://github.com/igor-barinov/lisman-lab-analysis/blob/master/lib.zip) and extract the contents into the directory you made.
+
 ### Usage
+#### **Running analysis_1_2**
+Once *stats_IB* is added to MATLAB's path along with all dependencies, you can start the program by either opening `stats_IB_XXXXXX.fig` or entering `stats_IB_XXXXXX` into MATLAB's command line interface, where `XXXXXX` is replaced by the appropriate version.
+
+#### **Supported Files**
+*analysis_1_2* uses Region of Interest (ROI) files to open, edit, and save data. There are four formats for ROI files. Here are the differences:
+
+| ROI File Format | Extension | Uneditted Data | Adjusted Data | Averaged Data | Experiment Info |
+| - | - | - | - | - | - |
+| FLIMage   | .csv | ✔️ | ❌ | ❌ | ❌ | ❌ |
+| Raw       | .mat | ✔️ | ❌ | ❌ | ❌ | ❌ |
+| Prepared  | .mat | ✔️ | ✔️ | ❌ | ✔️ | ❌ |
+| Averaged  | .mat | ❌ | ❌ | ❌ | ✔️ | ✔️ |
+
+##### Opening Files
+Files can be opened by going to `File -> Open` in the menu. You will be presented with a dialog to choose the file. If you select a *prepared* ROI file, you will be prompted to choose either raw or prepared data. Selecting raw will treat the file as a *raw* ROI file, otherwise the file will open as a *prepared* ROI file.
+
+##### Multiple Files
+Multiple files can be opened at once, as long as they have the same format. If you select multiple *prepared* or *averaged* ROI files, you will be notified of any experiment information discrepancies (e.g. missing information or different DNA types)
 
 ## Contributers and Contact Information
