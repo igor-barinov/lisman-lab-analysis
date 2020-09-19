@@ -32,8 +32,13 @@
         - [Plotting All Data](#plotting-all-data)
         - [Plotting Selected Data](#plotting-selected-data)
         - [Plotting Averages](#plotting-averages)
+        - [Plot Annotations](#plot-annotations)
       - [**Saving/Closing Data**](#savingclosing-data)
+        - [Saving ROI Data](#saving-roi-data)
+        - [Closing ROI Data](#closing-roi-data)
       - [**Tools and Preferences**](#tools-and-preferences)
+        - [Analysis Tools](#analysis-tools)
+        - [Preferences](#preferences)
   - [MATLAB Statistics: stats_IB](#matlab-statistics-stats_ib)
     - [Installation](#installation-1)
     - [Usage](#usage-1)
@@ -171,7 +176,7 @@ To toggle a single ROI between being enabled and disabled, go to `Data -> Toggle
 To revert all disabled ROIs, go to `Data -> Toggle -> ROI -> Enable All`. All ROIs will then have their original values
 
 #### **Plotting**
-> You can plot data, averages, and experiment information
+> You can plot data, its averages, and any experiment information
 
 ##### Selecting What to Plot
 Under the `Plot` menu, you can choose to toggle `Show Lifetime`, `Show Green Intensity`, `Show Red Intensity`, and `Show Annotations`. By default, `Show Lifetime`, `Show Green Intensity`, and `Show Red Intensity` will be toggled on. However, if one of the data types are missing (e.g. no valid red intensity values), then you will not be able to plot that data type. `Show Annotations` is toggled off by default, and can only be toggled on once a [DNA type](#dna-type) is present and the [number of baseline points](#solutions) is set.
@@ -183,9 +188,28 @@ To plot all data based on your preferences, go to `Plot -> All`. A figure for ea
 To plot a selection from the data table, make a selection, then go to `Plot -> Selected`. You will see the same thing as plotting all data, except only the selected ROIs will appear.
 
 ##### Plotting Averages
+To plot the averages, go to `Plot -> Averages`. The plots will appear according to your preferences, and they will contain the mean and standard errors over time. [Data modifiers](#data-modifiers) will also affect the averages plot.
+
+##### Plot Annotations
+When `Plot -> Show Annotations` is toggled, you will see annotations describing [solutions](#solutions) and the [DNA type](#dna-type). For *raw* and *prepared* ROI files the DNA types will appear in the plot title. For *averaged* ROI files, the DNA types will appear in the legend. Solution information will appear as horizontal bars along the top of the plot. The length of the bar corresponds to the solution timing. Each bar will have a label below it with the name of the solution.
 
 #### **Saving/Closing Data**
+> Once you are finished working on a file, you can either save the edits in another ROI file or just close the file
+
+##### Saving ROI Data
+Before saving a file, the minimum amount of [experiment information](#experiment-information) must be present: the number of baseline points and the DNA type. To save the ROI data, go to `File -> Save`. In the dialog that opens, choose where you are saving the file, name the file, and select the type of file you want to save as. You can save the file as one of the [supported file types](#supported-files). If any ROIs are disabled, you will have the option to either save or remove those ROIs. All other [data modifiers](#data-modifiers) will not be applied to the saved ROI data.
+
+##### Closing ROI Data
+To close any opened ROI files, go to `File -> Close`. You will be asked to confirm before closing. No data will be saved once a file is closed.
+
 #### **Tools and Preferences**
+> Supplementary tools are available along with the preferences menu.
+
+##### Analysis Tools
+To use other analysis tools, go to `Tools` and select the corresponding menu item. `SPC Analysis`, `imstack Analysis`, and [`Statistics`](#matlab-statistics-stats_ib) are MATLAB programs. `FLIMage Analysis` is an external C# program.
+
+##### Preferences
+To edit preferences, go to `Tools -> Preferences`. Currently, only default [plotting preferences](#selecting-what-to-plot) can be changed.
 
 ## MATLAB Statistics: stats_IB
 ### Installation
