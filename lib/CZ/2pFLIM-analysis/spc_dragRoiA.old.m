@@ -1,4 +1,4 @@
-function spc_dragRoiA
+function spc_dragRoiA;
 global spc;
 global gui;
 %waitforbuttonpress;
@@ -7,17 +7,7 @@ global gui;
 point1 = get(gca,'CurrentPoint'); % button down detected
 point1 = point1(1,1:2);              % extract x and y
 
-if isa(gco, 'matlab.graphics.primitive.Rectangle') % IB Correction lines 10-20
-    RoiRect = get(gco, 'Position');
-else
-    xdata = get(gco, 'XData');
-    ydata = get(gco, 'YData');
-    RoiRect = ones(1, 4);
-    RoiRect(1) = min(xdata);
-    RoiRect(2) = min(ydata);
-    RoiRect(3) = max(xdata) - RoiRect(1);
-    RoiRect(4) = max(ydata) - RoiRect(2); 
-end
+RoiRect = get(gco, 'Position');
 rectFigure = get(gcf, 'Position');
 rectAxes = get(gca, 'Position');
 
@@ -78,14 +68,7 @@ spc.switches.spc_roi{str2num(RoiNstr)+1} = spc_roi;
 shift = -RoiRect(1:2) + spc_roi(1:2);
 if strcmp (get(gcf, 'SelectionType'), 'normal')
     for i = 1:length(Rois)
-        if isa(Rois(i), 'matlab.graphics.primitive.Rectangle') %IB correction lines 83-90
-            set(Rois(i), 'Position', spc_roi);
-        else
-            roiX = get(Rois(i), 'XData') + shift(1);
-            roiY = get(Rois(i), 'YData') + shift(2);
-            set(Rois(i), 'XData', roiX);
-            set(Rois(i), 'YData', roiY);
-        end
+        set(Rois(i), 'Position', spc_roi);
         set(Texts(i), 'Position', [spc_roi(1)-2, spc_roi(2)-2, 0]);
     end
 elseif strcmp(get(gcf, 'SelectionType'), 'extend')
