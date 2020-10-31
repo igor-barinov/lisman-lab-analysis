@@ -527,8 +527,16 @@ classdef ROIUtils
         % Plots <ROIs> over the course of <time> as a line plot
         %
         function plot_values(time, ROIs)
-            plotOpts = {'o-'};
-            plot(time, ROIs, plotOpts{:});
+            colors = {[0.7,0.7,0.7], 'red', 'blue', 'green', 'magenta', 'cyan', [1,0.5,0],'black'};
+            for i = 1:size(ROIs, 2)
+                colorIdx = mod(i, numel(colors)) + 1;
+                if colorIdx == 0
+                    colorIdx = numel(colors);
+                end
+                plotOpts = {'o-', 'color', colors{colorIdx}};
+                plot(time, ROIs(:, i), plotOpts{:});
+                hold('on');
+            end
         end
         
         %% --------------------------------------------------------------------------------------------------------

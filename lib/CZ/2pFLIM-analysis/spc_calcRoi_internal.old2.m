@@ -58,31 +58,20 @@ for j = 1:nRoi
             if roiN == 0 || isempty(roiN) %%%%%Background
                 if spc.switches.noSPC
                     bg.time(fn) = datenum(spc.state.internal.triggerTimeString);
-                    %a(roiN).time3(fn) = datenum(spc.state.internal.triggerTimeString); %nicko these lines were added from W7 FLIM analysis
                 else
                     bg.time(fn) = datenum([spc.datainfo.date, ',', spc.datainfo.time]);
-                    %a(roiN).time3(fn) = datenum(spc.datainfo.triggerTime);%nicko these lines were added from W7 FLIM analysis
                 end
                 bg.position{fn} = ROI;
                 bg.mean_int(fn) = mean(F_int(:));
                 bg.nPixel(fn) = nPixel;
                 bg.mean_int(fn) = mean(F_int(:));
                 if spc.switches.redImg
-                    %img_greenF = spc.state.img.greenImgF;% nicko(:,:,fn); just a test
-                    %green_R_F = img_greenF(:,:,30)(ROIreg);% nicko(:,:,fn); just a test
-                    img_greenMax = spc.state.img.greenMax;% nicko(:,:,fn);
+                    img_greenMax = spc.state.img.greenImgF; %IB fix 10-12-20(:,:,fn);
                     green_R = img_greenMax(ROIreg);
                     bg.green_int(fn) = sum(green_R);
                     bg.green_mean(fn) = mean(green_R);
                     bg.green_nPixel(fn) = bg.green_int(fn) / bg.mean_int(fn);
-                    
-                    if spc.scanHeader.acq.imagingChannel3%nicko loading chaanel 3 green data in red
-                      %img_greenMax = spc.state.img.greenImgF;% nicko(:,:,fn);
-                    img_redMax = spc.state.img.greenMax;% nicko(:,:,fn);
-                    else 
-%                     %img_redMax = spc.state.img.redImgF;% nicko(:,:,fn);
-                      img_redMax = spc.state.img.redMax;% nicko(:,:,fn);
-                    end
+                    img_redMax = spc.state.img.redImgF; %IB fix 10-12-20(:,:,fn);
                     red_R = img_redMax(ROIreg);
                     bg.red_int(fn) = sum(red_R);
                     bg.red_mean(fn) = mean(red_R);
@@ -91,24 +80,13 @@ for j = 1:nRoi
                 
             else %No background
                 if spc.switches.noSPC
-                  %a(roiN).time3(fn) = datenum(spc.state.internal.triggerTimeString);%nicko these lines were added from W7 FLIM analysis
                 else
-                    %a(roiN).time3(fn) = datenum(spc.datainfo.triggerTime);%nicko these lines were added from W7 FLIM analysis
-                    %*******add by cong (CZ) for fitting each ROI
-%                     beta0 = spc_initialValue_double;              
-%                     weight = sqrt(lifetime)/sqrt(max(lifetime));
-%                     weight(lifetime < 1)=1/sqrt(max(lifetime));
-%                     try
-%                     betahat= nlinfit(x,lifetime+1,  @exp2gauss, beta0,'Weights',weight);
-%                     end
-                    %***end CZ and nicko
-                
                     a(roiN).fraction_Sim(fn) = spc_getFraction((tau_m + spc.fit(gui.spc.proChannel).t_offset)*1000/spc.datainfo.psPerUnit);
                     a(roiN).fraction2(fn) = tauD*(tauD-tau_m)/(tauD-tauAD) / (tauD + tauAD -tau_m);
                     a(roiN).tauD(fn) = tauD;
                     a(roiN).tauAD(fn) = tauAD;
                     a(roiN).tau_m(fn) = tau_m;
-               end
+                end
                 a(roiN).position{fn} = ROI;
                 a(roiN).nPixel(fn) = nPixel;
                 a(roiN).mean_int(fn) = mean(F_int(:))- bg.mean_int(fn);
@@ -116,21 +94,14 @@ for j = 1:nRoi
                 a(roiN).max_int(fn) = max(F_int(:)) - bg.mean_int(fn);
                 
                 if spc.switches.redImg
-                     if spc.scanHeader.acq.imagingChannel3% nicko loading chaanel 3 green data in red
-                      img_redMax = spc.state.img.greenMax;% nicko
-                      else 
-%                     %img_redMax = spc.state.img.redImgF;% nicko(:,:,fn);
-                      img_redMax = spc.state.img.redMax;% nicko(:,:,fn);
-                      
-                    end 
-%                     img_redMax = spc.state.img.redImgF;% no(:,:,fn);
+                    img_redMax = spc.state.img.redImgF;% IB Fix 10-12-20 (:,:,fn);
                     red_R = img_redMax(ROIreg);
                     a(roiN).red_int(fn) = sum(red_R);
                     a(roiN).red_mean(fn) = mean(red_R) - bg.red_mean(fn);
                     a(roiN).red_nPixel(fn) = a(roiN).red_int(fn) / mean(red_R);
                     a(roiN).red_int2(fn) = a(roiN).red_mean(fn)*a(roiN).red_nPixel(fn);
                     a(roiN).red_max(fn) = max(red_R) -  bg.red_mean(fn);
-                    img_greenMax = spc.state.img.greenMax;% nicko(:,:,fn);
+                    img_greenMax = spc.state.img.greenImgF; %IB Fix 10-12-20 (:,:,fn);
                     green_R = img_greenMax(ROIreg);
                     a(roiN).green_int(fn) = sum(green_R);
                     a(roiN).green_mean(fn) = mean(green_R) - bg.green_mean(fn);

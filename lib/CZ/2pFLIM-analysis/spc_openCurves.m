@@ -102,7 +102,7 @@ if exist(filename) == 2
         im2_opentif(filename);
     catch
         spc.state.img.greenImg = 0;
-        spc.satte.img.redImg = 0;
+        spc.state.img.redImg = 0;
     end
     if sum(size(spc.state.img.greenImg)) > 0
         spc.switches.redImg = 1;
@@ -186,6 +186,8 @@ if ~no_lastProject
                     set(gui.spc.figure.roiA(i), 'YData', yi);
                     set(gui.spc.figure.roiB(i), 'XData', xi);
                     set(gui.spc.figure.roiB(i), 'YData', yi);
+                    set(gui.spc.figure.roiC(i), 'XData', xi); % IB fix 10/17/20
+                    set(gui.spc.figure.roiC(i), 'YData', yi); % IB fix 10/17/20
                     textRoi = [xi(1)-2, yi(1)-2];
                     set(gui.spc.figure.textA(i), 'Position', textRoi);
                     set(gui.spc.figure.textB(i), 'Position', textRoi);

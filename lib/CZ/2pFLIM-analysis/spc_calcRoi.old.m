@@ -65,15 +65,6 @@ for channelN = 1:nChannels
         
         if get(gui.spc.spc_main.fit_eachtime, 'Value')
                 try
-                    betahat=spc_fitexp1gauss;
-                    spc_redrawSetting(1);
-                    fit_error = 0;
-                catch
-                    fit_error = 1;
-                end
-           
-            fit_error = 1;
-            try
                     betahat=spc_fitexp2gauss;
                     spc_redrawSetting(1);
                     fit_error = 0;
@@ -154,10 +145,8 @@ save(fname, fname);
 %Figure
 
 color_a = {[0.7,0.7,0.7], 'red', 'blue', 'green', 'magenta', 'cyan', [1,0.5,0],'black'};
-%fig_contentA = {'fraction2', 'tau_m', 'int_int2', 'red_mean', 'ratio'};
-% fig_yTitleA = {'Fraction', 'Tau_m', ' Intensity(FLIM)', 'Mean Intensity(R)', 'ratio'};
-fig_contentA = {'fraction2', 'tau_m', 'mean_int', 'red_mean', 'ratio'};
-fig_yTitleA = {'Fraction', 'Tau_m', 'Mean Intensity(FLIM)', 'mean Intensity(R)', 'ratio'};
+fig_contentA = {'fraction2', 'tau_m', 'int_int2', 'red_mean', 'ratio'};
+fig_yTitleA = {'Fraction', 'Tau_m', 'Intensity(FLIM)', 'Mean Intensity(R)', 'ratio'};
 fc(1) = get(gui.spc.spc_main.fracCheck, 'Value');
 fc(2) = get(gui.spc.spc_main.tauCheck, 'Value');
 fc(3) = get(gui.spc.spc_main.greenCheck, 'Value');
@@ -194,7 +183,7 @@ for subP = 1:panelN  %Three figures
     subplot(figFormat(1), figFormat(2), subP);
     hold off;
     legstr = [];
-        for channelN = 1:nChannels
+    for channelN = 1:nChannels
         for j=1:nRoi-1
             if ishandle(gui.spc.figure.roiB(j+1)) 
                 if (strcmp(get(gui.spc.figure.roiB(j+1), 'Type'), 'rectangle') || strcmp(get(gui.spc.figure.roiB(j+1), 'Type'), 'line'))
@@ -218,8 +207,8 @@ for subP = 1:panelN  %Three figures
                     legstr = [legstr; str1];
                 end
             end
-        end
-        end
+        end;
+    end
     if subP == panelN
         hl = legend(legstr);
         pos = get(hl, 'position');
