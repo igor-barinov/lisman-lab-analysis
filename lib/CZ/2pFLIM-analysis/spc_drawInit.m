@@ -1,6 +1,7 @@
 function spc_drawInit
 global spc;
 global gui;
+global fitsave;
 
 delete(findobj('Tag', 'spc_analysis'));
 %Position files. 
@@ -60,6 +61,7 @@ spc.switches.maxAve = 0;
 spc.switches.redImg = 0;
 spc.lifetimeMap = zeros(1,spc.SPCdata.resolution);
 
+fitsave = []; % IB 11/9/20
 for j = 1:3
     
     spc.fit(j).t_offset = 0;

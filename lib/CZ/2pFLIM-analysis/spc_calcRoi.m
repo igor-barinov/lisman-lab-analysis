@@ -1,7 +1,7 @@
 function a = spc_calcRoi
 global spc;
 global gui;
-
+global fitsave;
 
 if ~spc.switches.noSPC
     nChannels = spc.datainfo.scan_rx;
@@ -104,6 +104,11 @@ for channelN = 1:nChannels
         
         Ch(channelN).roiData = a;
         Ch(channelN).bgData = bg;
+        
+        % IB 11/9/20, 109-111
+        fitsave(fn).beta0 = spc.fit(gui.spc.proChannel).beta0;
+        fitsave(fn).fixtau = spc.fit(gui.spc.proChannel).fixtau;
+        Ch(channelN).fitsave = fitsave;
         
         if isfield(gui.spc.figure, 'polyRoi')
                 if ishandle(gui.spc.figure.polyRoi{1})

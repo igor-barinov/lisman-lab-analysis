@@ -21,7 +21,9 @@ bg = str2double(get(gui.spc.spc_main.beta7, 'string'));
 lifetime = lifetime;
 
 try
-    betahat = spc_nlinfit(x, lifetime, weight, @exp2gauss, beta0);
+    for i=1:3
+        betahat = spc_nlinfit(x, lifetime, weight, @exp2gauss, beta0);
+    end
 end
 
 for j = [2, 4, 5, 6]

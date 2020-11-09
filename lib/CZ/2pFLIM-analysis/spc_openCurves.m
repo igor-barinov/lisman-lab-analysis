@@ -1,8 +1,7 @@
 function spc_openCurves(fname)
 global spc
 global gui
-
-
+global fitsave
 
 no_limit = 0;
 
@@ -13,7 +12,6 @@ catch
     no_fit = 1;
     %disp('error')
 end
-%
 
 no_lastProject = 0;
 try
@@ -21,7 +19,6 @@ try
 catch
     no_lastProject = 1;
 end
-
 
 if ~ischar(fname)
     filenumber1 = fname;
@@ -45,7 +42,7 @@ disp (['Reading ', fname]);
 if strfind(fname, '.sdt')
     error = spc_readdata(fname);
 elseif strfind(fname, '.mat')
-    load (fname);
+    load(fname);
     error = 0;
 elseif strfind(fname, '.tif')
     error = spc_loadTiff (fname);
@@ -119,6 +116,39 @@ end
 try
     spc_redrawSetting(1);
 end
+
+% IB 11/9/20, 121-145
+[filepath, basename, fileNum, ~, ~] = spc_AnalyzeFilename(spc.filename);
+savedFile = fullfile(filepath, [basename, '_ROI2.mat']);
+
+if exist(savedFile) == 2 % ROI2 file exists
+    savedData = load(savedFile);
+    structField = [basename, '_ROI2'];    
+    
+    numUnsavedFit = max(0, fileNum - numel(fitsave));
+    for i = 1:numUnsavedFit
+        defaultParams.beta0 = spc.fit(gui.spc.proChannel).beta0;
+        defaultParams.fixtau = spc.fit(gui.spc.proChannel).fixtau;
+        
+        fitsave = [fitsave, defaultParams];
+    end
+    
+    if isfield(savedData.(structField), 'fitsave') % fit was saved
+        loadedFit = savedData.(structField).fitsave;        
+        if isstruct(loadedFit) && ...
+           isfield(loadedFit, 'beta0') && ...
+           isfield(loadedFit, 'fixtau') && ...
+           numel(loadedFit) >= fileNum
+            disp('Found saved fit, loading params...');
+            fitsave(fileNum).beta0 = loadedFit(fileNum).beta0;
+            fitsave(fileNum).fixtau = loadedFit(fileNum).fixtau;
+        end
+    end
+    
+    spc.fit(gui.spc.proChannel).beta0 = fitsave(fileNum).beta0;
+    spc.fit(gui.spc.proChannel).fixtau = fitsave(fileNum).fixtau;
+end
+
 
 %%%%%%%%%%%%%
 if ~no_lastProject
