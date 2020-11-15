@@ -100,6 +100,7 @@ function varargout = spc_file_Callback(h, eventdata, handles, varargin)
 function varargout = spc_open_Callback(h, eventdata, handles, varargin)
 global spc;
 global gui;
+global fitsave;
 %spc.fit.range(1) = 	str2num(get(handles.spc_fitstart, 'String'))/spc.datainfo.psPerUnit*1000;
 %spc.fit.range(2) =	str2num(get(handles.spc_fitend, 'String'))/spc.datainfo.psPerUnit*1000;
 %page = str2num(get(handles.spc_page, 'String'));
@@ -108,6 +109,7 @@ global gui;
 cd (pname);
 filestr = [pname, fname];
 if exist(filestr) == 2
+        fitsave = []; % IB fix 11/15/20
         spc_openCurves(filestr);
 end
 %spc_putIntoSPCS;

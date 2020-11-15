@@ -22,7 +22,8 @@ lifetime = lifetime;
 
 try
     for i=1:3
-        betahat = spc_nlinfit(x, lifetime, weight, @exp2gauss, beta0);
+        betahat = nlinfit(x,lifetime+1,  @exp2gauss, beta0,'Weights',weight); %by cong
+        %betahat = spc_nlinfit(x, lifetime, weight, @exp2gauss, beta0);
     end
 end
 

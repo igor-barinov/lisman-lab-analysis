@@ -5,13 +5,13 @@ global fitsave
 
 no_limit = 0;
 
-% no_fit = 0;
-% try
-%     save_fit = spc.fit;
-% catch
-%     no_fit = 1;
-%     %disp('error')
-% end
+no_fit = 0;
+try
+    save_fit = spc.fit;
+catch
+    no_fit = 1;
+    %disp('error')
+end
 
 no_lastProject = 0;
 try
@@ -30,7 +30,7 @@ else
     fname = sprintf('%s%s%03d%s', filepath, basename, filenumber, ext1); %???
 end
 
-disp(['Reading SPC.  ', fname]);
+display(['Reading  ', fname]);
 
 if ~exist(fname)
     disp('No such file (spc_openCurves L39)');
@@ -38,7 +38,7 @@ if ~exist(fname)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% disp (['Reading.. ', fname]);
+disp (['Reading ', fname]);
 if strfind(fname, '.sdt')
     error = spc_readdata(fname);
 elseif strfind(fname, '.mat')
@@ -62,9 +62,9 @@ end
 
 if ~error
     % 
-%     if ~no_fit
-%         spc.fit = save_fit;
-%     end
+    if ~no_fit
+        spc.fit = save_fit;
+    end
 
     roiP = get(gui.spc.figure.mapRoi, 'position');
     
@@ -91,7 +91,7 @@ elseif ~error
 else
 
 end
-disp(['Reading.not SPC', filename]);
+display(['Reading file...', filename]);
 
 spc.switches.redImg = 0;
 if exist(filename) == 2
@@ -112,107 +112,45 @@ if exist(filename) == 2
     end
 end
 
-% IB 11/9/20, 
+%%%%%%%%%%%%%%%%%%%%%%%%
+try
+    spc_redrawSetting(1);
+end
+
+% IB 11/9/20, 121-145
 [filepath, basename, fileNum, ~, ~] = spc_AnalyzeFilename(spc.filename);
 savedFile = fullfile(filepath, [basename, '_ROI2.mat']);
 
 if exist(savedFile) == 2 % ROI2 file exists
-    disp(['Reading ROI2', savedFile]);
     savedData = load(savedFile);
     structField = [basename, '_ROI2'];    
-%         usecurrentParam = 1; %nicko temp fix
-%      if usecurrentParam ==1 %nicko temp fix
-      if isfield(savedData.(structField), 'fitsave') % fit was saved
+    
+    numUnsavedFit = max(0, fileNum - numel(fitsave));
+    for i = 1:numUnsavedFit
+        defaultParams.beta0 = spc.fit(gui.spc.proChannel).beta0;
+        defaultParams.fixtau = spc.fit(gui.spc.proChannel).fixtau;
+        
+        fitsave = [fitsave, defaultParams];
+    end
+    
+    if isfield(savedData.(structField), 'fitsave') % fit was saved
         loadedFit = savedData.(structField).fitsave;        
         if isstruct(loadedFit) && ...
            isfield(loadedFit, 'beta0') && ...
            isfield(loadedFit, 'fixtau') && ...
-           isfield(loadedFit, 'range') && ...
-           isfield(loadedFit, 'lutlim') && ...
-           isfield(loadedFit, 'lifetime_limit') && ...
-           numel(loadedFit) >= fileNum && ...
-           ~isempty(loadedFit(fileNum).beta0)
-%             fitsave(fileNum).beta0= loadedFit(fileNum).beta0;
-%             fitsave(fileNum).fixtau = loadedFit(fileNum).fixtau;
-%           if fileNum <= length (fitsave)% if data analysed or missed
-                fitsave= loadedFit; %nicko 11.10.20
-                spc.fit(gui.spc.proChannel).beta0 = fitsave(fileNum).beta0;
-                spc.fit(gui.spc.proChannel).fixtau = fitsave(fileNum).fixtau;
-                spc.fit(gui.spc.proChannel).range = fitsave(fileNum).range;
-                spc.fit(gui.spc.proChannel).lutlim = fitsave(fileNum).lutlim;
-                spc.fit(gui.spc.proChannel).lifetime_limit = fitsave(fileNum).lifetime_limit;
-                msgbox('Saved fitting param. have been loaded', 'replace');
-        else
-%           if fileNum >= length (fitsave)% if data analysed or missed 
-            %disp('file was not analized , current fit parameteres are used');
-                msgbox('file was not analized , current fit parameteres are used', 'replace');
-        end 
-      end
-%      end          
-   
-%     if fileNum >= length (fitsave)% if data analysed or missed 
-% %        if numUnsavedFit = max(0, fileNum - numel(fitsave)); % if file was not analysed; nicko
-%            disp('file was not analized , current fit parameteres are used');
+           numel(loadedFit) >= fileNum
+            disp('Found saved fit, loading params...');
+            fitsave(fileNum).beta0 = loadedFit(fileNum).beta0;
+            fitsave(fileNum).fixtau = loadedFit(fileNum).fixtau;
+        end
+    end
     
-%       for i = 1:numUnsavedFit
-%         defaultParams.beta0 = spc.fit(gui.spc.proChannel).beta0;
-%         defaultParams.fixtau = spc.fit(gui.spc.proChannel).fixtau;
-%         defaultParams.range = spc.fit(gui.spc.proChannel).range; %nicko 11.10.20 next4 line
-%         defaultParams.lutlim = spc.fit(gui.spc.proChannel).lutlim;
-%         defaultParams.lifetime_limit = spc.fit(gui.spc.proChannel).lifetime_limit;
-%         %defaultParams.fixtau = spc.fit(gui.spc.proChannel).t_offset;
-%         fitsave = [fitsave, defaultParams];%nicko 11.10.20
-%        end  
-    
-%      if isempty(loadedFit(fileNum).beta0)  %nicko for not analyzed files?
-%             defaultParams.beta0 = spc.fit(gui.spc.proChannel).beta0;
-%             defaultParams.fixtau = spc.fit(gui.spc.proChannel).fixtau;
-%             defaultParams.range = spc.fit(gui.spc.proChannel).range; %nicko 11.10.20 next4 line
-%             defaultParams.lutlim = spc.fit(gui.spc.proChannel).lutlim;
-%             defaultParams.lifetime_limit = spc.fit(gui.spc.proChannel).lifetime_limit;
-% %         %defaultParams.fixtau = spc.fit(gui.spc.proChannel).t_offset;
-%                 spc.fit(gui.spc.proChannel).beta0 = fitsave(fileNum).beta0;
-%                 spc.fit(gui.spc.proChannel).fixtau = fitsave(fileNum).fixtau;
-%                 spc.fit(gui.spc.proChannel).range = fitsave(fileNum).range;
-%                 spc.fit(gui.spc.proChannel).lutlim = fitsave(fileNum).lutlim;
-%                 spc.fit(gui.spc.proChannel).lifetime_limit = fitsave(fileNum).lifetime_limit;
-% %     spc.fit(gui.spc.proChannel).t_offset = fitsave(fileNum).t_offset;           
-% fitsave = [fitsave, defaultParams];%nicko 11.10.20
-%            disp('file was not analized , current fit parameteres are used');
-%      end
-%     else
-%     disp('Found saved fit, loading params...');
-    
-%                 spc.fit(gui.spc.proChannel).beta0 = fitsave(fileNum).beta0;
-%                 spc.fit(gui.spc.proChannel).fixtau = fitsave(fileNum).fixtau;
-%                 spc.fit(gui.spc.proChannel).range = fitsave(fileNum).range;
-%                 spc.fit(gui.spc.proChannel).lutlim = fitsave(fileNum).lutlim;
-%                 spc.fit(gui.spc.proChannel).lifetime_limit = fitsave(fileNum).lifetime_limit;
-%     spc.fit(gui.spc.proChannel).t_offset = fitsave(fileNum).t_offset;
-%     if fileNum >= length (fitsave)% if data analysed or missed 
-%        if numUnsavedFit = max(0, fileNum - numel(fitsave)); % if file was not analysed; nicko
-           
-%     end
-set(gui.spc.spc_main.spc_fitstart, 'String', num2str(round(spc.fit(gui.spc.proChannel).range(1)*spc.datainfo.psPerUnit/100)/10));
-set(gui.spc.spc_main.spc_fitend, 'String', num2str(round(spc.fit(gui.spc.proChannel).range(2)*spc.datainfo.psPerUnit/100)/10));
-
-
- set(gui.spc.figure.lifetimeUpperlimit, 'String', num2str(spc.fit(gui.spc.proChannel).lifetime_limit(1)));
- set(gui.spc.figure.lifetimeLowerlimit, 'String', num2str(spc.fit(gui.spc.proChannel).lifetime_limit(2)));
- 
- set(gui.spc.figure.LutLowerlimit, 'String', num2str(spc.fit(gui.spc.proChannel).lutlim(1)));
- set(gui.spc.figure.LutUpperlimit, 'String', num2str(spc.fit(gui.spc.proChannel).lutlim(2)));
-        
-else
-      disp('ROI2 is not found');
+    spc.fit(gui.spc.proChannel).beta0 = fitsave(fileNum).beta0;
+    spc.fit(gui.spc.proChannel).fixtau = fitsave(fileNum).fixtau;
 end
-% IB 11/9/20, end
+
+
 %%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%
-    
-try
-    spc_redrawSetting(1);
-end
 if ~no_lastProject
     bg = 0;
     if isfield(gui.spc.figure, 'roiB')

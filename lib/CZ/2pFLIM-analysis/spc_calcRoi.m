@@ -105,9 +105,12 @@ for channelN = 1:nChannels
         Ch(channelN).roiData = a;
         Ch(channelN).bgData = bg;
         
-        % IB 11/9/20, 109-111
+        % IB 11/15/20, 109-113
         fitsave(fn).beta0 = spc.fit(gui.spc.proChannel).beta0;
         fitsave(fn).fixtau = spc.fit(gui.spc.proChannel).fixtau;
+        fitsave(fn).range = spc.fit(gui.spc.proChannel).range;
+        fitsave(fn).lutlim = spc.fit(gui.spc.proChannel).lutlim;
+        fitsave(fn).lifetime_limit = spc.fit(gui.spc.proChannel).lifetime_limit;
         Ch(channelN).fitsave = fitsave;
         
         if isfield(gui.spc.figure, 'polyRoi')
