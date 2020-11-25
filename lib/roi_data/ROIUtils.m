@@ -177,62 +177,36 @@ classdef ROIUtils
                 endIdx = strfind(uniformNotes, endPattern);
                 endIdx = endIdx(endIdx > startIdx(1));
                 if ~isempty(endIdx)
-                    dnaIdx = startIdx(1) + length('nommddyyx');
+                    dnaIdx = startIdx(1) + length('nommddyyx_');
                     dnaType = notes(dnaIdx : endIdx(1)-1);
                 end
             end
-
-            % Find baseline solutions
-            % Format: ... Start with [baseSolution] (...
-            startPattern = 'start with';
-            endPattern = '(';
-
+            
+            % Find solutions
+            % Format: 
+            % ... [SOLUTIONS] (Image #, Solution)
+            % <Image #>, <Solution>,
+            
+            startPattern = '[solutions]';
             startIdx = strfind(uniformNotes, startPattern);
             if ~isempty(startIdx)
-                endIdx = strfind(uniformNotes, endPattern);
-                endIdx = endIdx(endIdx > startIdx(1));
-                if ~isempty(endIdx)
-                    solutionIdx = startIdx(1) + length(startPattern);
-                    solutionName = strtrim(notes(solutionIdx : endIdx-1));
-                    solutionInfo = [solutionInfo; {solutionName, 1}];
-                end
-            end
-
-            % Find remaining solutions
-            % Format: ... After img[timing] start [solution]. ...
-            timingStartPtrn = 'after img';
-            timingEndPtrn = 'start';
-            nameEndPtrn = '.';
-
-            % Find first pattern: '... After img[timing] ...'
-            timingStartIndices = strfind(uniformNotes, timingStartPtrn);
-            if ~isempty(timingStartIndices)
-                % Find second pattern: ' ... start ...'
-                timingEndIndices = strfind(uniformNotes, timingEndPtrn);
-                timingEndIndices = timingEndIndices(timingEndIndices > timingStartIndices(1));
-
-                if ~isempty(timingEndIndices)
-                    % Find third pattern: ' ... [solution]. ...'
-                    nameEndIndices = strfind(uniformNotes, nameEndPtrn);
-                    nameEndIndices = nameEndIndices(nameEndIndices > timingEndIndices(1));
-
-                    if ~isempty(nameEndIndices)
-                        solutionCount = min([numel(timingStartIndices), numel(timingEndIndices), numel(nameEndIndices)]);
-
-                        if solutionCount > 0
-                            for i = 1:solutionCount
-                                timingIdx = timingStartIndices(i) + length(timingStartPtrn);
-                                nameIdx = timingEndIndices(i) + length(timingEndPtrn);
-                                solTiming = str2double(notes(timingIdx : timingEndIndices(i)-1));
-                                solName = strtrim(notes(nameIdx : nameEndIndices(i)-1));
-
-                                if ~isempty(solName) && ~isnan(solTiming)
-                                    solutionInfo = [solutionInfo; {solName, solTiming}];
-                                end
-                            end
-                        end
+                titlePattern = '%s %s %s %s\n';
+                [~, titleLen] = textscan(uniformNotes(startIdx:end), titlePattern);
+                solutionData = uniformNotes(startIdx+titleLen+1:end);
+                while true
+                    solutionPattern = '%d, %[^\n\r]';
+                    [nextSolution, dataLen] = textscan(solutionData, solutionPattern, 1);
+                    solutionTiming = nextSolution{1};
+                    solutionName = nextSolution{2};
+                    if isempty(solutionTiming) || isempty(solutionName)
+                        break;
                     end
-                end 
+                    
+                    solutionName = solutionName{1};                    
+                    solutionInfo = [solutionInfo; {solutionName(1:end-1), solutionTiming}];
+                    
+                    solutionData = solutionData(dataLen+1:end);
+                end
             end
         end
         
