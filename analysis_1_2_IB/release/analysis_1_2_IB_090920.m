@@ -90,7 +90,7 @@ varargout{1} = handles.output;
 function logdlg(lastErr)
 % Try making/adding to log
 try
-    logFile = IOUtils.path_to_log(Analysis_1_2_Versions.v081420);
+    logFile = IOUtils.path_to_log(Analysis_1_2_Versions.v090920);
     errordlg(['An error occured. See log at ', logFile]);
     IOUtils.log_error(lastErr, logFile);
 catch
