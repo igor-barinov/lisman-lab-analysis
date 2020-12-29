@@ -3,7 +3,7 @@ function varargout = spc_main(varargin)
 %    FIG = SPC_MAIN launch spc_main GUI.
 %    SPC_MAIN('callback_name', ...) invoke the named callback.
 
-% Last Modified by GUIDE v2.5 23-Nov-2020 15:13:17
+% Last Modified by GUIDE v2.5 12-Oct-2020 15:34:58
 global gui;
 global spc;
 
@@ -1144,14 +1144,3 @@ function estimate_bg_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 spc_estimate_bg;
-
-
-% --- Executes on button press in Saved.
-function Saved_Callback(hObject, eventdata, handles)
-% hObject    handle to Saved (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% global spc gui
-% spc.fit(gui.spc.proChannel).SavedFitParameters = get(h, 'Value');
-
-% Hint: get(hObject,'Value') returns toggle state of Saved

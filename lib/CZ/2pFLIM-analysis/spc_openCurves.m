@@ -3,6 +3,7 @@ global spc
 global gui
 global fitsave
 
+
 no_limit = 0;
 
 % no_fit = 0;
@@ -119,9 +120,12 @@ savedFile = fullfile(filepath, [basename, '_ROI2.mat']);
 if exist(savedFile) == 2 % ROI2 file exists
     disp(['Reading ROI2', savedFile]);
     savedData = load(savedFile);
-    structField = [basename, '_ROI2'];    
-%         usecurrentParam = 1; %nicko temp fix
-%      if usecurrentParam ==1 %nicko temp fix
+    structField = [basename, '_ROI2'];  
+%     SavedFitParameters = 1;
+    SavedFitParameters=gui.spc.spc_main.Saved.Value;
+    if    SavedFitParameters == 1 %nicko temp fix
+%     if  gui.spc.spc_main.Saved.Value ==1 %nicko temp fix
+         
       if isfield(savedData.(structField), 'fitsave') % fit was saved
         loadedFit = savedData.(structField).fitsave;        
         if isstruct(loadedFit) && ...
@@ -141,14 +145,19 @@ if exist(savedFile) == 2 % ROI2 file exists
                 spc.fit(gui.spc.proChannel).range = fitsave(fileNum).range;
                 spc.fit(gui.spc.proChannel).lutlim = fitsave(fileNum).lutlim;
                 spc.fit(gui.spc.proChannel).lifetime_limit = fitsave(fileNum).lifetime_limit;
-                msgbox('Saved fitting param. have been loaded', 'replace');
+                %msgbox('Saved fitting param. have been loaded', 'replace');
+                %pos=('100,600,60,60');
+%                 figuremessege=msgbox('Saved fitting param. have been loaded', 'replace','pos');
+                %figure (7, figuremessege, 100,700,60,60);
+                % specify position in the left corner or relatively
+                % spc_main fig)
         else
 %           if fileNum >= length (fitsave)% if data analysed or missed 
             %disp('file was not analized , current fit parameteres are used');
                 msgbox('file was not analized , current fit parameteres are used', 'replace');
         end 
       end
-%      end          
+     end          
    
 %     if fileNum >= length (fitsave)% if data analysed or missed 
 % %        if numUnsavedFit = max(0, fileNum - numel(fitsave)); % if file was not analysed; nicko
