@@ -9,7 +9,7 @@ classdef AppState
         % in program's log file. If there is no log file, the given error 
         % is described in the console.
         % 
-        % "lastErr": MException containing info about the last error raised
+        % (IN) "lastErr": MException containing info about the last error raised
         %
         % Assumes program log file is named according to release program
         % version
@@ -29,9 +29,9 @@ classdef AppState
         % 'get_user_preferences' Method
         %
         % Reads preferences stored in program's .ini file into a map
-        % structure.
+        % structure. If no .ini file exists, a default one will be created
         %
-        % If no .ini file exists, a default one will be created
+        % (OUT) "settingsMap": Map structure containing
         %
         % Assumes program .ini file is named according to release program
         % version
@@ -62,12 +62,28 @@ classdef AppState
         %
         % Updates which files are open by storing new file data
         %
-        % "handles": structure containing all program GUI data
-        % "openFileObj": ROIFile containing new file data
+        % (IN) "handles": structure containing all program GUI data
+        % (IN) "openFileObj": ROIFile containing new file data
         %
         % File data is stored in 'OPEN_FILE_OBJ' field of program's appdata
         %
             setappdata(handles.('mainFig'), 'OPEN_FILE_OBJ', openFileObj);
+        end
+        
+        function [openFileObj] = get_open_files(handles)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'set_open_files' Method
+        %
+        % Gets file data from currently opened files
+        %
+        % (IN) "handles": structure containing all program GUI data
+        %  
+        % (OUT) "openFileObj": ROIFile containing data of all open files
+        %
+        % Assumes that program's appdata has a previously created field
+        % 'OPEN_FILE_OBJ'
+        %
+            openFileObj = getappdata(handles.('mainFig'), 'OPEN_FILE_OBJ');
         end
     end
 end

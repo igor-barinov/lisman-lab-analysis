@@ -84,13 +84,6 @@ varargout{1} = handles.output;
 % -----------------------------------------------------------------------------------------------------------------
 
 %% ----------------------------------------------------------------------------------------------------------------
-% 'get_open_files' Method
-%
-function [openFileObj] = get_open_files(handles)
-openFileObj = getappdata(handles.('mainFig'), 'OPEN_FILE_OBJ');
-
-
-%% ----------------------------------------------------------------------------------------------------------------
 % 'set_roi_data' Method
 %
 function set_roi_data(handles, newROIData)
@@ -275,7 +268,7 @@ end
 %
 function update_win_title(handles)
 % Get program state
-openFile = get_open_files(handles);
+openFile = AppState.get_open_files(handles);
 
 title = Analysis_1_2_Versions.release();
 if ~isempty(openFile)
@@ -308,7 +301,7 @@ tf = get(handles.('btnToggleNormVals'), 'Value');
 % 'get_enabled_rois' Method
 %
 function [tf] = get_enabled_rois(handles)
-[openFiles] = get_open_files(handles);
+[openFiles] = AppState.get_open_files(handles);
 [roiData] = get_roi_data(handles);
 roiCount = roiData.roi_count();
 
@@ -323,7 +316,7 @@ end
 %
 function update_data_table(handles)
 % Get new program state
-openFiles = get_open_files(handles);
+openFiles = AppState.get_open_files(handles);
 newTableData = get_roi_data(handles);
 
 % Just clear table if necessary
@@ -593,7 +586,7 @@ function menuSave_Callback(hObject, ~, ~)
 try
     % Get program state
     handles = guidata(hObject);
-    openFile = get_open_files(handles);
+    openFile = AppState.get_open_files(handles);
     saveData = get_roi_data(handles);
     dnaType = get_dna_type(handles);
     solutions = get_solution_info(handles);
@@ -923,7 +916,7 @@ function menuEnableSelectedROI_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    openFile = get_open_files(handles);
+    openFile = AppState.get_open_files(handles);
     roiData = get_roi_data(handles);
     roiCount = roiData.roi_count();
     selection = get_data_selection(handles);
@@ -1216,7 +1209,7 @@ function menuPlotAll_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    openFile = get_open_files(handles);
+    openFile = AppState.get_open_files(handles);
     roiData = get_roi_data(handles);
     roiCount = roiData.roi_count();
     
@@ -1411,7 +1404,7 @@ function menuPlotSelected_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    openFile = get_open_files(handles);
+    openFile = AppState.get_open_files(handles);
     roiData = get_roi_data(handles);
     
     % Check if a selection was made
@@ -1616,7 +1609,7 @@ function menuPlotAvg_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    openFile = get_open_files(handles);
+    openFile = AppState.get_open_files(handles);
     roiData = get_roi_data(handles);
     
     % Check if at least one plot is enabled
