@@ -1,9 +1,18 @@
 classdef IOUtils
     methods (Static)
+        function create_ini_file(filepath, settings, values)
         %% --------------------------------------------------------------------------------------------------------
         % 'create_ini_file' Method
         %
-        function create_ini_file(filepath, settings, values)
+        % Creates a .ini file at the given filepath with the given settings
+        % and values.
+        %
+        % (IN) "filepath": string describing where the .ini file will be
+        % created
+        % (IN) "settings": cell of strings describing available settings
+        % (IN) "values": cell of strings describing default values to given
+        % settings at corresponding indices
+        %
             fileID = fopen(filepath, 'w');
             for i = 1:numel(settings)
                 fprintf(fileID, '%s=%s\n', settings{i}, values{i});
@@ -11,10 +20,19 @@ classdef IOUtils
             fclose(fileID);
         end
         
+        function [settings, values] = read_ini_file(filepath)
         %% --------------------------------------------------------------------------------------------------------
         % 'read_ini_file' Method
         %
-        function [settings, values] = read_ini_file(filepath)
+        % Gets list of settings and values from .ini file
+        %
+        % (IN) "filepath": string describing path to .ini file
+        %
+        % (OUT) "settings": cell of strings describing available settings
+        % in .ini file
+        % (OUT) "values": cell of strings describing values to settings at
+        % corresponding indices
+        %
             fileID = fopen(filepath);            
             currentLine = fgetl(fileID);
             settings = {};
@@ -28,29 +46,45 @@ classdef IOUtils
             fclose(fileID);
         end
         
+        function [filepath] = path_to_log(script)
         %% --------------------------------------------------------------------------------------------------------
         % 'path_to_log' Method
-        %        
-        function [filepath] = path_to_log(script)
+        %
+        % Returns the path to an 'analysis_1_2's log file
+        %
+        % (IN) "script": string describing 'analysis_1_2' version
+        % 
+        % (OUT) "filepath": string describing path to log file
+        %
             scriptFile = which(script);
             [path, ~, ~] = fileparts(scriptFile);
             logName = [script, '_LOG.txt'];
             filepath = fullfile(path, logName);
         end
         
+        function clear_log(filepath)
         %% --------------------------------------------------------------------------------------------------------
         % 'clear_log' Method
         %        
-        function clear_log(filepath)
+        % Clears all entries in a given log file
+        %
+        % (IN) "filepath": string describing path to log file
+        %
             fileID = fopen(filepath, 'w');
             fprintf(fileID, '\0');
             fclose(fileID);
         end
         
+        function log_error(exception, filepath)
         %% --------------------------------------------------------------------------------------------------------
         % 'log_error' Method
         %           
-        function log_error(exception, filepath)
+        % Logs error details in a given log file. Errors are logged in the
+        % format: "<date>: <error message>"
+        %
+        % (IN) "exception": MException containing error details
+        % (IN) "filepath": string describing path to log file
+        %
             dateStr = datestr(datetime());
             errReport = getReport(exception, 'extended', 'hyperlinks', 'off');
 
@@ -59,10 +93,17 @@ classdef IOUtils
             fclose(fileID);
         end
         
+        function [logs] = read_log(filepath)
         %% --------------------------------------------------------------------------------------------------------
         % 'read_log' Method
         % 
-        function [logs] = read_log(filepath)
+        % Gets a list of logs in a given log file
+        %
+        % (IN) "filepath": string describing path to log file
+        %
+        % (OUT) "logs": cell of string pairs containing each log. Each pair
+        % is in the form { <date>, <error message> }.
+        %
             fileID = fopen(filepath, 'r');
             currentLine = fgetl(fileID);
             currentTimestamp = [];
@@ -90,10 +131,16 @@ classdef IOUtils
             fclose(fileID);
         end
         
+        function [text] = read_word_file(filepath)
         %% --------------------------------------------------------------------------------------------------------
         % 'read_word_file' Method
-        %        
-        function [text] = read_word_file(filepath)
+        %
+        % Returns all text from a Microsoft Word file
+        %
+        % (IN) "filepath": string describing path to Word file
+        % 
+        % (OUT) "text": string containing all text in given Word file
+        %
             wordClient = actxserver('Word.Application');
             wordDoc = wordClient.Documents.Open(filepath);
             text = wordDoc.Content.Text;
