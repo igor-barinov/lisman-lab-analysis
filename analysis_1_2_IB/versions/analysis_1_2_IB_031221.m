@@ -85,21 +85,6 @@ varargout{1} = handles.output;
 
 
 %% ----------------------------------------------------------------------------------------------------------------
-% 'logdlg' Method
-%
-function logdlg(lastErr)
-% Try making/adding to log
-try
-    logFile = IOUtils.path_to_log(Analysis_1_2_Versions.v090920);
-    errordlg(['An error occured. See log at ', logFile]);
-    IOUtils.log_error(lastErr, logFile);
-catch
-    errordlg('Could not log error. See console for details');
-    error(getReport(lastErr));
-end
-
-
-%% ----------------------------------------------------------------------------------------------------------------
 % 'get_user_preferences' Method
 %
 function [settingsMap] = get_user_preferences()
@@ -629,7 +614,7 @@ try
     update_data_table(handles);         % <-- Updated last because of controls modifying disp
     
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -699,7 +684,7 @@ try
             warndlg('Cannot save the file under this type');
     end
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -728,7 +713,7 @@ try
         update_win_title(handles);
     end
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -747,7 +732,7 @@ try
     % Update program state
     update_data_selection(handles, eventdata.Indices);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -767,7 +752,7 @@ try
     end
     update_data_table(roiData);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -843,7 +828,7 @@ try
     set_roi_data(handles, roiData);
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -866,7 +851,7 @@ try
     % Update the data table
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -892,7 +877,7 @@ try
     % Update the data table
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -918,7 +903,7 @@ try
     % Update the data table
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -932,7 +917,7 @@ try
     toggle_menu(hObject);
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -959,7 +944,7 @@ try
     update_data_table(handles);
     
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1034,7 +1019,7 @@ try
     end
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1047,7 +1032,7 @@ try
     
     menuEnableSelectedROI_Callback(handles.('menuEnableSelectedROI'), [], handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1094,7 +1079,7 @@ try
     % Update table
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1141,7 +1126,7 @@ try
     % Update table
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1188,7 +1173,7 @@ try
     % Update table
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1247,7 +1232,7 @@ try
     % Update table
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1447,7 +1432,7 @@ try
         ROIUtils.set_x_limits(time);
     end
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1652,7 +1637,7 @@ try
         ROIUtils.set_x_limits(time);
     end
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1806,7 +1791,7 @@ try
         ROIUtils.set_x_limits(time);
     end
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1831,7 +1816,7 @@ try
         toggle_menu(hObject);
     end
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1852,7 +1837,7 @@ try
         return;
     end
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1873,7 +1858,7 @@ try
         return;
     end
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1894,7 +1879,7 @@ try
         return;
     end
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1953,7 +1938,7 @@ try
     % Update UI
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -1993,7 +1978,7 @@ try
     % Update UI
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -2066,7 +2051,7 @@ try
     % Update table
     update_data_table(handles);
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
@@ -2150,7 +2135,7 @@ try
         update_solution_info(handles, newSolutions);
     end
 catch err
-    logdlg(err);
+    AppState.logdlg(err);
 end
 
 
