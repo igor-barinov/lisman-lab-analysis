@@ -1,7 +1,5 @@
 classdef AppState
     methods (Static)
-        
-        function logdlg(lastErr)
         %% --------------------------------------------------------------------------------------------------------
         % 'logdlg' Method
         %
@@ -11,9 +9,9 @@ classdef AppState
         % If there is no log file, the given error is described in the
         % console.
         %
-        % Assumes program log file is named according to release program
-        % version
-        %
+        % Assumes program log file is located at [la
+        function logdlg(lastErr)
+            % Try making/adding to log
             try
                 logFile = IOUtils.path_to_log(Analysis_1_2_Versions.release());
                 errordlg(['An error occured. See log at ', logFile]);
@@ -24,7 +22,6 @@ classdef AppState
             end
         end
         
-        function [settingsMap] = get_user_preferences()
         %% --------------------------------------------------------------------------------------------------------
         % 'get_user_preferences' Method
         %
@@ -33,9 +30,7 @@ classdef AppState
         %
         % If no .ini file exists, a default one will be created
         %
-        % Assumes program .ini file is named according to release program
-        % version
-        %
+        function [settingsMap] = get_user_preferences()
             version = Analysis_1_2_Versions.release();
             filename = [version, '_SETTINGS.ini'];
             [path, ~, ~] = fileparts(which(version));

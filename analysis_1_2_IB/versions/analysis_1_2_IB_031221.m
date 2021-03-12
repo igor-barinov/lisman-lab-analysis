@@ -85,30 +85,6 @@ varargout{1} = handles.output;
 
 
 %% ----------------------------------------------------------------------------------------------------------------
-% 'get_user_preferences' Method
-%
-function [settingsMap] = get_user_preferences()
-version = Analysis_1_2_Versions.release();
-filename = [version, '_SETTINGS.ini'];
-[path, ~, ~] = fileparts(which(version));
-iniFile = fullfile(path, filename);
-
-% Create ini file if none exists
-fileID = fopen(iniFile, 'r');
-if fileID == -1
-    settings = {'show_green_int', 'show_lifetime', 'show_red_int'};
-    defaultValues = {'false', 'false', 'false'};
-    IOUtils.create_ini_file(iniFile, settings, defaultValues);
-else
-    fclose(fileID);
-end
-
-% Read ini file into map
-[settings, values] = IOUtils.read_ini_file(iniFile);
-settingsMap = containers.Map(settings, values);
-
-
-%% ----------------------------------------------------------------------------------------------------------------
 % 'set_open_files' Method
 %
 function set_open_files(handles, openFileObj)
@@ -286,7 +262,7 @@ switch fileType
 end
 
 % Change plotting options based on preferences
-[settingsMap] = get_user_preferences();
+[settingsMap] = AppState.get_user_preferences();
 showLifetime = settingsMap('show_lifetime');
 showGreen = settingsMap('show_green_int');
 showRed = settingsMap('show_red_int');
