@@ -62,21 +62,24 @@ classdef AppState
         %
         % Updates which files are open by storing new file data
         %
-        % (IN) "handles": structure containing all program GUI data
+        % (IN) "handles": structure containing all program GUI data. Must
+        % contain handle to main figure in field 'mainFig'
         % (IN) "openFileObj": ROIFile containing new file data
         %
-        % File data is stored in 'OPEN_FILE_OBJ' field of program's appdata
+        % File data is stored in 'OPEN_FILE_OBJ' field of program's
+        % appdata
         %
             setappdata(handles.('mainFig'), 'OPEN_FILE_OBJ', openFileObj);
         end
         
         function [openFileObj] = get_open_files(handles)
         %% --------------------------------------------------------------------------------------------------------
-        % 'set_open_files' Method
+        % 'get_open_files' Method
         %
         % Gets file data from currently opened files
         %
-        % (IN) "handles": structure containing all program GUI data
+        % (IN) "handles": structure containing all program GUI data. Must
+        % contain handle to main figure in field 'mainFig'
         %  
         % (OUT) "openFileObj": ROIFile containing data of all open files
         %
@@ -84,6 +87,73 @@ classdef AppState
         % 'OPEN_FILE_OBJ'
         %
             openFileObj = getappdata(handles.('mainFig'), 'OPEN_FILE_OBJ');
+        end
+        
+        function set_roi_data(handles, newROIData)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'set_roi_data' Method
+        %
+        % Updates which ROI data to display/modify by storing new ROI data
+        %
+        % (IN) "handles": structure containing all program GUI data. Must
+        % contain handle to main figure in field 'mainFig'
+        % (IN) "newROIData": ROIData containing new ROI data
+        %
+        % ROI data is stored in 'ROI_DATA' field of program's appdata
+        %
+            setappdata(handles.('mainFig'), 'ROI_DATA', newROIData);
+        end
+        
+        function [roiData] = get_roi_data(handles)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'get_roi_data' Method
+        %
+        % Gets ROI data that is currently being displayed/modified
+        %
+        % (IN) "handles": structure containing all program GUI data. Must
+        % contain handle to main figure in field 'mainFig'
+        %
+        % (OUT) "roiData": ROIData containing current ROI data
+        %
+        % Assumes that program's appdata has previously created field
+        % 'ROI_DATA'
+        %
+            roiData = getappdata(handles.('mainFig'), 'ROI_DATA');
+        end
+
+        function update_data_selection(handles, newSelection)
+        %% ----------------------------------------------------------------------------------------------------------------
+        % 'update_data_selection' Method
+        %
+        % Updates which ROI data is selected by storing new selection
+        % indices
+        %
+        % (IN) "handles": structure containing all program GUI data. Must
+        % contain handle to main figure in field 'mainFig'
+        % (IN): "newSelection": matrix of indices where each row is a
+        % selection in the form [<selected row>, <selected col>]
+        %
+        % Selected indices are stored 'DATA_SELECTION' field of program's appdata 
+        %
+            setappdata(handles.('mainFig'), 'DATA_SELECTION', newSelection);
+        end
+        
+        function [selection] = get_data_selection(handles)
+        %% ----------------------------------------------------------------------------------------------------------------
+        % 'get_data_selection' Method
+        %
+        % Gets indices of currently selected data
+        %
+        % (IN) "handles": structure containing all program GUI data. Must
+        % contain handle to main figure in field 'mainFig'
+        %
+        % (OUT) "selection": matrix of indices where each row is a
+        % selection in the form [<selected row>, <selected col>]
+        %
+        % Assumes program's appdata has previously created field
+        % 'DATA_SELECTION'
+        %
+            selection = getappdata(handles.('mainFig'), 'DATA_SELECTION');
         end
     end
 end

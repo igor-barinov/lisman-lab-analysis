@@ -79,39 +79,6 @@ varargout{1} = handles.output;
 
 
     
-    
-%% App State Methods ----------------------------------------------------------------------------------------------
-% -----------------------------------------------------------------------------------------------------------------
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'set_roi_data' Method
-%
-function set_roi_data(handles, newROIData)
-setappdata(handles.('mainFig'), 'ROI_DATA', newROIData);
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'get_roi_data' Method
-%
-function [roiData] = get_roi_data(handles)
-roiData = getappdata(handles.('mainFig'), 'ROI_DATA');
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'update_data_selection' Method
-%
-function update_data_selection(handles, newSelection)
-setappdata(handles.('mainFig'), 'DATA_SELECTION', newSelection);
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'get_data_selection' Method
-%
-function [selection] = get_data_selection(handles)
-selection = getappdata(handles.('mainFig'), 'DATA_SELECTION');
-
-
-
 
 %% GUI Utiltity Methods -------------------------------------------------------------------------------------------
 % -----------------------------------------------------------------------------------------------------------------
@@ -301,8 +268,7 @@ tf = get(handles.('btnToggleNormVals'), 'Value');
 % 'get_enabled_rois' Method
 %
 function [tf] = get_enabled_rois(handles)
-[openFiles] = AppState.get_open_files(handles);
-[roiData] = get_roi_data(handles);
+[roiData] = AppState.get_roi_data(handles);
 roiCount = roiData.roi_count();
 
 tf = false(1, roiCount);
@@ -317,7 +283,7 @@ end
 function update_data_table(handles)
 % Get new program state
 openFiles = AppState.get_open_files(handles);
-newTableData = get_roi_data(handles);
+newTableData = AppState.get_roi_data(handles);
 
 % Just clear table if necessary
 if isempty(newTableData)
@@ -548,7 +514,7 @@ try
     
     % Update program state
     AppState.set_open_files(handles, openFile);
-    set_roi_data(handles, roiData);
+    AppState.set_roi_data(handles, roiData);
     
     % Update UI
     update_win_title(handles);
@@ -587,7 +553,7 @@ try
     % Get program state
     handles = guidata(hObject);
     openFile = AppState.get_open_files(handles);
-    saveData = get_roi_data(handles);
+    saveData = AppState.get_roi_data(handles);
     dnaType = get_dna_type(handles);
     solutions = get_solution_info(handles);
     enabledROIs = get_enabled_rois(handles);
@@ -664,7 +630,7 @@ try
     if strcmp(choice, 'Yes')
         % Update program state
         AppState.set_open_files(handles, []);
-        set_roi_data(handles, []);
+        AppState.set_roi_data(handles, []);
         
         % Update UI
         update_data_table(handles);
@@ -691,7 +657,7 @@ try
     handles = guidata(hObject);
     
     % Update program state
-    update_data_selection(handles, eventdata.Indices);
+    AppState.update_data_selection(handles, eventdata.Indices);
 catch err
     AppState.logdlg(err);
 end
@@ -724,7 +690,7 @@ function menuFix_Callback(hObject, ~, ~)
 try
     % Get program state
     handles = guidata(hObject);
-    roiData = get_roi_data(handles);
+    roiData = AppState.get_roi_data(handles);
     enabledROIs = get_enabled_rois(handles);
     
     % Get ROI data values
@@ -786,7 +752,7 @@ try
     
     
     % Update program state
-    set_roi_data(handles, roiData);
+    AppState.set_roi_data(handles, roiData);
     update_data_table(handles);
 catch err
     AppState.logdlg(err);
@@ -889,7 +855,7 @@ function menuEnableAllROI_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    roiData = get_roi_data(handles);
+    roiData = AppState.get_roi_data(handles);
     
     % Enable any disabled ROIs
     for i = 1:roiData.roi_count()
@@ -917,9 +883,9 @@ try
     % Get current program state
     handles = guidata(hObject);
     openFile = AppState.get_open_files(handles);
-    roiData = get_roi_data(handles);
+    roiData = AppState.get_roi_data(handles);
     roiCount = roiData.roi_count();
-    selection = get_data_selection(handles);
+    selection = AppState.get_data_selection(handles);
 
     % Check if there is a selection
     if isempty(selection)
@@ -1004,8 +970,8 @@ function menuAddRowAbove_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    roiData = get_roi_data(handles);
-    tableSelection = get_data_selection(handles);
+    roiData = AppState.get_roi_data(handles);
+    tableSelection = AppState.get_data_selection(handles);
 
     % Check if a single row was selected
     if isempty(tableSelection)
@@ -1035,7 +1001,7 @@ try
     roiData = roiData.set_lifetime(newLifetime);
     roiData = roiData.set_green(newInt);
     roiData = roiData.set_red(newRed);
-    set_roi_data(handles, roiData);
+    AppState.set_roi_data(handles, roiData);
     
     % Update table
     update_data_table(handles);
@@ -1051,8 +1017,8 @@ function menuAddRowBelow_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    roiData = get_roi_data(handles);
-    tableSelection = get_data_selection(handles);
+    roiData = AppState.get_roi_data(handles);
+    tableSelection = AppState.get_data_selection(handles);
 
     % Check if a single row was selected
     if isempty(tableSelection)
@@ -1082,7 +1048,7 @@ try
     roiData = roiData.set_lifetime(newLifetime);
     roiData = roiData.set_green(newInt);
     roiData = roiData.set_red(newRed);
-    set_roi_data(handles, roiData);
+    AppState.set_roi_data(handles, roiData);
     
     % Update table
     update_data_table(handles);
@@ -1098,8 +1064,8 @@ function menuZeroRow_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    roiData = get_roi_data(handles);
-    tableSelection = get_data_selection(handles);
+    roiData = AppState.get_roi_data(handles);
+    tableSelection = AppState.get_data_selection(handles);
 
     % Check if a single row was selected
     if isempty(tableSelection)
@@ -1129,7 +1095,7 @@ try
     roiData = roiData.set_lifetime(lifetime);
     roiData = roiData.set_green(int);
     roiData = roiData.set_red(red);
-    set_roi_data(handles, roiData);
+    AppState.set_roi_data(handles, roiData);
     
     % Update table
     update_data_table(handles);
@@ -1145,8 +1111,8 @@ function menuDeleteRow_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    roiData = get_roi_data(handles);
-    tableSelection = get_data_selection(handles);
+    roiData = AppState.get_roi_data(handles);
+    tableSelection = AppState.get_data_selection(handles);
 
     % Check if a single row was selected
     if isempty(tableSelection)
@@ -1188,7 +1154,7 @@ try
     roiData = roiData.set_green(int);
     roiData = roiData.set_red(red);
 
-    set_roi_data(handles, roiData);
+    AppState.set_roi_data(handles, roiData);
     
     % Update table
     update_data_table(handles);
@@ -1210,7 +1176,7 @@ try
     % Get current program state
     handles = guidata(hObject);
     openFile = AppState.get_open_files(handles);
-    roiData = get_roi_data(handles);
+    roiData = AppState.get_roi_data(handles);
     roiCount = roiData.roi_count();
     
     % Check if at least one plot is enabled
@@ -1405,10 +1371,10 @@ try
     % Get current program state
     handles = guidata(hObject);
     openFile = AppState.get_open_files(handles);
-    roiData = get_roi_data(handles);
+    roiData = AppState.get_roi_data(handles);
     
     % Check if a selection was made
-    selection = get_data_selection(handles);
+    selection = AppState.get_data_selection(handles);
     if isempty(selection)
         warndlg('Please select a column or cell');
         return;
@@ -1610,7 +1576,7 @@ try
     % Get current program state
     handles = guidata(hObject);
     openFile = AppState.get_open_files(handles);
-    roiData = get_roi_data(handles);
+    roiData = AppState.get_roi_data(handles);
     
     % Check if at least one plot is enabled
     isLifetimePlot = menu_is_toggled(handles.('menuShowLifetime'));
@@ -1788,7 +1754,7 @@ function menuShowLifetime_Callback(hObject, ~, ~)
 try
     % Get program state
     handles = guidata(hObject);
-    roiData = get_roi_data(handles);
+    roiData = AppState.get_roi_data(handles);
     
     % Check if there are lifetime values to plot
     if menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.lifetime())
@@ -1809,7 +1775,7 @@ function menuShowGreen_Callback(hObject, ~, ~)
 try
     % Get program state
     handles = guidata(hObject);
-    roiData = get_roi_data(handles);
+    roiData = AppState.get_roi_data(handles);
     
     % Check if there are int values to plot
     if menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.green())
@@ -1830,7 +1796,7 @@ function menuShowRed_Callback(hObject, ~, ~)
 try
     % Get program state
     handles = guidata(hObject);
-    roiData = get_roi_data(handles);
+    roiData = AppState.get_roi_data(handles);
     
     % Check if there are red values to plot
     if menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.red())
@@ -1856,7 +1822,7 @@ function btnAddSolution_Callback(hObject, ~, ~)
 try
     % Get the current program state
     handles = guidata(hObject);
-    roiData = get_roi_data(handles);
+    roiData = AppState.get_roi_data(handles);
     pointCount = max(roiData.point_counts());
     currentSolutions = get_solution_info(handles);
 
@@ -1950,7 +1916,7 @@ function solutionTable_CellEditCallback(hObject, eventdata, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    roiData = get_roi_data(handles);
+    roiData = AppState.get_roi_data(handles);
     pointCount = max(roiData.point_counts());
     solutions = get_solution_info(handles);
 
