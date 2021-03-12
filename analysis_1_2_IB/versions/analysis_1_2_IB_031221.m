@@ -83,14 +83,6 @@ varargout{1} = handles.output;
 %% App State Methods ----------------------------------------------------------------------------------------------
 % -----------------------------------------------------------------------------------------------------------------
 
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'set_open_files' Method
-%
-function set_open_files(handles, openFileObj)
-setappdata(handles.('mainFig'), 'OPEN_FILE_OBJ', openFileObj);
-
-
 %% ----------------------------------------------------------------------------------------------------------------
 % 'get_open_files' Method
 %
@@ -562,7 +554,7 @@ try
     end
     
     % Update program state
-    set_open_files(handles, openFile);
+    AppState.set_open_files(handles, openFile);
     set_roi_data(handles, roiData);
     
     % Update UI
@@ -678,7 +670,7 @@ try
                       'No');
     if strcmp(choice, 'Yes')
         % Update program state
-        set_open_files(handles, []);
+        AppState.set_open_files(handles, []);
         set_roi_data(handles, []);
         
         % Update UI

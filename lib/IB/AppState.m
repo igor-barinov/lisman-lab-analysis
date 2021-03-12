@@ -6,10 +6,10 @@ classdef AppState
         % 'logdlg' Method
         %
         % Raises dialog describing given error. That error is then logged
-        % in program's log file.
-        %
-        % If there is no log file, the given error is described in the
-        % console.
+        % in program's log file. If there is no log file, the given error 
+        % is described in the console.
+        % 
+        % "lastErr": MException containing info about the last error raised
         %
         % Assumes program log file is named according to release program
         % version
@@ -54,6 +54,20 @@ classdef AppState
             % Read ini file into map
             [settings, values] = IOUtils.read_ini_file(iniFile);
             settingsMap = containers.Map(settings, values);
+        end
+        
+        function set_open_files(handles, openFileObj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'set_open_files' Method
+        %
+        % Updates which files are open by storing new file data
+        %
+        % "handles": structure containing all program GUI data
+        % "openFileObj": ROIFile containing new file data
+        %
+        % File data is stored in 'OPEN_FILE_OBJ' field of program's appdata
+        %
+            setappdata(handles.('mainFig'), 'OPEN_FILE_OBJ', openFileObj);
         end
     end
 end
