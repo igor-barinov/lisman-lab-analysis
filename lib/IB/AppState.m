@@ -155,5 +155,7 @@ classdef AppState
         %
             selection = getappdata(handles.('mainFig'), 'DATA_SELECTION');
         end
+        
+        
     end
 end

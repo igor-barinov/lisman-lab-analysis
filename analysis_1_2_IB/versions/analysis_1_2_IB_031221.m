@@ -61,7 +61,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % Set initial program state
-update_ui_access(handles, ROIFileType.None);
+GUIUtils.update_ui_access(handles, ROIFileType.None);
 
 
 %% ----------------------------------------------------------------------------------------------------------------
@@ -82,305 +82,6 @@ varargout{1} = handles.output;
 
 %% GUI Utiltity Methods -------------------------------------------------------------------------------------------
 % -----------------------------------------------------------------------------------------------------------------
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'set_ui_access' Method
-%
-function set_ui_access(handle, enabled, childrenEnabled, ignoreParent)
-if ~ignoreParent && enabled
-    set(handle, 'Enable', 'on');
-elseif ~ignoreParent && ~enabled
-    set(handle, 'Enable', 'off');
-end
-
-hChildren = findall(handle, '-property', 'Enable');
-if childrenEnabled
-    set(hChildren, 'Enable', 'on');
-else
-    set(hChildren, 'Enable', 'off');
-end
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'ui_is_enabled' Method
-%
-function [tf] = ui_is_enabled(handle)
-try
-    enableState = get(handle, 'Enable');
-    tf = strcmp(enableState, 'on');
-catch
-    tf = false;
-end
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'toggle_menu' Method
-%
-function toggle_menu(handle)
-if menu_is_toggled(handle)
-    set(handle, 'Checked', 'off');
-else
-    set(handle, 'Checked', 'on');
-end
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'menu_is_toggled' Method
-%
-function [tf] = menu_is_toggled(handle)
-enableState = get(handle, 'Checked');
-tf = strcmp(enableState, 'on');
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'toggle_button' Method
-%
-function toggle_button(handle)
-btnState = button_is_toggled(handle);
-set(handle, 'Value', ~btnState);
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'button_is_toggled' Method
-%
-function [tf] = button_is_toggled(handle)
-tf = get(handle, 'Value');
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'update_ui_access' Method
-%
-function update_ui_access(handles, fileType)
-% Enable everything
-set_ui_access(handles.('panelInfo'), true, true, true);     % Info panel
-set_ui_access(handles.('dataTable'), true, true, false);    % Data table
-set_ui_access(handles.('menuFile'), true, true, false);     % File -> *
-set_ui_access(handles.('menuData'), true, true, false);     % Data -> *
-set_ui_access(handles.('menuRow'), true, true, false);      % Data -> Row -> *
-set_ui_access(handles.('menuToggle'), true, true, false);   % Data -> Toggle -> *
-set_ui_access(handles.('menuPlot'), true, true, false);     % Plot -> *
-set_ui_access(handles.('menuTools'), true, true, false);    % Tools -> *
-
-% Disable all plotting options
-if menu_is_toggled(handles.('menuShowLifetime'))
-    toggle_menu(handles.('menuShowLifetime'));
-end
-if menu_is_toggled(handles.('menuShowGreen'))
-    toggle_menu(handles.('menuShowGreen'));
-end
-if menu_is_toggled(handles.('menuShowRed'))
-    toggle_menu(handles.('menuShowRed'));
-end
-
-switch fileType        
-    case ROIFileType.Averaged
-        % Disable info inputs
-        set_ui_access(handles.('panelInfo'), true, false, true);
-        set_ui_access(handles.('btnToggleNormVals'), true, true, false);
-        set_ui_access(handles.('btnEnableROI'), true, true, false);
-        % And data editting
-        set_ui_access(handles.('menuFix'), false, false, false);
-        set_ui_access(handles.('menuRow'), false, false, false);
-        % And average plotting
-        set_ui_access(handles.('menuPlotAvg'), false, false, false);
-    case ROIFileType.Prepared
-        % Permanently toggle adjusted time
-        if ~time_is_adjusted(handles)
-            toggle_button(handles.('btnToggleAdjustedTime'));
-        end
-        set_ui_access(handles.('btnToggleAdjustedTime'), false, false, false);
-    case ROIFileType.None    
-        % Toggle controls off if neccessary
-        if time_is_adjusted(handles)
-            toggle_button(handles.('btnToggleAdjustedTime'));
-        end
-        if values_are_normalized(handles)
-            toggle_button(handles.('btnToggleNormVals'));
-            toggle_menu(handles.('menuToggleNormVals'));
-        end
-        
-        
-        % Disable everything 
-        set_ui_access(handles.('panelInfo'), false, false, true);   % Info panel
-        set_ui_access(handles.('dataTable'), false, false, false);  % Data table
-        set_ui_access(handles.('menuData'), false, false, false);   % Data -> *
-        set_ui_access(handles.('menuPlot'), false, false, false);   % Plot -> *
-        % Except file open
-        set_ui_access(handles.('menuFile'), true, true, false);
-        set_ui_access(handles.('menuSave'), false, false, false);
-        set_ui_access(handles.('menuClose'), false, false, false);
-        % And tools
-        set_ui_access(handles.('menuTools'), true, true, false);
-end
-
-% Change plotting options based on preferences
-[settingsMap] = AppState.get_user_preferences();
-showLifetime = settingsMap('show_lifetime');
-showGreen = settingsMap('show_green_int');
-showRed = settingsMap('show_red_int');
-
-if strcmp(showLifetime, 'true')
-    toggle_menu(handles.('menuShowLifetime'));
-end
-if strcmp(showGreen, 'true')
-    toggle_menu(handles.('menuShowGreen'));
-end
-if strcmp(showRed, 'true')
-    toggle_menu(handles.('menuShowRed'));
-end
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'update_win_title' Method
-%
-function update_win_title(handles)
-% Get program state
-openFile = AppState.get_open_files(handles);
-
-title = Analysis_1_2_Versions.release();
-if ~isempty(openFile)
-    srcFiles = openFile.source_files();
-    [~, firstFile, ext] = fileparts(srcFiles{1});
-    title = [title, ' - ', firstFile, ext];
-end
-
-set(handles.('mainFig'), 'Name', title);
-
-
-
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'time_is_adjusted' Method
-%
-function [tf] = time_is_adjusted(handles)
-tf = get(handles.('btnToggleAdjustedTime'), 'Value');
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'time_is_adjusted' Method
-%
-function [tf] = values_are_normalized(handles)
-tf = get(handles.('btnToggleNormVals'), 'Value');
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'get_enabled_rois' Method
-%
-function [tf] = get_enabled_rois(handles)
-[roiData] = AppState.get_roi_data(handles);
-roiCount = roiData.roi_count();
-
-tf = false(1, roiCount);
-for i = 1:roiCount
-    tagStr = ['menuToggleROI', num2str(i)];
-    tf(i) = menu_is_toggled(handles.(tagStr));
-end
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'update_data_table' Method
-%
-function update_data_table(handles)
-% Get new program state
-openFiles = AppState.get_open_files(handles);
-newTableData = AppState.get_roi_data(handles);
-
-% Just clear table if necessary
-if isempty(newTableData)
-    set(handles.('dataTable'), 'Data', []);
-    set(handles.('dataTable'), 'ColumnName', {});
-    return;
-end
-
-% Adjust time if necessary
-if time_is_adjusted(handles)
-    solutions = get_solution_info(handles);
-    numBasePts = ROIUtils.number_of_baseline_pts(solutions);
-    time = newTableData.adjusted_time(numBasePts);
-else
-    time = newTableData.time();
-end
-
-% Get values and normalize if necessary
-if values_are_normalized(handles)
-    solutions = get_solution_info(handles);
-    numBasePts = ROIUtils.number_of_baseline_pts(solutions);
-    lifetime = newTableData.normalized_lifetime(numBasePts);
-    int = newTableData.normalized_green(numBasePts);
-    red = newTableData.normalized_red(numBasePts);
-else
-    lifetime = newTableData.lifetime();
-    int = newTableData.green();
-    red = newTableData.red();
-end
-
-% Enable/Disable ROIs if necessary
-enabledROIs = get_enabled_rois(handles);
-if openFiles.type() == ROIFileType.Averaged
-    lifetime = ROIUtils.enable_averages(lifetime, enabledROIs);
-    int = ROIUtils.enable_averages(int, enabledROIs);
-    red = ROIUtils.enable_averages(red, enabledROIs);
-else
-    lifetime = ROIUtils.enable(lifetime, enabledROIs);
-    int = ROIUtils.enable(int, enabledROIs);
-    red = ROIUtils.enable(red, enabledROIs);
-end
-
-
-set(handles.('dataTable'), 'Data', [time, lifetime, int, red]);
-set(handles.('dataTable'), 'ColumnName', newTableData.roi_labels());
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'update_dna_type' Method
-%
-function update_dna_type(handles, newDNAType)
-set(handles.('inputDNAType'), 'String', newDNAType);
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'get_dna_type' Method
-%
-function [dnaType] = get_dna_type(handles)
-dnaType = get(handles.('inputDNAType'), 'String');
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'update_solution_info' Method
-%
-function update_solution_info(handles, newSolutionInfo)
-set(handles.('solutionTable'), 'Data', newSolutionInfo);
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'get_solution_info' Method
-%
-function [solutions] = get_solution_info(handles)
-solutions = get(handles.('solutionTable'), 'Data');
-
-
-%% ----------------------------------------------------------------------------------------------------------------
-% 'update_toggle_menu' Method
-%
-function [newHandles] = update_toggle_menu(handles, newROICount)
-newHandles = handles;
-MENU_DATA_ID = double('toggleROI');
-
-currentMenuItems = findall(handles.('menuToggleROI'), 'UserData', MENU_DATA_ID);
-delete(currentMenuItems);
-
-for i = 1:newROICount
-    tagStr = ['menuToggleROI', num2str(i)];
-    hMenu = uimenu(handles.('menuToggleROI'), ...
-                   'Text', ['ROI #', num2str(i)], ...
-                   'Checked', 'on', ...
-                   'Tag', tagStr, ...
-                   'UserData', MENU_DATA_ID, ...
-                   'Callback', {@toggleROI_Callback, handles});
-    newHandles.(tagStr) = hMenu;
-end
-guidata(handles.('mainFig'), newHandles);
-
 
     
 %% GUI Init Methods -----------------------------------------------------------------------------------------------
@@ -517,28 +218,28 @@ try
     AppState.set_roi_data(handles, roiData);
     
     % Update UI
-    update_win_title(handles);
-    update_ui_access(handles, openFile.type());
-    handles = update_toggle_menu(handles, openFile.roi_count());
-    update_dna_type(handles, dnaType);
-    update_solution_info(handles, solutionInfo);
+    GUIUtils.update_win_title(handles);
+    GUIUtils.update_ui_access(handles, openFile.type());
+    handles = GUIUtils.update_toggle_menu(handles, openFile.roi_count());
+    GUIUtils.update_dna_type(handles, dnaType);
+    GUIUtils.update_solution_info(handles, solutionInfo);
     
     % Disable info-dependent controls if necessary
     if ~openFile.has_exp_info()
-        if time_is_adjusted(handles)
-            toggle_button(handles.('btnToggleAdjustedTime'));
+        if GUIUtils.time_is_adjusted(handles)
+            GUIUtils.toggle_button(handles.('btnToggleAdjustedTime'));
         end
-        if values_are_normalized(handles)
-            toggle_button(handles.('btnToggleNormVals'));
-            toggle_menu(handles.('menuToggleNormVals'));
+        if GUIUtils.values_are_normalized(handles)
+            GUIUtils.toggle_button(handles.('btnToggleNormVals'));
+            GUIUtils.toggle_menu(handles.('menuToggleNormVals'));
         end
-        if menu_is_toggled(handles.('menuShowAnnots'))
-            toggle_menu(handles.('menuShowAnnots'));
+        if GUIUtils.menu_is_toggled(handles.('menuShowAnnots'))
+            GUIUtils.toggle_menu(handles.('menuShowAnnots'));
         end
     end
     
     % Update data table
-    update_data_table(handles);         % <-- Updated last because of controls modifying disp
+    GUIUtils.update_data_table(handles);         % <-- Updated last because of controls modifying disp
     
 catch err
     AppState.logdlg(err);
@@ -554,9 +255,9 @@ try
     handles = guidata(hObject);
     openFile = AppState.get_open_files(handles);
     saveData = AppState.get_roi_data(handles);
-    dnaType = get_dna_type(handles);
-    solutions = get_solution_info(handles);
-    enabledROIs = get_enabled_rois(handles);
+    dnaType = GUIUtils.get_dna_type(handles);
+    solutions = GUIUtils.get_solution_info(handles);
+    enabledROIs = GUIUtils.get_enabled_rois(handles);
 
     % Check if we have all data
     if isempty(dnaType)
@@ -633,11 +334,11 @@ try
         AppState.set_roi_data(handles, []);
         
         % Update UI
-        update_data_table(handles);
-        update_dna_type(handles, []);
-        update_solution_info(handles, {});
-        update_ui_access(handles, ROIFileType.None);
-        update_win_title(handles);
+        GUIUtils.update_data_table(handles);
+        GUIUtils.update_dna_type(handles, []);
+        GUIUtils.update_solution_info(handles, {});
+        GUIUtils.update_ui_access(handles, ROIFileType.None);
+        GUIUtils.update_win_title(handles);
     end
 catch err
     AppState.logdlg(err);
@@ -677,7 +378,7 @@ try
     if ~isnan(eventdata.NewData)
         roiData(eventdata.Indices) = eventdata.NewData;
     end
-    update_data_table(roiData);
+    GUIUtils.update_data_table(roiData);
 catch err
     AppState.logdlg(err);
 end
@@ -691,7 +392,7 @@ try
     % Get program state
     handles = guidata(hObject);
     roiData = AppState.get_roi_data(handles);
-    enabledROIs = get_enabled_rois(handles);
+    enabledROIs = GUIUtils.get_enabled_rois(handles);
     
     % Get ROI data values
     roiCount = roiData.roi_count();
@@ -744,7 +445,7 @@ try
                 if ~roiWasFixed(i) && enabledROIs(i)
                     tagStr = ['menuToggleROI', num2str(i)];
                     hMenu = handles.(tagStr);
-                    toggle_menu(hMenu);
+                    GUIUtils.toggle_menu(hMenu);
                 end
             end
         end
@@ -753,7 +454,7 @@ try
     
     % Update program state
     AppState.set_roi_data(handles, roiData);
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -766,17 +467,17 @@ function btnToggleAdjustedTime_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    solutions = get_solution_info(handles);
+    solutions = GUIUtils.get_solution_info(handles);
 
     % Check if we can get the # of base pts
     if ~ROIUtils.has_number_of_baseline_pts(solutions)
         warndlg('Please enter at least 2 solutions with different timings to set the number of baseline points');
-        toggle_button(hObject);
+        GUIUtils.toggle_button(hObject);
         return;
     end
 
     % Update the data table
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -789,20 +490,20 @@ function btnToggleNormVals_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    solutions = get_solution_info(handles);
+    solutions = GUIUtils.get_solution_info(handles);
 
     % Check if we can get the # of base pts
     if ~ROIUtils.has_number_of_baseline_pts(solutions)
         warndlg('Please enter at least 2 solutions with different timings to set the number of baseline points');
-        toggle_button(hObject);
+        GUIUtils.toggle_button(hObject);
         return;
     end
 
     % Update the corresponding menu item
-    toggle_menu(handles.('menuToggleNormVals'));
+    GUIUtils.toggle_menu(handles.('menuToggleNormVals'));
 
     % Update the data table
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -815,20 +516,20 @@ function menuToggleNormVals_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    solutions = get_solution_info(handles);
+    solutions = GUIUtils.get_solution_info(handles);
 
     % Check if we can get the # of base pts
     if ~ROIUtils.has_number_of_baseline_pts(solutions)
         warndlg('Please enter at least 2 solutions with different timings to set the number of baseline points');
-        toggle_button(hObject);
+        GUIUtils.toggle_button(hObject);
         return;
     end
 
     % Update the corresponding button item
-    toggle_button(handles.('btnToggleNormVals'));
+    GUIUtils.toggle_button(handles.('btnToggleNormVals'));
 
     % Update the data table
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -841,8 +542,8 @@ function toggleROI_Callback(hObject, ~, ~)
 try
     handles = guidata(hObject);
     
-    toggle_menu(hObject);
-    update_data_table(handles);
+    GUIUtils.toggle_menu(hObject);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -862,13 +563,13 @@ try
         tagStr = ['menuToggleROI', num2str(i)];
         hMenu = handles.(tagStr);
         
-        if ~menu_is_toggled(hMenu)
-            toggle_menu(hMenu);
+        if ~GUIUtils.menu_is_toggled(hMenu)
+            GUIUtils.toggle_menu(hMenu);
         end
     end
     
     % Update Table
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
     
 catch err
     AppState.logdlg(err);
@@ -938,13 +639,13 @@ try
     for i = 1:roiCount
         menuTag = ['menuToggleROI', num2str(i)];
         hMenu = handles.(menuTag);
-        needsToggle = (enabledROIs(i) && ~menu_is_toggled(hMenu)) || (~enabledROIs(i) && menu_is_toggled(hMenu));
+        needsToggle = (enabledROIs(i) && ~GUIUtils.menu_is_toggled(hMenu)) || (~enabledROIs(i) && GUIUtils.menu_is_toggled(hMenu));
 
         if needsToggle
-            toggle_menu(hMenu);
+            GUIUtils.toggle_menu(hMenu);
         end
     end
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -1004,7 +705,7 @@ try
     AppState.set_roi_data(handles, roiData);
     
     % Update table
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -1051,7 +752,7 @@ try
     AppState.set_roi_data(handles, roiData);
     
     % Update table
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -1098,7 +799,7 @@ try
     AppState.set_roi_data(handles, roiData);
     
     % Update table
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -1157,7 +858,7 @@ try
     AppState.set_roi_data(handles, roiData);
     
     % Update table
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -1180,17 +881,17 @@ try
     roiCount = roiData.roi_count();
     
     % Check if at least one plot is enabled
-    isLifetimePlot = menu_is_toggled(handles.('menuShowLifetime'));
-    isIntPlot = menu_is_toggled(handles.('menuShowGreen'));
-    isRedPlot = menu_is_toggled(handles.('menuShowRed'));
+    isLifetimePlot = GUIUtils.menu_is_toggled(handles.('menuShowLifetime'));
+    isIntPlot = GUIUtils.menu_is_toggled(handles.('menuShowGreen'));
+    isRedPlot = GUIUtils.menu_is_toggled(handles.('menuShowRed'));
     if ~(isLifetimePlot || isIntPlot || isRedPlot)
         warndlg('Please enable at least one of the plotting options');
         return;
     end
     
     % Get appropriate ROIs
-    if values_are_normalized(handles)
-        solutions = get_solution_info(handles);
+    if GUIUtils.values_are_normalized(handles)
+        solutions = GUIUtils.get_solution_info(handles);
         nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
         
         lifetime = roiData.normalized_lifetime(nBaselinePts);
@@ -1205,23 +906,23 @@ try
     % Check if necessary data exists
     if isLifetimePlot && ~ROIUtils.data_exists(lifetime)
         warndlg('There is no lifetime data to plot');
-        toggle_menu(handles.('menuShowLifetime'));
+        GUIUtils.toggle_menu(handles.('menuShowLifetime'));
         return;
     end
     if isIntPlot && ~ROIUtils.data_exists(int)
         warndlg('There is no green intensity data to plot');
-        toggle_menu(handles.('menuShowGreen'));
+        GUIUtils.toggle_menu(handles.('menuShowGreen'));
         return;
     end
     if isRedPlot && ~ROIUtils.data_exists(red)
         warndlg('There is no red intensity data to plot');
-        toggle_menu(handles.('menuShowRed'));
+        GUIUtils.toggle_menu(handles.('menuShowRed'));
         return;
     end
     
     % Get appropriate time values
-    if time_is_adjusted(handles)
-        solutions = get_solution_info(handles);
+    if GUIUtils.time_is_adjusted(handles)
+        solutions = GUIUtils.get_solution_info(handles);
         nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
         time = roiData.adjusted_time(nBaselinePts); 
     else
@@ -1229,7 +930,7 @@ try
     end
     
     % Get which ROIs are enabled
-    enabledROIs = get_enabled_rois(handles);
+    enabledROIs = GUIUtils.get_enabled_rois(handles);
     enabledIndices = find(enabledROIs);
     
     % Check if at least one ROI is enabled
@@ -1242,7 +943,7 @@ try
     switch openFile.type()
         case ROIFileType.Averaged
             % Get the dna type and roi count of each source file
-            allDNA = ROIUtils.split_dna_type(get_dna_type(handles));
+            allDNA = ROIUtils.split_dna_type(GUIUtils.get_dna_type(handles));
             roiCounts = openFile.file_roi_counts();
             
             legendEntries = ROIUtils.averages_legend(allDNA, roiCounts);
@@ -1286,8 +987,8 @@ try
         legend('boxoff');
         
         % Plot annotations if necessary
-        if menu_is_toggled(handles.('menuShowAnnots'))
-            allSolutions = get_solution_info(handles);
+        if GUIUtils.menu_is_toggled(handles.('menuShowAnnots'))
+            allSolutions = GUIUtils.get_solution_info(handles);
             solutionInfo = ROIUtils.split_solution_info(allSolutions);
             ROIUtils.plot_annotations(gca, time, solutionInfo);
         end
@@ -1318,8 +1019,8 @@ try
         legend('boxoff');
         
         % Plot annotations if necessary
-        if menu_is_toggled(handles.('menuShowAnnots'))
-            allSolutions = get_solution_info(handles);
+        if GUIUtils.menu_is_toggled(handles.('menuShowAnnots'))
+            allSolutions = GUIUtils.get_solution_info(handles);
             solutionInfo = ROIUtils.split_solution_info(allSolutions);
             ROIUtils.plot_annotations(gca, time, solutionInfo);
         end
@@ -1350,8 +1051,8 @@ try
         legend('boxoff');
         
         % Plot annotations if necessary
-        if menu_is_toggled(handles.('menuShowAnnots'))
-            allSolutions = get_solution_info(handles);
+        if GUIUtils.menu_is_toggled(handles.('menuShowAnnots'))
+            allSolutions = GUIUtils.get_solution_info(handles);
             solutionInfo = ROIUtils.split_solution_info(allSolutions);
             ROIUtils.plot_annotations(gca, time, solutionInfo);
         end
@@ -1381,16 +1082,16 @@ try
     end
     
     % Check if at least one plot is enabled
-    isLifetimePlot = menu_is_toggled(handles.('menuShowLifetime'));
-    isIntPlot = menu_is_toggled(handles.('menuShowGreen'));
-    isRedPlot = menu_is_toggled(handles.('menuShowRed'));
+    isLifetimePlot = GUIUtils.menu_is_toggled(handles.('menuShowLifetime'));
+    isIntPlot = GUIUtils.menu_is_toggled(handles.('menuShowGreen'));
+    isRedPlot = GUIUtils.menu_is_toggled(handles.('menuShowRed'));
     if ~(isLifetimePlot || isIntPlot || isRedPlot)
         warndlg('Please enable at least one of the plotting options');
         return;
     end
     
     % Get which ROIs are selected and enabled
-    enabledROIs = get_enabled_rois(handles);
+    enabledROIs = GUIUtils.get_enabled_rois(handles);
     selectedROIs = roiData.select_rois(selection) & enabledROIs;
     
     % Check that a valid selection was made
@@ -1400,8 +1101,8 @@ try
     end
     
     % Get appropriate selected ROI values
-    if values_are_normalized(handles)
-        solutions = get_solution_info(handles);
+    if GUIUtils.values_are_normalized(handles)
+        solutions = GUIUtils.get_solution_info(handles);
         nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
         
         lifetime = roiData.normalized_lifetime(nBaselinePts);
@@ -1416,23 +1117,23 @@ try
     % Check if necessary data exists
     if isLifetimePlot && ~ROIUtils.data_exists(lifetime)
         warndlg('There is no lifetime data to plot');
-        toggle_menu(handles.('menuShowLifetime'));
+        GUIUtils.toggle_menu(handles.('menuShowLifetime'));
         return;
     end
     if isIntPlot && ~ROIUtils.data_exists(int)
         warndlg('There is no green intensity data to plot');
-        toggle_menu(handles.('menuShowGreen'));
+        GUIUtils.toggle_menu(handles.('menuShowGreen'));
         return;
     end
     if isRedPlot && ~ROIUtils.data_exists(red)
         warndlg('There is no red intensity data to plot');
-        toggle_menu(handles.('menuShowRed'));
+        GUIUtils.toggle_menu(handles.('menuShowRed'));
         return;
     end
     
     % Get appropriate time values
-    if time_is_adjusted(handles)
-        solutions = get_solution_info(handles);
+    if GUIUtils.time_is_adjusted(handles)
+        solutions = GUIUtils.get_solution_info(handles);
         nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
         time = roiData.adjusted_time(nBaselinePts); 
     else
@@ -1444,7 +1145,7 @@ try
     switch openFile.type()
         case ROIFileType.Averaged
             % Get the dna type and roi count of each source file
-            allDNA = ROIUtils.split_dna_type(get_dna_type(handles));
+            allDNA = ROIUtils.split_dna_type(GUIUtils.get_dna_type(handles));
             roiCounts = openFile.file_roi_counts();
             
             legendEntries = ROIUtils.averages_legend(allDNA, roiCounts);
@@ -1489,8 +1190,8 @@ try
         legend('boxoff');
         
         % Plot annotations if necessary
-        if menu_is_toggled(handles.('menuShowAnnots'))
-            allSolutions = get_solution_info(handles);
+        if GUIUtils.menu_is_toggled(handles.('menuShowAnnots'))
+            allSolutions = GUIUtils.get_solution_info(handles);
             solutionInfo = ROIUtils.split_solution_info(allSolutions);
             ROIUtils.plot_annotations(gca, time, solutionInfo);
         end
@@ -1522,8 +1223,8 @@ try
         legend('boxoff');
         
         % Plot annotations if necessary
-        if menu_is_toggled(handles.('menuShowAnnots'))
-            allSolutions = get_solution_info(handles);
+        if GUIUtils.menu_is_toggled(handles.('menuShowAnnots'))
+            allSolutions = GUIUtils.get_solution_info(handles);
             solutionInfo = ROIUtils.split_solution_info(allSolutions);
             ROIUtils.plot_annotations(gca, time, solutionInfo);
         end
@@ -1555,8 +1256,8 @@ try
         legend('boxoff');
         
         % Plot annotations if necessary
-        if menu_is_toggled(handles.('menuShowAnnots'))
-            allSolutions = get_solution_info(handles);
+        if GUIUtils.menu_is_toggled(handles.('menuShowAnnots'))
+            allSolutions = GUIUtils.get_solution_info(handles);
             solutionInfo = ROIUtils.split_solution_info(allSolutions);
             ROIUtils.plot_annotations(gca, time, solutionInfo);
         end
@@ -1579,17 +1280,17 @@ try
     roiData = AppState.get_roi_data(handles);
     
     % Check if at least one plot is enabled
-    isLifetimePlot = menu_is_toggled(handles.('menuShowLifetime'));
-    isIntPlot = menu_is_toggled(handles.('menuShowGreen'));
-    isRedPlot = menu_is_toggled(handles.('menuShowRed'));
+    isLifetimePlot = GUIUtils.menu_is_toggled(handles.('menuShowLifetime'));
+    isIntPlot = GUIUtils.menu_is_toggled(handles.('menuShowGreen'));
+    isRedPlot = GUIUtils.menu_is_toggled(handles.('menuShowRed'));
     if ~(isLifetimePlot || isIntPlot || isRedPlot)
         warndlg('Please enable at least one of the plotting options');
         return;
     end
     
     % Get appropriate ROIs
-    if values_are_normalized(handles)
-        solutions = get_solution_info(handles);
+    if GUIUtils.values_are_normalized(handles)
+        solutions = GUIUtils.get_solution_info(handles);
         nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
         
         lifetime = roiData.normalized_lifetime(nBaselinePts);
@@ -1604,23 +1305,23 @@ try
     % Check if necessary data exists
     if isLifetimePlot && ~ROIUtils.data_exists(lifetime)
         warndlg('There is no lifetime data to plot');
-        toggle_menu(handles.('menuShowLifetime'));
+        GUIUtils.toggle_menu(handles.('menuShowLifetime'));
         return;
     end
     if isIntPlot && ~ROIUtils.data_exists(int)
         warndlg('There is no green intensity data to plot');
-        toggle_menu(handles.('menuShowGreen'));
+        GUIUtils.toggle_menu(handles.('menuShowGreen'));
         return;
     end
     if isRedPlot && ~ROIUtils.data_exists(red)
         warndlg('There is no red intensity data to plot');
-        toggle_menu(handles.('menuShowRed'));
+        GUIUtils.toggle_menu(handles.('menuShowRed'));
         return;
     end
     
     % Get appropriate time values
-    if time_is_adjusted(handles)
-        solutions = get_solution_info(handles);
+    if GUIUtils.time_is_adjusted(handles)
+        solutions = GUIUtils.get_solution_info(handles);
         nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
         time = roiData.adjusted_time(nBaselinePts); 
     else
@@ -1628,14 +1329,14 @@ try
     end
     
     % Check if at least one ROI is enabled
-    enabledROIs = get_enabled_rois(handles);    
+    enabledROIs = GUIUtils.get_enabled_rois(handles);    
     if ~any(enabledROIs)
         warndlg('Please enable at least one ROI');
         return;
     end
     
     % Generate legend
-    allDNA = { ROIUtils.trim_dna_type(get_dna_type(handles)) }; % ROIUtils.split_dna_type(get_dna_type(handles));
+    allDNA = { ROIUtils.trim_dna_type(GUIUtils.get_dna_type(handles)) }; % ROIUtils.split_dna_type(GUIUtils.get_dna_type(handles));
     roiCounts = numel(find(enabledROIs));
     legendEntries = ROIUtils.averages_legend(allDNA, roiCounts);
     
@@ -1663,8 +1364,8 @@ try
         legend('boxoff');
         
         % Plot annotations if necessary
-        if menu_is_toggled(handles.('menuShowAnnots'))
-            allSolutions = get_solution_info(handles);
+        if GUIUtils.menu_is_toggled(handles.('menuShowAnnots'))
+            allSolutions = GUIUtils.get_solution_info(handles);
             solutionInfo = ROIUtils.split_solution_info(allSolutions);
             ROIUtils.plot_annotations(gca, time, solutionInfo);
         end
@@ -1686,8 +1387,8 @@ try
         legend('boxoff');
         
         % Plot annotations if necessary
-        if menu_is_toggled(handles.('menuShowAnnots'))
-            allSolutions = get_solution_info(handles);
+        if GUIUtils.menu_is_toggled(handles.('menuShowAnnots'))
+            allSolutions = GUIUtils.get_solution_info(handles);
             solutionInfo = ROIUtils.split_solution_info(allSolutions);
             ROIUtils.plot_annotations(gca, time, solutionInfo);
         end
@@ -1709,8 +1410,8 @@ try
         legend('boxoff');
         
         % Plot annotations if necessary
-        if menu_is_toggled(handles.('menuShowAnnots'))
-            allSolutions = get_solution_info(handles);
+        if GUIUtils.menu_is_toggled(handles.('menuShowAnnots'))
+            allSolutions = GUIUtils.get_solution_info(handles);
             solutionInfo = ROIUtils.split_solution_info(allSolutions);
             ROIUtils.plot_annotations(gca, time, solutionInfo);
         end
@@ -1729,8 +1430,8 @@ function menuShowAnnots_Callback(hObject, ~, ~)
 try
     % Get current program state
     handles = guidata(hObject);
-    dnaType = get_dna_type(handles);
-    solutions = get_solution_info(handles);
+    dnaType = GUIUtils.get_dna_type(handles);
+    solutions = GUIUtils.get_solution_info(handles);
     
     % Check if we have enough info for annotations
     if ~ROIUtils.has_number_of_baseline_pts(solutions)
@@ -1740,7 +1441,7 @@ try
         warndlg('Please enter the DNA type before enabling annotations');
         return;
     else
-        toggle_menu(hObject);
+        GUIUtils.toggle_menu(hObject);
     end
 catch err
     AppState.logdlg(err);
@@ -1757,8 +1458,8 @@ try
     roiData = AppState.get_roi_data(handles);
     
     % Check if there are lifetime values to plot
-    if menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.lifetime())
-        toggle_menu(hObject);
+    if GUIUtils.menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.lifetime())
+        GUIUtils.toggle_menu(hObject);
     else
         warndlg('This file has no lifetime intensity data to plot');
         return;
@@ -1778,8 +1479,8 @@ try
     roiData = AppState.get_roi_data(handles);
     
     % Check if there are int values to plot
-    if menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.green())
-        toggle_menu(hObject);
+    if GUIUtils.menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.green())
+        GUIUtils.toggle_menu(hObject);
     else
         warndlg('This file has no green intensity data to plot');
         return;
@@ -1799,8 +1500,8 @@ try
     roiData = AppState.get_roi_data(handles);
     
     % Check if there are red values to plot
-    if menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.red())
-        toggle_menu(hObject);
+    if GUIUtils.menu_is_toggled(hObject) || ROIUtils.data_exists(roiData.red())
+        GUIUtils.toggle_menu(hObject);
     else
         warndlg('This file has no red intensity data to plot');
         return;
@@ -1824,7 +1525,7 @@ try
     handles = guidata(hObject);
     roiData = AppState.get_roi_data(handles);
     pointCount = max(roiData.point_counts());
-    currentSolutions = get_solution_info(handles);
+    currentSolutions = GUIUtils.get_solution_info(handles);
 
     % Get solution info from user
     addSolPrompt = {'Enter solution name:', 'Enter when solution starts (# of points):'};
@@ -1860,10 +1561,10 @@ try
     newSolutions = sortrows(newSolutions, 2);
 
     % Update the program state
-    update_solution_info(handles, newSolutions);
+    GUIUtils.update_solution_info(handles, newSolutions);
     
     % Update UI
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -1877,7 +1578,7 @@ try
     handles = guidata(hObject);
     
     % Get current program state
-    solutions = get_solution_info(handles);
+    solutions = GUIUtils.get_solution_info(handles);
     
     % Check if there is anything to remove
     if isempty(solutions)
@@ -1900,10 +1601,10 @@ try
     solutions(optionIdx, :) = [];
 
     % Update the program state
-    update_solution_info(handles, solutions);
+    GUIUtils.update_solution_info(handles, solutions);
     
     % Update UI
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -1918,7 +1619,7 @@ try
     handles = guidata(hObject);
     roiData = AppState.get_roi_data(handles);
     pointCount = max(roiData.point_counts());
-    solutions = get_solution_info(handles);
+    solutions = GUIUtils.get_solution_info(handles);
 
     % Determine which data is being changed
     row = eventdata.Indices(1);
@@ -1961,22 +1662,22 @@ try
     end
 
     % Update the program state
-    update_solution_info(handles, solutions);
+    GUIUtils.update_solution_info(handles, solutions);
 
     % Check if # of baseline pts is available
     if ~ROIUtils.has_number_of_baseline_pts(solutions)
         % Toggle off adj. time and norm. values if necessary
-        if time_is_adjusted(handles)
-            toggle_button(handles.('btnToggleAdjustedTime'));
+        if GUIUtils.time_is_adjusted(handles)
+            GUIUtils.toggle_button(handles.('btnToggleAdjustedTime'));
         end
-        if values_are_normalized(handles)
-            toggle_button(handles.('btnToggleNormVals'));
-            toggle_menu(handles.('menuToggleNormVals'));
+        if GUIUtils.values_are_normalized(handles)
+            GUIUtils.toggle_button(handles.('btnToggleNormVals'));
+            GUIUtils.toggle_menu(handles.('menuToggleNormVals'));
         end
     end
 
     % Update table
-    update_data_table(handles);
+    GUIUtils.update_data_table(handles);
 catch err
     AppState.logdlg(err);
 end
@@ -2056,10 +1757,10 @@ try
     
     % Update program state
     if ~isempty(newDNAType)
-        update_dna_type(handles, newDNAType);
+        GUIUtils.update_dna_type(handles, newDNAType);
     end
     if ~isempty(newSolutions)
-        update_solution_info(handles, newSolutions);
+        GUIUtils.update_solution_info(handles, newSolutions);
     end
 catch err
     AppState.logdlg(err);
