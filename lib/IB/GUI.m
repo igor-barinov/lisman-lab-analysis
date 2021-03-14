@@ -54,7 +54,7 @@ classdef GUI
         %
         % (IN) "handle": handle to a toggle-able menu
         %
-            if GUIUtils.menu_is_toggled(handle)
+            if GUI.menu_is_toggled(handle)
                 set(handle, 'Checked', 'off');
             else
                 set(handle, 'Checked', 'on');
@@ -83,7 +83,7 @@ classdef GUI
         %
         % (IN) "handle": handle to a toggle button
         %
-            btnState = GUIUtils.button_is_toggled(handle);
+            btnState = GUI.button_is_toggled(handle);
             set(handle, 'Value', ~btnState);
         end
         
@@ -111,65 +111,65 @@ classdef GUI
         % (IN) "fileType": ROIFileType describing the type of file that is opened
         %
             % Enable everything
-            GUIUtils.set_ui_access(handles.('panelInfo'), true, true, true);     % Info panel
-            GUIUtils.set_ui_access(handles.('dataTable'), true, true, false);    % Data table
-            GUIUtils.set_ui_access(handles.('menuFile'), true, true, false);     % File -> *
-            GUIUtils.set_ui_access(handles.('menuData'), true, true, false);     % Data -> *
-            GUIUtils.set_ui_access(handles.('menuRow'), true, true, false);      % Data -> Row -> *
-            GUIUtils.set_ui_access(handles.('menuToggle'), true, true, false);   % Data -> Toggle -> *
-            GUIUtils.set_ui_access(handles.('menuPlot'), true, true, false);     % Plot -> *
-            GUIUtils.set_ui_access(handles.('menuTools'), true, true, false);    % Tools -> *
+            GUI.set_ui_access(handles.('panelInfo'), true, true, true);     % Info panel
+            GUI.set_ui_access(handles.('dataTable'), true, true, false);    % Data table
+            GUI.set_ui_access(handles.('menuFile'), true, true, false);     % File -> *
+            GUI.set_ui_access(handles.('menuData'), true, true, false);     % Data -> *
+            GUI.set_ui_access(handles.('menuRow'), true, true, false);      % Data -> Row -> *
+            GUI.set_ui_access(handles.('menuToggle'), true, true, false);   % Data -> Toggle -> *
+            GUI.set_ui_access(handles.('menuPlot'), true, true, false);     % Plot -> *
+            GUI.set_ui_access(handles.('menuTools'), true, true, false);    % Tools -> *
 
             % Disable all plotting options
-            if GUIUtils.menu_is_toggled(handles.('menuShowLifetime'))
-                GUIUtils.toggle_menu(handles.('menuShowLifetime'));
+            if GUI.menu_is_toggled(handles.('menuShowLifetime'))
+                GUI.toggle_menu(handles.('menuShowLifetime'));
             end
-            if GUIUtils.menu_is_toggled(handles.('menuShowGreen'))
-                GUIUtils.toggle_menu(handles.('menuShowGreen'));
+            if GUI.menu_is_toggled(handles.('menuShowGreen'))
+                GUI.toggle_menu(handles.('menuShowGreen'));
             end
-            if GUIUtils.menu_is_toggled(handles.('menuShowRed'))
-                GUIUtils.toggle_menu(handles.('menuShowRed'));
+            if GUI.menu_is_toggled(handles.('menuShowRed'))
+                GUI.toggle_menu(handles.('menuShowRed'));
             end
 
             switch fileType        
                 case ROIFileType.Averaged
                     % Disable info inputs
-                    GUIUtils.set_ui_access(handles.('panelInfo'), true, false, true);
-                    GUIUtils.set_ui_access(handles.('btnToggleNormVals'), true, true, false);
-                    GUIUtils.set_ui_access(handles.('btnEnableROI'), true, true, false);
+                    GUI.set_ui_access(handles.('panelInfo'), true, false, true);
+                    GUI.set_ui_access(handles.('btnToggleNormVals'), true, true, false);
+                    GUI.set_ui_access(handles.('btnEnableROI'), true, true, false);
                     % And data editting
-                    GUIUtils.set_ui_access(handles.('menuFix'), false, false, false);
-                    GUIUtils.set_ui_access(handles.('menuRow'), false, false, false);
+                    GUI.set_ui_access(handles.('menuFix'), false, false, false);
+                    GUI.set_ui_access(handles.('menuRow'), false, false, false);
                     % And average plotting
-                    GUIUtils.set_ui_access(handles.('menuPlotAvg'), false, false, false);
+                    GUI.set_ui_access(handles.('menuPlotAvg'), false, false, false);
                 case ROIFileType.Prepared
                     % Permanently toggle adjusted time
-                    if ~GUIUtils.time_is_adjusted(handles)
-                        GUIUtils.toggle_button(handles.('btnToggleAdjustedTime'));
+                    if ~GUI.time_is_adjusted(handles)
+                        GUI.toggle_button(handles.('btnToggleAdjustedTime'));
                     end
-                    GUIUtils.set_ui_access(handles.('btnToggleAdjustedTime'), false, false, false);
+                    GUI.set_ui_access(handles.('btnToggleAdjustedTime'), false, false, false);
                 case ROIFileType.None    
                     % Toggle controls off if neccessary
-                    if GUIUtils.time_is_adjusted(handles)
-                        GUIUtils.toggle_button(handles.('btnToggleAdjustedTime'));
+                    if GUI.time_is_adjusted(handles)
+                        GUI.toggle_button(handles.('btnToggleAdjustedTime'));
                     end
-                    if GUIUtils.values_are_normalized(handles)
-                        GUIUtils.toggle_button(handles.('btnToggleNormVals'));
-                        GUIUtils.toggle_menu(handles.('menuToggleNormVals'));
+                    if GUI.values_are_normalized(handles)
+                        GUI.toggle_button(handles.('btnToggleNormVals'));
+                        GUI.toggle_menu(handles.('menuToggleNormVals'));
                     end
 
 
                     % Disable everything 
-                    GUIUtils.set_ui_access(handles.('panelInfo'), false, false, true);   % Info panel
-                    GUIUtils.set_ui_access(handles.('dataTable'), false, false, false);  % Data table
-                    GUIUtils.set_ui_access(handles.('menuData'), false, false, false);   % Data -> *
-                    GUIUtils.set_ui_access(handles.('menuPlot'), false, false, false);   % Plot -> *
+                    GUI.set_ui_access(handles.('panelInfo'), false, false, true);   % Info panel
+                    GUI.set_ui_access(handles.('dataTable'), false, false, false);  % Data table
+                    GUI.set_ui_access(handles.('menuData'), false, false, false);   % Data -> *
+                    GUI.set_ui_access(handles.('menuPlot'), false, false, false);   % Plot -> *
                     % Except file open
-                    GUIUtils.set_ui_access(handles.('menuFile'), true, true, false);
-                    GUIUtils.set_ui_access(handles.('menuSave'), false, false, false);
-                    GUIUtils.set_ui_access(handles.('menuClose'), false, false, false);
+                    GUI.set_ui_access(handles.('menuFile'), true, true, false);
+                    GUI.set_ui_access(handles.('menuSave'), false, false, false);
+                    GUI.set_ui_access(handles.('menuClose'), false, false, false);
                     % And tools
-                    GUIUtils.set_ui_access(handles.('menuTools'), true, true, false);
+                    GUI.set_ui_access(handles.('menuTools'), true, true, false);
             end
 
             % Change plotting options based on preferences
@@ -179,13 +179,13 @@ classdef GUI
             showRed = settingsMap('show_red_int');
 
             if strcmp(showLifetime, 'true')
-                GUIUtils.toggle_menu(handles.('menuShowLifetime'));
+                GUI.toggle_menu(handles.('menuShowLifetime'));
             end
             if strcmp(showGreen, 'true')
-                GUIUtils.toggle_menu(handles.('menuShowGreen'));
+                GUI.toggle_menu(handles.('menuShowGreen'));
             end
             if strcmp(showRed, 'true')
-                GUIUtils.toggle_menu(handles.('menuShowRed'));
+                GUI.toggle_menu(handles.('menuShowRed'));
             end
         end
         
@@ -259,7 +259,7 @@ classdef GUI
             tf = false(1, roiCount);
             for i = 1:roiCount
                 tagStr = ['menuToggleROI', num2str(i)];
-                tf(i) = GUIUtils.menu_is_toggled(handles.(tagStr));
+                tf(i) = GUI.menu_is_toggled(handles.(tagStr));
             end
         end
         
@@ -284,8 +284,8 @@ classdef GUI
             end
 
             % Adjust time if necessary
-            if GUIUtils.time_is_adjusted(handles)
-                solutions = GUIUtils.get_solution_info(handles);
+            if GUI.time_is_adjusted(handles)
+                solutions = GUI.get_solution_info(handles);
                 numBasePts = ROIUtils.number_of_baseline_pts(solutions);
                 time = newTableData.adjusted_time(numBasePts);
             else
@@ -293,8 +293,8 @@ classdef GUI
             end
 
             % Get values and normalize if necessary
-            if GUIUtils.values_are_normalized(handles)
-                solutions = GUIUtils.get_solution_info(handles);
+            if GUI.values_are_normalized(handles)
+                solutions = GUI.get_solution_info(handles);
                 numBasePts = ROIUtils.number_of_baseline_pts(solutions);
                 lifetime = newTableData.normalized_lifetime(numBasePts);
                 int = newTableData.normalized_green(numBasePts);
@@ -306,7 +306,7 @@ classdef GUI
             end
 
             % Enable/Disable ROIs if necessary
-            enabledROIs = GUIUtils.get_enabled_rois(handles);
+            enabledROIs = GUI.get_enabled_rois(handles);
             if openFiles.type() == ROIFileType.Averaged
                 lifetime = ROIUtils.enable_averages(lifetime, enabledROIs);
                 int = ROIUtils.enable_averages(int, enabledROIs);
@@ -406,7 +406,7 @@ classdef GUI
                                'Checked', 'on', ...
                                'Tag', tagStr, ...
                                'UserData', MENU_DATA_ID, ...
-                               'Callback', {@toggleROI_Callback, handles});
+                               'Callback', {'toggleROI_Callback', handles});
                 newHandles.(tagStr) = hMenu;
             end
             guidata(handles.('mainFig'), newHandles);

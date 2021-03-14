@@ -1,0 +1,100 @@
+classdef GUICallbacks
+    methods (Static)
+        function dataTable_cell_select(hObject, eventdata)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'dataTable' Cell Select Callback
+        %
+        % Updates which ROI data is selected when table cell is selected
+        %
+        % (IN) "hObject": handle to 'dataTable'
+        % (IN) "eventdata": structure containg UI event data
+        %
+            handles = guidata(hObject);
+    
+            % Update program state
+            AppState.update_data_selection(handles, eventdata.Indices);
+        end
+        
+        function dataTable_cell_edit(hObject, eventdata)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'dataTable' Cell Edit Callback
+        %
+        % Updates ROI data when table cell is editted
+        %
+        % (IN) "hObject": handle to 'dataTable'
+        % (IN) "eventdata": structure containg UI event data
+        %
+            handles = guidata(hObject);
+    
+            % Get current program state
+            roiData = get_adjusted_data(handles);
+
+            % Update only on valid data
+            if ~isnan(eventdata.NewData)
+                roiData(eventdata.Indices) = eventdata.NewData;
+            end
+            GUI.update_data_table(roiData);
+        end
+        
+        function btnToggleAdjustedTime(hObject)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'btnToggleAdjustedTime' Callback
+        %
+        % Toggles time adjustment on or off
+        %
+        % (IN) "hObject": handle to 'btnToggleAdjustedTime'
+        %
+            % Get current program state
+            handles = guidata(hObject);
+            solutions = GUI.get_solution_info(handles);
+
+            % Check if we can get the # of base pts
+            if ~ROIUtils.has_number_of_baseline_pts(solutions)
+                warndlg('Please enter at least 2 solutions with different timings to set the number of baseline points');
+                GUI.toggle_button(hObject);
+                return;
+            end
+
+            % Update the data table
+            GUI.update_data_table(handles);
+        end
+        
+        function btnToggleNormVals(hObject)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'btnToggleNormVals' Callback
+        %
+        % Toggles value normalization on or off
+        %
+        % (IN) "hObject": handle to 'btnToggleNormVals'
+        %
+            % Get current program state
+            handles = guidata(hObject);
+            solutions = GUI.get_solution_info(handles);
+
+            % Check if we can get the # of base pts
+            if ~ROIUtils.has_number_of_baseline_pts(solutions)
+                warndlg('Please enter at least 2 solutions with different timings to set the number of baseline points');
+                GUI.toggle_button(hObject);
+                return;
+            end
+
+            % Update the corresponding menu item
+            GUI.toggle_menu(handles.('menuToggleNormVals'));
+
+            % Update the data table
+            GUI.update_data_table(handles);
+        end
+        
+        function btnEnableROI(hObject)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'btnToggleNormVals' Callback
+        %
+        % Enables the selected ROis
+        %
+        % (IN) "hObject": handle to 'btnToggleNormVals'
+        %
+            handles = guidata(hObject);
+            DataMenu.enable_selected_roi(handles.('menuEnableSelectedROI'));
+        end
+    end
+end

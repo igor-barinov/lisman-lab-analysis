@@ -117,28 +117,28 @@ classdef FileMenu
             AppState.set_roi_data(handles, roiData);
 
             % Update UI
-            GUIUtils.update_win_title(handles);
-            GUIUtils.update_ui_access(handles, openFile.type());
-            handles = GUIUtils.update_toggle_menu(handles, openFile.roi_count());
-            GUIUtils.update_dna_type(handles, dnaType);
-            GUIUtils.update_solution_info(handles, solutionInfo);
+            GUI.update_win_title(handles);
+            GUI.update_ui_access(handles, openFile.type());
+            handles = GUI.update_toggle_menu(handles, openFile.roi_count());
+            GUI.update_dna_type(handles, dnaType);
+            GUI.update_solution_info(handles, solutionInfo);
 
             % Disable info-dependent controls if necessary
             if ~openFile.has_exp_info()
-                if GUIUtils.time_is_adjusted(handles)
-                    GUIUtils.toggle_button(handles.('btnToggleAdjustedTime'));
+                if GUI.time_is_adjusted(handles)
+                    GUI.toggle_button(handles.('btnToggleAdjustedTime'));
                 end
-                if GUIUtils.values_are_normalized(handles)
-                    GUIUtils.toggle_button(handles.('btnToggleNormVals'));
-                    GUIUtils.toggle_menu(handles.('menuToggleNormVals'));
+                if GUI.values_are_normalized(handles)
+                    GUI.toggle_button(handles.('btnToggleNormVals'));
+                    GUI.toggle_menu(handles.('menuToggleNormVals'));
                 end
-                if GUIUtils.menu_is_toggled(handles.('menuShowAnnots'))
-                    GUIUtils.toggle_menu(handles.('menuShowAnnots'));
+                if GUI.menu_is_toggled(handles.('menuShowAnnots'))
+                    GUI.toggle_menu(handles.('menuShowAnnots'));
                 end
             end
 
             % Update data table
-            GUIUtils.update_data_table(handles);         % <-- Updated last because of controls modifying disp
+            GUI.update_data_table(handles);         % <-- Updated last because of controls modifying disp
         end
         
         function save(hObject)
@@ -155,9 +155,9 @@ classdef FileMenu
             handles = guidata(hObject);
             openFile = AppState.get_open_files(handles);
             saveData = AppState.get_roi_data(handles);
-            dnaType = GUIUtils.get_dna_type(handles);
-            solutions = GUIUtils.get_solution_info(handles);
-            enabledROIs = GUIUtils.get_enabled_rois(handles);
+            dnaType = GUI.get_dna_type(handles);
+            solutions = GUI.get_solution_info(handles);
+            enabledROIs = GUI.get_enabled_rois(handles);
 
             % Check if we have all data
             if isempty(dnaType)
@@ -235,11 +235,11 @@ classdef FileMenu
                 AppState.set_roi_data(handles, []);
 
                 % Update UI
-                GUIUtils.update_data_table(handles);
-                GUIUtils.update_dna_type(handles, []);
-                GUIUtils.update_solution_info(handles, {});
-                GUIUtils.update_ui_access(handles, ROIFileType.None);
-                GUIUtils.update_win_title(handles);
+                GUI.update_data_table(handles);
+                GUI.update_dna_type(handles, []);
+                GUI.update_solution_info(handles, {});
+                GUI.update_ui_access(handles, ROIFileType.None);
+                GUI.update_win_title(handles);
             end
         end
     end
