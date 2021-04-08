@@ -22,7 +22,7 @@ function varargout = analysis_1_2_user_options(varargin)
 
 % Edit the above text to modify the response to help analysis_1_2_user_options
 
-% Last Modified by GUIDE v2.5 24-Aug-2020 10:31:18
+% Last Modified by GUIDE v2.5 08-Apr-2021 14:07:48
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -245,7 +245,28 @@ catch err
     logdlg(err);
 end
 
+% --- Executes on button press in show_annotations.
+function show_annotations_Callback(hObject, ~, ~)
+try
+    % Get program state
+    handles = guidata(hObject);
+    settingsMap = get_settings_map(handles);
+    
+    % Change the appropriate setting
+    if is_checked(hObject)
+        settingsMap('show_annotations') = 'true';
+    else
+        settingsMap('show_annotations') = 'false';
+    end
+    
+    set_settings_map(handles, settingsMap);
+catch err
+    logdlg(err);
+end
+
 
 
 
 %#ok<*DEFNU>
+
+

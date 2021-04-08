@@ -46,14 +46,8 @@ classdef GUICallbacks
         %
             % Get current program state
             handles = guidata(hObject);
-            solutions = GUI.get_solution_info(handles);
-
-            % Check if we can get the # of base pts
-            if ~ROIUtils.has_number_of_baseline_pts(solutions)
-                warndlg('Please enter at least 2 solutions with different timings to set the number of baseline points');
-                GUI.toggle_button(hObject);
-                return;
-            end
+            % solutions = GUI.get_solution_info(handles);
+            % GUI.toggle_button(hObject);
 
             % Update the data table
             GUI.update_data_table(handles);
@@ -69,15 +63,9 @@ classdef GUICallbacks
         %
             % Get current program state
             handles = guidata(hObject);
-            solutions = GUI.get_solution_info(handles);
+            % solutions = GUI.get_solution_info(handles);
 
-            % Check if we can get the # of base pts
-            if ~ROIUtils.has_number_of_baseline_pts(solutions)
-                warndlg('Please enter at least 2 solutions with different timings to set the number of baseline points');
-                GUI.toggle_button(hObject);
-                return;
-            end
-
+            %GUI.toggle_button(hObject);
             % Update the corresponding menu item
             GUI.toggle_menu(handles.('menuToggleNormVals'));
 
@@ -110,6 +98,7 @@ classdef GUICallbacks
             roiData = AppState.get_roi_data(handles);
             pointCount = max(roiData.point_counts());
             currentSolutions = GUI.get_solution_info(handles);
+            settingsMap = AppState.get_user_preferences();
 
             % Get solution info from user
             addSolPrompt = {'Enter solution name:', 'Enter when solution starts (# of points):'};
@@ -263,6 +252,10 @@ classdef GUICallbacks
 
             % Update table
             GUI.update_data_table(handles);
+        end
+        
+        function btnChooseBaseline(hObject)
+            handles = guidata(hObject);
         end
         
         function btnImportInfo(hObject)

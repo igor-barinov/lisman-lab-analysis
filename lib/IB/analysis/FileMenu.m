@@ -132,9 +132,9 @@ classdef FileMenu
                     GUI.toggle_button(handles.('btnToggleNormVals'));
                     GUI.toggle_menu(handles.('menuToggleNormVals'));
                 end
-                if GUI.menu_is_toggled(handles.('menuShowAnnots'))
-                    GUI.toggle_menu(handles.('menuShowAnnots'));
-                end
+                %if GUI.menu_is_toggled(handles.('menuShowAnnots'))
+                    %GUI.toggle_menu(handles.('menuShowAnnots'));
+                %end
             end
 
             % Update data table

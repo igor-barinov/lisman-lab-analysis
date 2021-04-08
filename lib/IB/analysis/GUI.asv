@@ -130,10 +130,6 @@ classdef GUI
             if GUI.menu_is_toggled(handles.('menuShowRed'))
                 GUI.toggle_menu(handles.('menuShowRed'));
             end
-            if GUI.menu_is_toggled(handles.('menuShowAnnots'))
-                GUI.toggle_menu(handles.('menuShowAnnots'));
-            end
-            
 
             switch fileType        
                 case ROIFileType.Averaged
@@ -295,12 +291,7 @@ classdef GUI
             % Adjust time if necessary
             if GUI.time_is_adjusted(handles)
                 solutions = GUI.get_solution_info(handles);
-                if ROIUtils.has_number_of_baseline_pts(solutions)
-                    numBasePts = ROIUtils.number_of_baseline_pts(solutions);
-                else
-                    numBasePts = 1;
-                end
-                
+                numBasePts = ROIUtils.number_of_baseline_pts(solutions);
                 time = newTableData.adjusted_time(numBasePts);
             else
                 time = newTableData.time();
@@ -309,13 +300,7 @@ classdef GUI
             % Get values and normalize if necessary
             if GUI.values_are_normalized(handles)
                 solutions = GUI.get_solution_info(handles);
-                if ROIUtils.has_number_of_baseline_pts(solutions)
-                    numBasePts = ROIUtils.number_of_baseline_pts(solutions);
-                else
-                    numBasePts = 1;
-                end
-                
-                
+                numBasePts = ROIUtils.number_of_baseline_pts(solutions);
                 lifetime = newTableData.normalized_lifetime(numBasePts);
                 int = newTableData.normalized_green(numBasePts);
                 red = newTableData.normalized_red(numBasePts);

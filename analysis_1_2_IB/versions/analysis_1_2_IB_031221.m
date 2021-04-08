@@ -418,6 +418,17 @@ end
 
 
 %% ----------------------------------------------------------------------------------------------------------------
+% 'btnChooseBaseline' Callback
+%
+function btnChooseBaseline_Callback(hObject, ~, ~)
+try
+    GUICallbacks.btnChooseBaseline(hObject);
+catch err
+    AppState.logdlg(err);
+end
+
+
+%% ----------------------------------------------------------------------------------------------------------------
 % 'btnImportInfo' Callback
 %
 function btnImportInfo_Callback(hObject, ~, ~)
@@ -462,3 +473,10 @@ function menuPlot_Callback(~, ~, ~)
 function menuTools_Callback(~, ~, ~) 
 %#ok<*DEFNU>
 
+
+
+% --- Executes on button press in btnChooseBaseline.
+
+% hObject    handle to btnChooseBaseline (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

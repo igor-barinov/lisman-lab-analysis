@@ -26,12 +26,8 @@ classdef PlotMenu
             % Get appropriate ROIs
             if GUI.values_are_normalized(handles)
                 solutions = GUI.get_solution_info(handles);
-                if ROIUtils.has_number_of_baseline_pts(solutions)
-                    nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
-                else
-                    nBaselinePts = 1;
-                end
-                
+                if ROIU
+                nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
 
                 lifetime = roiData.normalized_lifetime(nBaselinePts);
                 int = roiData.normalized_green(nBaselinePts);
@@ -62,12 +58,7 @@ classdef PlotMenu
             % Get appropriate time values
             if GUI.time_is_adjusted(handles)
                 solutions = GUI.get_solution_info(handles);
-                if ROIUtils.has_number_of_baseline_pts(solutions)
-                    nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
-                else
-                    nBaselinePts = 1;
-                end
-                
+                nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
                 time = roiData.adjusted_time(nBaselinePts); 
             else
                 time = roiData.time(); 
@@ -247,12 +238,7 @@ classdef PlotMenu
             % Get appropriate selected ROI values
             if GUI.values_are_normalized(handles)
                 solutions = GUI.get_solution_info(handles);
-                if ROIUtils.has_number_of_baseline_pts(solutions)
-                    nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
-                else
-                    nBaselinePts = 1;
-                end
-                
+                nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
 
                 lifetime = roiData.normalized_lifetime(nBaselinePts);
                 int = roiData.normalized_green(nBaselinePts);
@@ -283,12 +269,7 @@ classdef PlotMenu
             % Get appropriate time values
             if GUI.time_is_adjusted(handles)
                 solutions = GUI.get_solution_info(handles);
-                if ROIUtils.has_number_of_baseline_pts(solutions)
-                    nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
-                else
-                    nBaselinePts = 1;
-                end
-                
+                nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
                 time = roiData.adjusted_time(nBaselinePts); 
             else
                 time = roiData.time(); 
@@ -445,12 +426,7 @@ classdef PlotMenu
             % Get appropriate ROIs
             if GUI.values_are_normalized(handles)
                 solutions = GUI.get_solution_info(handles);
-                if ROIUtils.has_number_of_baseline_pts(solutions)
-                    nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
-                else
-                    nBaselinePts = 1;
-                end
-                
+                nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
 
                 lifetime = roiData.normalized_lifetime(nBaselinePts);
                 int = roiData.normalized_green(nBaselinePts);
@@ -481,12 +457,7 @@ classdef PlotMenu
             % Get appropriate time values
             if GUI.time_is_adjusted(handles)
                 solutions = GUI.get_solution_info(handles);
-                if ROIUtils.has_number_of_baseline_pts(solutions)
-                    nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
-                else
-                    nBaselinePts = 1;
-                end
-                
+                nBaselinePts = ROIUtils.number_of_baseline_pts(solutions);
                 time = roiData.adjusted_time(nBaselinePts); 
             else
                 time = roiData.time(); 
