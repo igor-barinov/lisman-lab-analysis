@@ -58,3 +58,21 @@ Error in analysis_1_2_IB_031221 (line 43)
 Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_031221('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
 
 
+[15-Apr-2021 13:24:56]: Error using figure
+Value must be numeric and finite
+
+Error in PlotMenu.plot_all (line 116)
+                figure('Name', 'Lifetime Over Time', 'Position', figSize);
+
+Error in analysis_1_2_IB_031221>menuPlotAll_Callback (line 310)
+    PlotMenu.plot_all(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_031221 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_031221('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+

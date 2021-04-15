@@ -10,6 +10,7 @@ classdef PlotMenu
         %
             % Get current program state
             handles = guidata(hObject);
+            settingsMap = AppState.get_user_preferences();
             openFile = AppState.get_open_files(handles);
             roiData = AppState.get_roi_data(handles);
             roiCount = roiData.roi_count();
@@ -107,11 +108,44 @@ classdef PlotMenu
 
             % Remove disabled ROIs from legend
             legendEntries = legendEntries(enabledROIs);
+            
+            % Load graph settings
+            ltX = str2double(settingsMap('lt_x'));
+            ltY = str2double(settingsMap('lt_y'));
+            ltW = str2double(settingsMap('lt_w'));
+            ltH = str2double(settingsMap('lt_h'));
+            ltSize = [ltX, ltY, ltW, ltH];
+            
+            greenX = str2double(settingsMap('green_x'));
+            greenY = str2double(settingsMap('green_y'));
+            greenW = str2double(settingsMap('green_w'));
+            greenH = str2double(settingsMap('green_h'));
+            greenSize = [greenX, greenY, greenW, greenH];
+            
+            redX = str2double(settingsMap('red_x'));
+            redY = str2double(settingsMap('red_y'));
+            redW = str2double(settingsMap('red_w'));
+            redH = str2double(settingsMap('red_h'));
+            redSize = [redX, redY, redW, redH];
+            
+            ltXMin = str2double(settingsMap('lt_x_min')); 
+            ltXMax = str2double(settingsMap('lt_x_max'));
+            ltYMin = str2double(settingsMap('lt_y_min'));
+            ltYMax = str2double(settingsMap('lt_y_max'));
+            
+            greenXMin = str2double(settingsMap('green_x_min')); 
+            greenXMax = str2double(settingsMap('green_x_max'));
+            greenYMin = str2double(settingsMap('green_y_min'));
+            greenYMax = str2double(settingsMap('green_y_max'));
+            
+            redXMin = str2double(settingsMap('red_x_min')); 
+            redXMax = str2double(settingsMap('red_x_max'));
+            redYMin = str2double(settingsMap('red_y_min'));
+            redYMax = str2double(settingsMap('red_y_max'));
 
             % Plot lifetime if necessary
             if isLifetimePlot
-
-                figure('Name', 'Lifetime Over Time');
+                figure('Name', 'Lifetime Over Time', 'Position', ltSize);
                 switch openFile.type()
                     case ROIFileType.Averaged
                         averages = lifetime(:, 2*enabledIndices - 1);
@@ -125,6 +159,8 @@ classdef PlotMenu
                 end
 
                 title(titleStr, 'Interpreter', 'none');
+                xlim([ltXMin, ltXMax]);
+                ylim([ltYMin, ltYMax]);
                 xlabel('Time');
                 ylabel('Lifetime (Ch #1)');
                 legend(legendEntries);
@@ -143,7 +179,7 @@ classdef PlotMenu
             % Plot intensity if necessary
             if isIntPlot
 
-                figure('Name', 'Green Int. Over Time');
+                figure('Name', 'Green Int. Over Time', 'Position', greenSize);
                 switch openFile.type()
                     case ROIFileType.Averaged
                         averages = int(:, 2*enabledIndices - 1);
@@ -157,6 +193,8 @@ classdef PlotMenu
                 end
 
                 title(titleStr, 'Interpreter', 'none');
+                xlim([greenXMin, greenXMax]);
+                ylim([greenYMin, greenYMax]);
                 xlabel('Time');
                 ylabel('Mean Intensity (Ch #1)');
                 legend(legendEntries);
@@ -175,7 +213,7 @@ classdef PlotMenu
             % Plot red if necessary
             if isRedPlot
 
-                figure('Name', 'Red Int. Over Time');
+                figure('Name', 'Red Int. Over Time', 'Position', redSize);
                 switch openFile.type()  
                     case ROIFileType.Averaged
                         averages = red(:, 2*enabledIndices - 1);
@@ -189,6 +227,8 @@ classdef PlotMenu
                 end
 
                 title(titleStr, 'Interpreter', 'none');
+                xlim([redXMin, redXMax]);
+                ylim([redYMin, redYMax]);
                 xlabel('Time');
                 ylabel('Mean Intensity (Ch #2)');
                 legend(legendEntries);
@@ -215,6 +255,7 @@ classdef PlotMenu
         %
             % Get current program state
             handles = guidata(hObject);
+            settingsMap = AppState.get_user_preferences();
             openFile = AppState.get_open_files(handles);
             roiData = AppState.get_roi_data(handles);
 
@@ -319,11 +360,45 @@ classdef PlotMenu
 
             % Remove disabled ROIs from legend
             legendEntries = legendEntries(selectedROIs);
+            
+            % Load Graph settings
+            ltX = str2double(settingsMap('lt_x'));
+            ltY = str2double(settingsMap('lt_y'));
+            ltW = str2double(settingsMap('lt_w'));
+            ltH = str2double(settingsMap('lt_h'));
+            ltSize = [ltX, ltY, ltW, ltH];
+            
+            greenX = str2double(settingsMap('green_x'));
+            greenY = str2double(settingsMap('green_y'));
+            greenW = str2double(settingsMap('green_w'));
+            greenH = str2double(settingsMap('green_h'));
+            greenSize = [greenX, greenY, greenW, greenH];
+            
+            redX = str2double(settingsMap('red_x'));
+            redY = str2double(settingsMap('red_y'));
+            redW = str2double(settingsMap('red_w'));
+            redH = str2double(settingsMap('red_h'));
+            redSize = [redX, redY, redW, redH];
+            
+            ltXMin = str2double(settingsMap('lt_x_min')); 
+            ltXMax = str2double(settingsMap('lt_x_max'));
+            ltYMin = str2double(settingsMap('lt_y_min'));
+            ltYMax = str2double(settingsMap('lt_y_max'));
+            
+            greenXMin = str2double(settingsMap('green_x_min')); 
+            greenXMax = str2double(settingsMap('green_x_max'));
+            greenYMin = str2double(settingsMap('green_y_min'));
+            greenYMax = str2double(settingsMap('green_y_max'));
+            
+            redXMin = str2double(settingsMap('red_x_min')); 
+            redXMax = str2double(settingsMap('red_x_max'));
+            redYMin = str2double(settingsMap('red_y_min'));
+            redYMax = str2double(settingsMap('red_y_max'));
 
             % Plot lifetime if necessary
             if isLifetimePlot
 
-                figure('Name', 'Lifetime Over Time');
+                figure('Name', 'Lifetime Over Time', 'Position', ltSize);
                 switch openFile.type()
                     case ROIFileType.Averaged
                         lifetime = ROIUtils.select_averages(lifetime, selectedROIs);
@@ -338,6 +413,8 @@ classdef PlotMenu
                 end
 
                 title(titleStr, 'Interpreter', 'none');
+                xlim([ltXMin, ltXMax]);
+                ylim([ltYMin, ltYMax]);
                 xlabel('Time');
                 ylabel('Lifetime (Ch #1)');
                 legend(legendEntries);
@@ -356,7 +433,7 @@ classdef PlotMenu
             % Plot intensity if necessary
             if isIntPlot
 
-                figure('Name', 'Green Int. Over Time');
+                figure('Name', 'Green Int. Over Time', 'Position', greenSize);
                 switch openFile.type()
                     case ROIFileType.Averaged
                         int = ROIUtils.select_averages(int, selectedROIs);
@@ -371,6 +448,8 @@ classdef PlotMenu
                 end
 
                 title(titleStr, 'Interpreter', 'none');
+                xlim([greenXMin, greenXMax]);
+                ylim([greenYMin, greenYMax]);
                 xlabel('Time');
                 ylabel('Mean Intensity (Ch #1)');
                 legend(legendEntries);
@@ -389,7 +468,7 @@ classdef PlotMenu
             % Plot red if necessary
             if isRedPlot
 
-                figure('Name', 'Red Int. Over Time');
+                figure('Name', 'Red Int. Over Time', 'Position', redSize);
                 switch openFile.type()
                     case ROIFileType.Averaged
                         red = ROIUtils.select_averages(red, selectedROIs);
@@ -404,6 +483,8 @@ classdef PlotMenu
                 end
 
                 title(titleStr, 'Interpreter', 'none');
+                xlim([redXMin, redXMax]);
+                ylim([redYMin, redYMax]);
                 xlabel('Time');
                 ylabel('Mean Intensity (Ch #1)');
                 legend(legendEntries);
@@ -430,6 +511,7 @@ classdef PlotMenu
         %
             % Get current program state
             handles = guidata(hObject);
+            settingsMap = AppState.get_user_preferences();
             openFile = AppState.get_open_files(handles);
             roiData = AppState.get_roi_data(handles);
 
@@ -513,15 +595,51 @@ classdef PlotMenu
                     titleStr = [titleStr, ' | '];
                 end
             end
+            
+            % Load Graph Settings
+            ltX = str2double(settingsMap('lt_x'));
+            ltY = str2double(settingsMap('lt_y'));
+            ltW = str2double(settingsMap('lt_w'));
+            ltH = str2double(settingsMap('lt_h'));
+            ltSize = [ltX, ltY, ltW, ltH];
+            
+            greenX = str2double(settingsMap('green_x'));
+            greenY = str2double(settingsMap('green_y'));
+            greenW = str2double(settingsMap('green_w'));
+            greenH = str2double(settingsMap('green_h'));
+            greenSize = [greenX, greenY, greenW, greenH];
+            
+            redX = str2double(settingsMap('red_x'));
+            redY = str2double(settingsMap('red_y'));
+            redW = str2double(settingsMap('red_w'));
+            redH = str2double(settingsMap('red_h'));
+            redSize = [redX, redY, redW, redH];
+            
+            ltXMin = str2double(settingsMap('lt_x_min')); 
+            ltXMax = str2double(settingsMap('lt_x_max'));
+            ltYMin = str2double(settingsMap('lt_y_min'));
+            ltYMax = str2double(settingsMap('lt_y_max'));
+            
+            greenXMin = str2double(settingsMap('green_x_min')); 
+            greenXMax = str2double(settingsMap('green_x_max'));
+            greenYMin = str2double(settingsMap('green_y_min'));
+            greenYMax = str2double(settingsMap('green_y_max'));
+            
+            redXMin = str2double(settingsMap('red_x_min')); 
+            redXMax = str2double(settingsMap('red_x_max'));
+            redYMin = str2double(settingsMap('red_y_min'));
+            redYMax = str2double(settingsMap('red_y_max'));
 
             % Plot lifetime if necessary
             if isLifetimePlot
 
-                figure('Name', 'Lifetime Over Time');
+                figure('Name', 'Lifetime Over Time', 'Position', ltSize);
                 [averages, errors] = ROIUtils.average(lifetime(:, enabledROIs));
                 ROIUtils.plot_averages(time, averages, errors);
 
                 title(titleStr, 'Interpreter', 'none');
+                xlim([ltXMin, ltXMax]);
+                ylim([ltYMin, ltYMax]);
                 xlabel('Time');
                 ylabel('Lifetime (Ch #1)');
                 legend(legendEntries, 'Location', 'south');
@@ -540,11 +658,13 @@ classdef PlotMenu
             % Plot intensity if necessary
             if isIntPlot
 
-                figure('Name', 'Green Int. Over Time');
+                figure('Name', 'Green Int. Over Time', 'Position', greenSize);
                 [averages, errors] = ROIUtils.average(int(:, enabledROIs));
                 ROIUtils.plot_averages(time, averages, errors);
 
                 title(titleStr, 'Interpreter', 'none');
+                xlim([greenXMin, greenXMax]);
+                ylim([greenYMin, greenYMax]);
                 xlabel('Time');
                 ylabel('Mean Intensity (Ch #1)');
                 legend(legendEntries, 'Location', 'south');
@@ -563,11 +683,13 @@ classdef PlotMenu
             % Plot red if necessary
             if isRedPlot
 
-                figure('Name', 'Red Int. Over Time');
+                figure('Name', 'Red Int. Over Time', 'Position', redSize);
                 [averages, errors] = ROIUtils.average(red(:, enabledROIs));
                 ROIUtils.plot_averages(time, averages, errors);
 
                 title(titleStr, 'Interpreter', 'none');
+                xlim([redXMin, redXMax]);
+                ylim([redYMin, redYMax]);
                 xlabel('Time');
                 ylabel('Mean Intensity (Ch #2)');
                 legend(legendEntries, 'Location', 'south');
