@@ -76,3 +76,78 @@ Error in analysis_1_2_IB_031221 (line 43)
 Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_031221('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
 
 
+[09-Jun-2021 10:41:23]: Index in position 2 exceeds array bounds.
+
+Error in ROIUtils.split_solution_info (line 338)
+            solNames = solutionInfo(:, 1);
+
+Error in PlotMenu.plot_all (line 172)
+                    solutionInfo = ROIUtils.split_solution_info(allSolutions);
+
+Error in analysis_1_2_IB_031221>menuPlotAll_Callback (line 310)
+    PlotMenu.plot_all(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_031221 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_031221('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[09-Jun-2021 10:41:43]: Error using xlim (line 31)
+Limits must be a 2-element vector of increasing numeric values.
+
+Error in PlotMenu.plot_all (line 162)
+                xlim([ltXMin, ltXMax]);
+
+Error in analysis_1_2_IB_031221>menuPlotAll_Callback (line 310)
+    PlotMenu.plot_all(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_031221 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_031221('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[09-Jun-2021 10:42:54]: Index in position 2 exceeds array bounds.
+
+Error in ROIUtils.split_solution_info (line 338)
+            solNames = solutionInfo(:, 1);
+
+Error in PlotMenu.plot_all (line 172)
+                    solutionInfo = ROIUtils.split_solution_info(allSolutions);
+
+Error in analysis_1_2_IB_031221>menuPlotAll_Callback (line 310)
+    PlotMenu.plot_all(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_031221 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_031221('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[09-Jun-2021 11:22:24]: Undefined function or variable 'settings_file'.
+
+Error in PreferencesApp.btnSaveChanges (line 134)
+            iniFile = settings_file();
+
+Error in analysis_1_2_user_options>btnSaveChanges_Callback (line 215)
+    PreferencesApp.btnSaveChanges(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_user_options (line 42)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_user_options('btnSaveChanges_Callback',hObject,eventdata,guidata(hObject))
+
+

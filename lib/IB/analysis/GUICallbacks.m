@@ -255,6 +255,11 @@ classdef GUICallbacks
         end
         
         function btnChooseBaseline(hObject)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'btnChooseBaseline' Callback
+        %
+        % TODO: open dialog to let user choose which solution is baseline
+        %
             handles = guidata(hObject);
         end
         

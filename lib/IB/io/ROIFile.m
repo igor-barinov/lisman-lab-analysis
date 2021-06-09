@@ -1,4 +1,9 @@
 classdef (Abstract) ROIFile < ROIData
+%% ----------------------------------------------------------------------------------------------------------------
+% 'ROIFile' Interface
+%
+% Interface that describes operations for files that handle ROI data
+%
     methods (Abstract)        
         [fileType] = type(obj);
         [filepaths] = source_files(obj);

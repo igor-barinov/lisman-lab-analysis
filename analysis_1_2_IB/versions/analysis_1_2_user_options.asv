@@ -165,6 +165,12 @@ function [settingsMap] = get_settings_map(handles)
 settingsMap = getappdata(handles.('mainFig'), 'SETTINGS_MAP');
 
 
+%% ----------------------------------------------------------------------------------------------------------------
+% 'is_checked' Method
+%
+function [tf] = is_checked(hObject)
+tf = get(hObject, 'Value');
+
 
 %% ----------------------------------------------------------------------------------------------------------------
 % 'update_gui' Method
@@ -212,9 +218,22 @@ set(hFigDefsList, 'Value', selection);
 %
 function btnSaveChanges_Callback(hObject, ~, ~)
 try
-    PreferencesApp.btnSaveChanges(hObject);
+    % Get program state
+    handles = guidata(hObject);
+    settingsMap = get_settings_map(handles);
+    iniFile = settings_file();
+    
+    % Get the new setting values
+    newSettings = keys(settingsMap);
+    newValues = values(settingsMap, newSettings);
+    
+    % Make a new ini file with the new settings
+    IOUtils.create_ini_file(iniFile, newSettings, newValues);
+    
+    % Close the window
+    close(handles.('mainFig'));
 catch err
-    PreferencesApp.logdlg(err);
+    logdlg(err);
 end
 
 
@@ -225,18 +244,18 @@ function show_lifetime_Callback(hObject, ~, ~)
 try
     % Get program state
     handles = guidata(hObject);
-    settingsMap = PreferencesApp.get_settings_map(handles);
+    settingsMap = get_settings_map(handles);
     
     % Change the appropriate setting
-    if GUI.box_is_checked(hObject)
+    if is_checked(hObject)
         settingsMap('show_lifetime') = 'true';
     else
         settingsMap('show_lifetime') = 'false';
     end
     
-    PreferencesApp.set_settings_map(handles, settingsMap);
+    set_settings_map(handles, settingsMap);
 catch err
-    PreferencesApp.logdlg(err);
+    logdlg(err);
 end
 
 
@@ -250,7 +269,7 @@ try
     settingsMap = get_settings_map(handles);
     
     % Change the appropriate setting
-    if GUI.box_is_checked(hObject)
+    if is_checked(hObject)
         settingsMap('show_green_int') = 'true';
     else
         settingsMap('show_green_int') = 'false';
@@ -272,7 +291,7 @@ try
     settingsMap = get_settings_map(handles);
     
     % Change the appropriate setting
-    if GUI.box_is_checked(hObject)
+    if is_checked(hObject)
         settingsMap('show_red_int') = 'true';
     else
         settingsMap('show_red_int') = 'false';
@@ -291,7 +310,7 @@ try
     settingsMap = get_settings_map(handles);
     
     % Change the appropriate setting
-    if GUI.box_is_checked(hObject)
+    if is_checked(hObject)
         settingsMap('show_annotations') = 'true';
     else
         settingsMap('show_annotations') = 'false';
@@ -1205,12 +1224,8 @@ try
         setting = figSettings{i};
         value = figValues{i};
         
-        settingsMap(setting) = value;
+        se
     end
-    settingsMap('plot_default') = selectedDefault;
-    
-    set_settings_map(handles, settingsMap);
-    update_gui(handles);
     
 catch err
     logdlg(err);

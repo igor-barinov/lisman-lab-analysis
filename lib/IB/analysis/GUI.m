@@ -75,6 +75,10 @@ classdef GUI
             tf = strcmp(enableState, 'on');
         end
         
+        function [tf] = box_is_checked(handle)
+            tf = get(handle, 'Value');
+        end
+        
         function toggle_button(handle)
         %% --------------------------------------------------------------------------------------------------------
         % 'toggle_button' Method

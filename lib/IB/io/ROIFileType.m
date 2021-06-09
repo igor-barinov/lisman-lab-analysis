@@ -1,4 +1,9 @@
 classdef ROIFileType < uint8
+%% ----------------------------------------------------------------------------------------------------------------
+% 'ROIFileType' enumeration
+%
+% Enum describing different ROI file formats
+%
     enumeration
         Raw         (1)
         FLImage     (2)
@@ -10,6 +15,12 @@ classdef ROIFileType < uint8
     methods (Static)
         %% --------------------------------------------------------------------------------------------------------
         % 'as_string' Method
+        %
+        % Converts a ROIFileType value to a string
+        %
+        % (IN) "type": ROIFileType to be converted
+        %
+        % (OUT) "str": string describing the current enumeration
         %
         function [str] = as_string(type)
             switch type

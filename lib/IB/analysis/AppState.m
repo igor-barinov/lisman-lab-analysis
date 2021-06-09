@@ -54,6 +54,17 @@ classdef AppState
             % Read ini file into map
             [settings, values] = IOUtils.read_ini_file(iniFile);
             settingsMap = containers.Map(settings, values);
+            
+            activeFigDefault = settingsMap('plot_default');
+            figDefaultFile = [version, '_', activeFigDefault, '.ini'];
+            iniFigDefault = fullfile(path, figDefaultFile);
+            [figSettings, figValues] = IOUtils.read_ini_file(iniFigDefault);
+            for i = 1:numel(figSettings)
+                figSetting = figSettings{i};
+                figVal = figValues{i};
+                settingsMap(figSetting) = figVal;
+            end
+            
         end
         
         function set_open_files(handles, openFileObj)
