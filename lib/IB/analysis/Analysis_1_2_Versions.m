@@ -13,11 +13,12 @@ classdef Analysis_1_2_Versions
         v081420 = 'analysis_1_2_IB_081420';
         v090920 = 'analysis_1_2_IB_090920';
         v031221 = 'analysis_1_2_IB_031221';
+        v061521 = 'analysis_1_2_IB_061521';
     end
     
     methods (Static)
         function [version] = release()
-            version = Analysis_1_2_Versions.v031221;
+            version = Analysis_1_2_Versions.v061521;
         end
     end
 end

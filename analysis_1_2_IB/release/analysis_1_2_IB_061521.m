@@ -4,33 +4,33 @@
 %% ----------------------------------------------------------------------------------------------------------------
 % Entry Point - DO NOT EDIT
 %
-%      ANALYSIS_1_2_IB_031221, by itself, creates a new ANALYSIS_1_2_IB_031221 or raises the existing
+%      ANALYSIS_1_2_IB_061521, by itself, creates a new ANALYSIS_1_2_IB_061521 or raises the existing
 %      singleton*.
 %
-%      H = ANALYSIS_1_2_IB_031221 returns the handle to a new ANALYSIS_1_2_IB_031221 or the handle to
+%      H = ANALYSIS_1_2_IB_061521 returns the handle to a new ANALYSIS_1_2_IB_061521 or the handle to
 %      the existing singleton*.
 %
-%      ANALYSIS_1_2_IB_031221('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in ANALYSIS_1_2_IB_031221.M with the given input arguments.
+%      ANALYSIS_1_2_IB_061521('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in ANALYSIS_1_2_IB_061521.M with the given input arguments.
 %
-%      ANALYSIS_1_2_IB_031221('Property','Value',...) creates a new ANALYSIS_1_2_IB_031221 or raises the
+%      ANALYSIS_1_2_IB_061521('Property','Value',...) creates a new ANALYSIS_1_2_IB_061521 or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before analysis_1_2_IB_031221_OpeningFcn gets called.  An
+%      applied to the GUI before analysis_1_2_IB_061521_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to analysis_1_2_IB_031221_OpeningFcn via varargin.
+%      stop.  All inputs are passed to analysis_1_2_IB_061521_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 %
-function varargout = analysis_1_2_IB_031221(varargin)
+function varargout = analysis_1_2_IB_061521(varargin)
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @analysis_1_2_IB_031221_OpeningFcn, ...
-                   'gui_OutputFcn',  @analysis_1_2_IB_031221_OutputFcn, ...
+                   'gui_OpeningFcn', @analysis_1_2_IB_061521_OpeningFcn, ...
+                   'gui_OutputFcn',  @analysis_1_2_IB_061521_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -51,10 +51,10 @@ end
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to analysis_1_2_IB_031221 (see VARARGIN)
+% varargin   command line arguments to analysis_1_2_IB_061521 (see VARARGIN)
 %
-function analysis_1_2_IB_031221_OpeningFcn(hObject, eventdata, handles, varargin)
-% Choose default command line output for analysis_1_2_IB_031221
+function analysis_1_2_IB_061521_OpeningFcn(hObject, eventdata, handles, varargin)
+% Choose default command line output for analysis_1_2_IB_061521
 handles.output = hObject;
 
 % Update handles structure
@@ -72,7 +72,7 @@ GUI.update_ui_access(handles, ROIFileType.None);
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 %
-function varargout = analysis_1_2_IB_031221_OutputFcn(hObject, eventdata, handles) 
+function varargout = analysis_1_2_IB_061521_OutputFcn(hObject, eventdata, handles) 
 % Get default command line output from handles structure
 
 varargout{1} = handles.output;
