@@ -481,15 +481,9 @@ classdef ROIUtils
                         nameStr = [nameStr, ' ', names{s}];
                     end
 
-                    % Get solution name position
-                    % Move second solution a line down
-                    if j == 2
-                        txtBoxPos = [xStart, yOffset - txtBoxHeight - 0.07, diff(lineWidth), txtBoxHeight];
-                    else
-                        txtBoxPos = [xStart, yOffset - 0.07, diff(lineWidth), txtBoxHeight];
-                    end
-                    
                     % Plot solution name
+                    
+                    txtBoxPos = [xStart, yOffset - 0.07, diff(lineWidth), txtBoxHeight];
                     annotation('textbox', txtBoxPos, 'String', nameStr, txtBoxOpts{:});
 
                     % Move x-start to end of plotted annotation

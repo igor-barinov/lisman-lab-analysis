@@ -39,6 +39,7 @@ classdef AppState
             version = Analysis_1_2_Versions.release();
             filename = [version, '_SETTINGS.ini'];
             [path, ~, ~] = fileparts(which(version));
+            path = [path, '\config\'];
             iniFile = fullfile(path, filename);
 
             % Create ini file if none exists
