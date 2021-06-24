@@ -60,51 +60,52 @@ if isstruct(a)
                 else
                     spc_roi = a(i).position{fn};
                 end
+                siz = size(spc_roi); % IB, 6/18/21
             catch
                 siz = 0;
             end
-            siz = size(spc_roi);
-            if siz(2) == 4
-                figure(gui.spc.figure.project);
-                axes(gui.spc.figure.projectAxes);
-                gui.spc.figure.roiA(i+1) = rectangle('Position', spc_roi, 'Tag', rectstr, 'EdgeColor', 'cyan', 'Curvature', [1,1], 'ButtonDownFcn', 'spc_dragRoiA');
-                gui.spc.figure.textA(i+1) = text(spc_roi(1)-2, spc_roi(2)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
-                %spc_drawLifetime;
             
-                figure(gui.spc.figure.lifetimeMap);
-                axes(gui.spc.figure.lifetimeMapAxes);
-                gui.spc.figure.roiB(i+1) = rectangle('Position', spc_roi, 'Tag', rectstr, 'EdgeColor', 'cyan', 'Curvature', [1,1], 'ButtonDownFcn', 'spc_dragRoiA');
-                gui.spc.figure.textB(i+1) = text(spc_roi(1)-2, spc_roi(2)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
+            if numel(siz) > 1
+                if siz(2) == 4
+                    figure(gui.spc.figure.project);
+                    axes(gui.spc.figure.projectAxes);
+                    gui.spc.figure.roiA(i+1) = rectangle('Position', spc_roi, 'Tag', rectstr, 'EdgeColor', 'cyan', 'Curvature', [1,1], 'ButtonDownFcn', 'spc_dragRoiA');
+                    gui.spc.figure.textA(i+1) = text(spc_roi(1)-2, spc_roi(2)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
+                    %spc_drawLifetime;
 
-                if spc.switches.redImg
-                    scan_roi = spc_roi; % - [4,0, 0, 0];
-                    figure(gui.spc.figure.scanImgF);
-                    axes(gui.spc.figure.scanImgA);
-                    gui.spc.figure.roiC(i+1) = rectangle('Position', scan_roi, 'Tag', rectstr, 'EdgeColor', 'cyan', 'Curvature', [1,1], 'ButtonDownFcn', 'spc_dragRoiA');
-                    gui.spc.figure.textC(i+1) = text(scan_roi(1)-2, scan_roi(2)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
-                end
+                    figure(gui.spc.figure.lifetimeMap);
+                    axes(gui.spc.figure.lifetimeMapAxes);
+                    gui.spc.figure.roiB(i+1) = rectangle('Position', spc_roi, 'Tag', rectstr, 'EdgeColor', 'cyan', 'Curvature', [1,1], 'ButtonDownFcn', 'spc_dragRoiA');
+                    gui.spc.figure.textB(i+1) = text(spc_roi(1)-2, spc_roi(2)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
 
-                spc.switches.spc_roi{i+1} = get(gui.spc.figure.roiA(i+1), 'Position');
-            elseif siz(2) == 2
-                figure(gui.spc.figure.project);
-                axes(gui.spc.figure.projectAxes);
-                xi = spc_roi(:,1);
-                yi = spc_roi(:,2);
-                gui.spc.figure.roiA(i+1) = line(xi, yi, 'Tag', rectstr, 'color', 'cyan', 'ButtonDownFcn', 'spc_dragRoiA');
-                gui.spc.figure.textA(i+1) = text(xi(1)-2, yi(1)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
-                figure(gui.spc.figure.lifetimeMap);
-                axes(gui.spc.figure.lifetimeMapAxes);
-                gui.spc.figure.roiB(i+1) = line(xi, yi, 'Tag', rectstr, 'color', 'cyan', 'ButtonDownFcn', 'spc_dragRoiA');
-                gui.spc.figure.textB(i+1) = text(xi(1)-2, yi(1)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
-                if spc.switches.redImg
-                    figure(gui.spc.figure.scanImgF);
-                    axes(gui.spc.figure.scanImgA);
-                    gui.spc.figure.roiC(i+1) = line(xi, yi, 'Tag', rectstr, 'color', 'cyan', 'ButtonDownFcn', 'spc_dragRoiA');
-                    gui.spc.figure.textC(i+1) = text(xi(1)-2, yi(1)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
+                    if spc.switches.redImg
+                        scan_roi = spc_roi; % - [4,0, 0, 0];
+                        figure(gui.spc.figure.scanImgF);
+                        axes(gui.spc.figure.scanImgA);
+                        gui.spc.figure.roiC(i+1) = rectangle('Position', scan_roi, 'Tag', rectstr, 'EdgeColor', 'cyan', 'Curvature', [1,1], 'ButtonDownFcn', 'spc_dragRoiA');
+                        gui.spc.figure.textC(i+1) = text(scan_roi(1)-2, scan_roi(2)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
+                    end
+
+                    spc.switches.spc_roi{i+1} = get(gui.spc.figure.roiA(i+1), 'Position');
+                elseif siz(2) == 2
+                    figure(gui.spc.figure.project);
+                    axes(gui.spc.figure.projectAxes);
+                    xi = spc_roi(:,1);
+                    yi = spc_roi(:,2);
+                    gui.spc.figure.roiA(i+1) = line(xi, yi, 'Tag', rectstr, 'color', 'cyan', 'ButtonDownFcn', 'spc_dragRoiA');
+                    gui.spc.figure.textA(i+1) = text(xi(1)-2, yi(1)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
+                    figure(gui.spc.figure.lifetimeMap);
+                    axes(gui.spc.figure.lifetimeMapAxes);
+                    gui.spc.figure.roiB(i+1) = line(xi, yi, 'Tag', rectstr, 'color', 'cyan', 'ButtonDownFcn', 'spc_dragRoiA');
+                    gui.spc.figure.textB(i+1) = text(xi(1)-2, yi(1)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
+                    if spc.switches.redImg
+                        figure(gui.spc.figure.scanImgF);
+                        axes(gui.spc.figure.scanImgA);
+                        gui.spc.figure.roiC(i+1) = line(xi, yi, 'Tag', rectstr, 'color', 'cyan', 'ButtonDownFcn', 'spc_dragRoiA');
+                        gui.spc.figure.textC(i+1) = text(xi(1)-2, yi(1)-2, num2str(i), 'color', 'white', 'Tag', textstr, 'ButtonDownFcn', 'spc_deleteRoiA');
+                    end
+                    spc.switches.spc_roi{i+1} = [xi(:), yi(:)];
                 end
-                spc.switches.spc_roi{i+1} = [xi(:), yi(:)];
-            else %%%weired Roi
-                
             end
         end
     end

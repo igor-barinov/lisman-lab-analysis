@@ -18,7 +18,7 @@ if nargin == 0  % LAUNCH GUI
 
 	if nargout > 0
 		varargout{1} = fig;
-	end
+    end
     
     try
         range = round(spc.fit(gui.spc.proChannel).range.*spc.datainfo.psPerUnit/100)/10;
@@ -183,7 +183,7 @@ y=exp(-x/beta0(2))*beta0(1);
 
 % --------------------------------------------------------------------
 function varargout = spc_expgauss_Callback(h, eventdata, handles, varargin)
-betahat=spc_fitexp2gauss;
+betahat=spc_fitexpgauss;
 spc_redrawSetting(1);
 % --------------------------------------------------------------------
 function varargout = spc_exp2gauss_Callback(h, eventdata, handles, varargin)
@@ -254,6 +254,7 @@ function varargout = spc_fit1_Callback(h, eventdata, handles, varargin)
 global spc
 betahat=spc_fitexpgauss;
 %spc_dispbeta;
+%betahat = spc_test_fit('single');
 spc_redrawSetting(1);
 
 % --------------------------------------------------------------------
@@ -261,6 +262,7 @@ function varargout = spc_fit2_Callback(h, eventdata, handles, varargin)
 global spc
 betahat=spc_fitexp2gauss;
 % spc_dispbeta;
+%betahat = spc_test_fit('double');
 spc_redrawSetting(1);
 
 % --------------------------------------------------------------------

@@ -17,13 +17,13 @@ for i=1:201
     fraction1(i) = i-51;    
     beta1(1) = 100*(100-fraction1(i));
     beta1(3) = 100*fraction1(i);
-    curve1 = exp2gauss(beta1, t1);
+    curve1 = FLIMageFitting.Exp2Gauss(beta1, t1); % exp2gauss(beta1, t1); IB
     tau1(i) = sum(t1.*curve1)/sum(curve1); %*spc.datainfo.psPerUnit/1000;
     
     pop1 = beta1(1)/(beta1(1) + beta1(3));
     pop2 = 1 - pop1;
-    tauD = beta1(2)*spc.datainfo.psPerUnit/1000;
-    tauAD = beta1(4)*spc.datainfo.psPerUnit/1000;
+    tauD =  spc.datainfo.psPerUnit/1000/beta1(2); % IB
+    tauAD = spc.datainfo.psPerUnit/1000/beta1(4); % IB
     tau2(i) = (tauD*tauD*pop1+tauAD*tauAD*pop2)/(tauD*pop1 + tauAD*pop2);
     %plot(t1, curve1/max(curve1)); 
 end

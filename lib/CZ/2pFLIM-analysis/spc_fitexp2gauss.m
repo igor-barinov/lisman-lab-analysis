@@ -12,6 +12,7 @@ x = range(1):range(2);
 [val_max, pos_max] = max(lifetime);
 
 beta0 = spc_initialValue_double;
+%beta0 = spc_initialFitParams('double');
     
 weight = sqrt(lifetime)/sqrt(max(lifetime));
 weight(lifetime < 1)=1/sqrt(max(lifetime));
@@ -20,12 +21,23 @@ bg = str2double(get(gui.spc.spc_main.beta7, 'string'));
 
 lifetime = lifetime;
 
-try
-    for i=1:3
-        betahat = nlinfit(x, lifetime+1, @exp2gauss, beta0,'Weights',weight); %by cong
-        %betahat = spc_nlinfit(x, lifetime, weight, @exp2gauss, beta0);
+warning('');
+warning('off');
+for i=1:3
+    % betahat = nlinfit(x, lifetime+1, @exp2gauss, beta0,'Weights',weight); %by cong
+    %betahat = spc_nlinfit(x, lifetime, weight, @exp2gauss, beta0);
+    
+    beta0 = FLIMageFitting.Exp2GaussInitialPrms(x, lifetime, spc.datainfo.psPerUnit);
+    betahat = FLIMageFitting.Exp2GaussFit(beta0, x, lifetime);
+    
+    [warnMsg, warnID] = lastwarn();
+    if ~isempty(warnMsg)
+        disp(['Warning raised during fit: ', warnID]);
     end
 end
+warning('on');
+
+
 
 for j = [2, 4, 5, 6]
     if fixtau(j)
@@ -34,12 +46,13 @@ for j = [2, 4, 5, 6]
 end
 
 spc.fit(gui.spc.proChannel).beta0 = betahat;
-spc.fit(gui.spc.proChannel).curve = exp2gauss(betahat, x);
+spc.fit(gui.spc.proChannel).curve = FLIMageFitting.Exp2Gauss(betahat, x);
+%spc.fit(gui.spc.proChannel).curve = exp2gauss(betahat, x);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-tauD = spc.fit(gui.spc.proChannel).beta0(2)*spc.datainfo.psPerUnit/1000;
-tauAD = spc.fit(gui.spc.proChannel).beta0(4)*spc.datainfo.psPerUnit/1000;
+tauD = spc.datainfo.psPerUnit/1000/spc.fit(gui.spc.proChannel).beta0(2);
+tauAD = spc.datainfo.psPerUnit/1000/spc.fit(gui.spc.proChannel).beta0(4);
 
 % pop2 = spc_getFraction(sum(lifetime.*x)/sum(lifetime));
 pop1 = betahat(1)/(betahat(1) + betahat(3));

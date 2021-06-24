@@ -7,12 +7,12 @@ if isfield(spc.fit(gui.spc.proChannel), 'beta0')
 	handles = gui.spc.spc_main;
 	betahat = spc.fit(gui.spc.proChannel).beta0;
 	
-	tau = betahat(2)*spc.datainfo.psPerUnit/1000;
-	tau2 = betahat(4)*spc.datainfo.psPerUnit/1000;
+	tau = spc.datainfo.psPerUnit/1000/betahat(2); %IB
+	tau2 = spc.datainfo.psPerUnit/1000/betahat(4); %IB
 	%peaktime = (betahat(5)+range(1))*spc.datainfo.psPerUnit/1000;
-    peaktime = (betahat(5))*spc.datainfo.psPerUnit/1000;
+    peaktime = (betahat(6))*spc.datainfo.psPerUnit/1000;
     if length(betahat) >= 6
-        tau_g = betahat(6)*spc.datainfo.psPerUnit/1000;
+        tau_g = betahat(5)*spc.datainfo.psPerUnit/1000;
     end
 	
 %     fix1 = spc.fit(gui.spc.proChannel).fixtau1; % get(gui.spc.spc_main.fixtau1, 'value');

@@ -47,7 +47,11 @@ betahat(4) = beta0(4);
 weight = sqrt(lifetime)/sqrt(max(lifetime));
 weight(lifetime < 1)=1/sqrt(max(lifetime));
 
-betahat = spc_nlinfit(x, lifetime, weight, @expgauss, beta0);
+%beta0 = spc_initialFitParams('single');
+
+% betahat = spc_nlinfit(x, lifetime, weight, @expgauss, beta0);
+beta0 = FLIMageFitting.ExpGaussInitialPrms(x, lifetime, spc.datainfo.psPerUnit);
+betahat = FLIMageFitting.ExpGaussFit(beta0, x, lifetime);
 %betahat = spc_nlinfit(x, lifetime, 1, @expgauss, beta0);
 
 for j = [2, 5, 6]
@@ -58,7 +62,8 @@ end
 
 %Drawing
 spc.fit(gui.spc.proChannel).beta0 = betahat;
-spc.fit(gui.spc.proChannel).curve = expgauss(betahat, x);
+spc.fit(gui.spc.proChannel).curve = FLIMageFitting.ExpGauss(betahat, x);
+%spc.fit(gui.spc.proChannel).curve = expgauss(betahat, x);
 
 tau_m = spc.fit(gui.spc.proChannel).beta0(2)*spc.datainfo.psPerUnit/1000;
 tau_m2 = sum(lifetime.*x)/sum(lifetime)*spc.datainfo.psPerUnit/1000; %tau_m.
