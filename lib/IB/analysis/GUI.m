@@ -182,6 +182,10 @@ classdef GUI
 
             % Change plotting options based on preferences
             [settingsMap] = AppState.get_user_preferences();
+            if isempty(settingsMap)
+                warndlg('Could not load all user preferences');
+            end
+            
             showLifetime = settingsMap('show_lifetime');
             showGreen = settingsMap('show_green_int');
             showRed = settingsMap('show_red_int');

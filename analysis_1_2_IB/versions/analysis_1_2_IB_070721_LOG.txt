@@ -1,0 +1,44 @@
+[07-Jul-2021 21:06:17]: Error using isfield
+Not enough input arguments.
+
+Error in AveragedFile (line 31)
+                    if isfield(fileStruct.('userPref'))
+
+Error in FileMenu.open (line 32)
+                openFile = AveragedFile(filepaths);
+
+Error in analysis_1_2_IB_070721>menuOpen_Callback (line 113)
+    FileMenu.open(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+
+[07-Jul-2021 21:07:03]: Reference to non-existent field 'filePath'.
+
+Error in AveragedFile/source_files (line 53)
+                filepaths = [filepaths, obj.filedata(i).('filePath')];
+
+Error in GUI.update_win_title (line 223)
+                srcFiles = openFile.source_files();
+
+Error in FileMenu.open (line 126)
+            GUI.update_win_title(handles);
+
+Error in analysis_1_2_IB_070721>menuOpen_Callback (line 113)
+    FileMenu.open(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+

@@ -29,11 +29,17 @@ classdef IOUtils
         % (IN) "filepath": string describing path to .ini file
         %
         % (OUT) "settings": cell of strings describing available settings
-        % in .ini file
+        % in .ini file. Empty if the file does not exist.
         % (OUT) "values": cell of strings describing values to settings at
-        % corresponding indices
+        % corresponding indices. Empty if the file does not exist.
         %
-            fileID = fopen(filepath);            
+            fileID = fopen(filepath);   
+            if fileID == -1
+                settings = {};
+                values = {};
+                return;
+            end
+            
             currentLine = fgetl(fileID);
             settings = {};
             values = {};

@@ -20,7 +20,7 @@ classdef AveragedFile < ROIFile
                     dataStruct = struct;
                     
                     % Load mandatory fields
-                    dataStruct.('filepath') = fileStruct.('filePath');
+                    dataStruct.('filePath') = fileStruct.('filePath');
                     dataStruct.('numROI') = fileStruct.('numROI');
                     dataStruct.('time') = fileStruct.('time');
                     dataStruct.('dnaType') = fileStruct.('dnaType');
@@ -28,7 +28,7 @@ classdef AveragedFile < ROIFile
                     dataStruct.('averages') = fileStruct.('averages');
                     
                     % Load possible fields
-                    if isfield(fileStruct.('userPref'))
+                    if isfield(fileStruct, 'userPref')
                         dataStruct.('userPref') = fileStruct.('userPref');
                     end
                     

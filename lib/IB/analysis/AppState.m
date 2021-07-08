@@ -31,7 +31,8 @@ classdef AppState
         % Reads preferences stored in program's .ini file into a map
         % structure. If no .ini file exists, a default one will be created
         %
-        % (OUT) "settingsMap": Map structure containing
+        % (OUT) "settingsMap": Map structure containing key/value pairs
+        % representing user preferences. Empty if there was an error
         %
         % Assumes program .ini file is named according to release program
         % version
@@ -50,11 +51,21 @@ classdef AppState
 
             % Read ini file into map
             [settings, values] = IOUtils.read_ini_file(iniFile);
+            if isempty(settings) || isempty(values)
+                settingsMap = containers.Map;
+                return;
+            end
+            
             settingsMap = containers.Map(settings, values);
             
             activeFigDefault = settingsMap('plot_default');
             iniFigDefault = PreferencesApp.figure_default_filepath(activeFigDefault);
             [figSettings, figValues] = IOUtils.read_ini_file(iniFigDefault);
+            if isempty(figSettings) || isempty(figValues)
+                settingsMap = containers.Map;
+                return;
+            end
+            
             for i = 1:numel(figSettings)
                 figSetting = figSettings{i};
                 figVal = figValues{i};
