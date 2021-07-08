@@ -196,6 +196,8 @@ if ~spc.switches.noSPC
     betahat = spc.fit(gui.spc.proChannel).beta0;
     try
         spc_drawfit (t,  spc.fit(gui.spc.proChannel).curve, lifetime, gui.spc.proChannel);   
+    catch e
+        disp(e);
     end
     spc_dispbeta;
 end

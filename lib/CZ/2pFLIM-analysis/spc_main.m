@@ -4,11 +4,9 @@ function varargout = spc_main(varargin)
 %    SPC_MAIN('callback_name', ...) invoke the named callback.
 
 % Last Modified by GUIDE v2.5 23-Nov-2020 15:13:17
-global gui;
-global spc;
+global gui spc;
 
 if nargin == 0  % LAUNCH GUI
-
 	fig = openfig(mfilename,'reuse');
 
 	% Generate a structure of handles to pass to callbacks, and store it. 
@@ -20,37 +18,31 @@ if nargin == 0  % LAUNCH GUI
 		varargout{1} = fig;
     end
     
-    try
-        range = round(spc.fit(gui.spc.proChannel).range.*spc.datainfo.psPerUnit/100)/10;
-        set(handles.spc_fitstart, 'String', num2str(range(1)));
-        set(handles.spc_fitend, 'String', num2str(range(2)));
-        set(handles.back_value, 'String', num2str(spc.fit(gui.spc.proChannel).background));
-        set(handles.filename, 'String', spc.filename);
-        set(handles.spc_page, 'String', num2str(spc.switches.currentPage));
-        set(handles.slider1, 'Value', (spc.switches.currentPage-1)/100);
-        spc_dispbeta;
-    end
-    try
-        set(handles.fracCheck, 'Value', 1);
-        set(handles.tauCheck, 'Value', 1);
-        set(handles.greenCheck, 'Value', 1);
-        set(handles.redCheck, 'Value', 1);
-        set(handles.RatioCheck, 'Value', 0);
-    end
-       
-
+    range = round(spc.fit(gui.spc.proChannel).range.*spc.datainfo.psPerUnit/100)/10;
+    set(handles.spc_fitstart, 'String', num2str(range(1)));
+    set(handles.spc_fitend, 'String', num2str(range(2)));
+    set(handles.back_value, 'String', num2str(spc.fit(gui.spc.proChannel).background));
+    set(handles.filename, 'String', spc.filename);
+    set(handles.spc_page, 'String', num2str(spc.switches.currentPage));
+    set(handles.slider1, 'Value', (spc.switches.currentPage-1)/100);
+    spc_dispbeta();
+    
+    
+    set(handles.fracCheck, 'Value', 1);
+    set(handles.tauCheck, 'Value', 1);
+    set(handles.greenCheck, 'Value', 1);
+    set(handles.redCheck, 'Value', 1);
+    set(handles.RatioCheck, 'Value', 0);
 elseif ischar(varargin{1}) % INVOKE NAMED SUBFUNCTION OR CALLBACK
-
 	try
-		if (nargout)
+		if nargout
 			[varargout{1:nargout}] = feval(varargin{:}); % FEVAL switchyard
 		else
 			feval(varargin{:}); % FEVAL switchyard
 		end
-	catch
-		disp(lasterr);
-	end
-
+    catch err
+		disp(err);
+    end
 end
 
 
@@ -90,69 +82,142 @@ end
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Menu bar
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%File menu
-% --------------------------------------------------------------------
-function varargout = spc_file_Callback(h, eventdata, handles, varargin)
-% --------------------------------------------------------------------
-function varargout = spc_open_Callback(h, eventdata, handles, varargin)
-global spc;
+%% FILE MENU ======================================================================================================
+%
+function spc_file_Callback(~, ~, ~, varargin)
+
+
+function spc_open_Callback(~, ~, ~, varargin)
+SPCFileMenu.Open();
+
+
+function saveMovie_Callback(~, ~, ~)
+SPCFileMenu.SaveTifMovieAs();
+
+%% ================================================================================================================
+
+
+
+
+
+
+
+
+
+
+%% DRAWING MENU ===================================================================================================
+%
+function spc_drawing_Callback(~, ~, ~, varargin)
+
+function spc_drawall_Callback(~, ~, ~, varargin)
+SPCDrawingMenu.RedrawLifetime();
+
+
+function logscale_Callback(~, ~, ~, varargin)
+SPCDrawingMenu.Logscale();
+
+
+function lifetime_map_Callback(~, ~, ~, varargin)
+SPCDrawingMenu.LifetimeRange();
+
+
+function show_all_Callback(~, ~, ~, varargin)
+SPCDrawingMenu.ShowAll();
+
+
+function redraw_all_Callback(~, ~, ~, varargin)
+SPCDrawingMenu.RedrawAll();
+
+%% ================================================================================================================
+
+
+
+
+
+
+
+
+
+
+%% ANALYSIS MENU ==================================================================================================
+%
+
+function analysis_Callback(~, ~, ~, varargin)
+
+function smoothing_Callback(~, ~, ~, varargin)
+%% ANALYSIS -> SMOOTHING ------------------------------------------------------------------------------------------
+%
+spc_smooth();
+
+
+function binning_Callback(~, ~, ~, varargin)
+%% ANALYSIS -> BINNING --------------------------------------------------------------------------------------------
+%
+spc_binning();
+
+
+function spc_averageMultipleImages_Callback(~, ~, ~)
+%% ANALYSIS -> AVERAGE MULTIPLE IMAGES ----------------------------------------------------------------------------
+%
+spc_averageMultipleImages();
+
+
+function Frames_Callback(~, ~, ~)
+%% ANALYSIS -> FRAMES ... -----------------------------------------------------------------------------------------
+%
+
+
+function fastAnalysis_Callback(~, ~, ~)
+%% ANALYSIS -> FRAMES -> FRAME CALCROIS ---------------------------------------------------------------------------
+%
+spc_calc_timeCourseFromStack();
+
+
+function frameCurrentAnal_Callback(~, ~, ~)
+%% ANALYSIS -> FRAMES -> FRAME CALCROIS (CURRENT FRAME) -----------------------------------------------------------
+%
 global gui;
-global fitsave;
-%spc.fit.range(1) = 	str2num(get(handles.spc_fitstart, 'String'))/spc.datainfo.psPerUnit*1000;
-%spc.fit.range(2) =	str2num(get(handles.spc_fitend, 'String'))/spc.datainfo.psPerUnit*1000;
-%page = str2num(get(handles.spc_page, 'String'));
 
-[fname,pname] = uigetfile('*.sdt;*.mat;*.tif','Select spc-file');
-cd (pname);
-filestr = [pname, fname];
-if exist(filestr) == 2
-        fitsave = []; % IB fix 11/15/20
-        spc_openCurves(filestr);
-end
-%spc_putIntoSPCS;
-spc_updateMainStrings;
+slicesS = get(gui.spc.spc_main.spc_page, 'String');
+slices = str2num(slicesS);
+spc_calc_timeCourseFromStack(slices);
+set(gui.spc.spc_main.spc_page, 'String', slicesS);
+spc_redrawSetting(1);
+spc_updateMainStrings();
 
-%%%Put into spc array if there is no state
-
+%% ================================================================================================================
 
 % --------------------------------------------------------------------
-function varargout = openall_Callback(h, eventdata, handles, varargin)
-global spc;
-%spc.fit.range(1) = 	str2num(get(handles.spc_fitstart, 'String'))/spc.datainfo.psPerUnit*1000;
-%spc.fit.range(2) =	str2num(get(handles.spc_fitend, 'String'))/spc.datainfo.psPerUnit*1000;
-%spc_openAll;
+function openall_Callback(~, ~, ~, varargin)
 spc_updateMainStrings;
+
 % --------------------------------------------------------------------
-function varargout = spc_loadPrf_Callback(h, eventdata, handles, varargin)
+function spc_loadPrf_Callback(~, ~, ~, varargin)
 global spc;
 [fname,pname] = uigetfile('*.mat','Select mat-file');
-if exist([pname, fname]) == 2
+if exist([pname, fname], 'file') == 2
     load ([pname,fname], 'prf');
 end
 spc.fit.prf = prf;
 
 % --------------------------------------------------------------------
-function varargout = spc_savePrf_Callback(h, eventdata, handles, varargin)
+function spc_savePrf_Callback(~, ~, ~, varargin)
 global spc;
 [fname,pname] = uiputfile('*.mat','Select the mat-file');
+filestr = [pname, fname];
 prf = spc.fit.prf;
-%if (pname == 7) & (fname ~= '')
-    save ([pname,fname], 'prf');
-%end
+save(filestr, 'prf');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Fitting menu
 % --------------------------------------------------------------------
-function varargout = spc_fitting_Callback(h, eventdata, handles, varargin)
+function spc_fitting_Callback(~, ~, ~, varargin)
 % --------------------------------------------------------------------
-function varargout = spc_exps_Callback(h, eventdata, handles, varargin)
-global spc
+function spc_exps_Callback(~, ~, handles, varargin)
+global spc;
 range = spc.fit.range;
 lifetime = spc.lifetime(range(1):1:range(2));
-x = [1:1:length(lifetime)];
+x = 1:1:length(lifetime);
 beta0 = [max(lifetime), sum(lifetime)/max(lifetime)];
 betahat = spc_nlinfit(x, lifetime, sqrt(lifetime)/sqrt(max(lifetime)), @expfit, beta0);
 tau = betahat(2)*spc.datainfo.psPerUnit/1000;
@@ -167,140 +232,111 @@ set(handles.average, 'String', num2str(tau));
 
 %Drawing
 fit = expfit(betahat, x);
-t = [range(1):1:range(2)];
+t = range(1):1:range(2);
 t = t*spc.datainfo.psPerUnit/1000;
-spc_drawfit (t, fit, lifetime, betahat);
+spc_drawfit(t, fit, lifetime, betahat);
 
 
-function y=expfit(beta0, x);
-global spc;
-if spc.switches.imagemode == 1
-    spc_roi = get(spc.figure.roi, 'Position');
-else
-    spc_roi = [1,1,1,1];
-end;
+function y=expfit(beta0, x)
 y=exp(-x/beta0(2))*beta0(1);
 
 % --------------------------------------------------------------------
-function varargout = spc_expgauss_Callback(h, eventdata, handles, varargin)
-betahat=spc_fitexpgauss;
+function spc_expgauss_Callback(~, ~, ~, varargin)
+spc_fitexpgauss();
 spc_redrawSetting(1);
 % --------------------------------------------------------------------
-function varargout = spc_exp2gauss_Callback(h, eventdata, handles, varargin)
-betahat=spc_fitexp2gauss;
+function spc_exp2gauss_Callback(~, ~, ~, varargin)
+spc_fitexp2gauss();
 spc_redrawSetting(1);
 
 % --------------------------------------------------------------------
-function varargout = expgauss_triple_Callback(h, eventdata, handles, varargin)
-spc_fitWithSingleExp_triple;
+function expgauss_triple_Callback(~, ~, ~, varargin)
+spc_fitWithSingleExp_triple();
 
 % --------------------------------------------------------------------
-function varargout = Double_expgauss_triple_Callback(h, eventdata, handles, varargin)
-spc_fitWithDoubleExp_triple;
+function Double_expgauss_triple_Callback(~, ~, ~, varargin)
+spc_fitWithDoubleExp_triple();
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Drawing menu
 % --------------------------------------------------------------------
-function varargout = spc_drawing_Callback(h, eventdata, handles, varargin)
-% --------------------------------------------------------------------
-function varargout = spc_drawall_Callback(h, eventdata, handles, varargin)
-%spc_spcsUpdate;
-spc_redrawSetting(1);
 
 % --------------------------------------------------------------------
-function varargout = logscale_Callback(h, eventdata, handles, varargin)
-spc_logscale;
-% --------------------------------------------------------------------
-function varargout = lifetime_map_Callback(h, eventdata, handles, varargin)
-twodialog;
-% --------------------------------------------------------------------
-function varargout = show_all_Callback(h, eventdata, handles, varargin)
-global gui
-figure(gui.spc.figure.project);
-figure(gui.spc.figure.lifetime);
-figure(gui.spc.figure.lifetimeMap);
-figure(gui.spc.figure.scanImgF);
+
 
 % --------------------------------------------------------------------
-function varargout = redraw_all_Callback(h, eventdata, handles, varargin)
-spc_redrawSetting(1);
+
+% --------------------------------------------------------------------
+
+% --------------------------------------------------------------------
+
+
+% --------------------------------------------------------------------
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Analysis menu
 % --------------------------------------------------------------------
-function varargout = analysis_Callback(h, eventdata, handles, varargin)
-% --------------------------------------------------------------------
-function varargout = smoothing_Callback(h, eventdata, handles, varargin)
-spc_smooth;
-% --------------------------------------------------------------------
-function varargout = binning_Callback(h, eventdata, handles, varargin)
-spc_binning;
 
 % --------------------------------------------------------------------
-function varargout = smooth_all_Callback(h, eventdata, handles, varargin)
-spc_smoothAll;
 
 % --------------------------------------------------------------------
-function varargout = binning_all_Callback(h, eventdata, handles, varargin)
-spc_binningAll;
+
 
 % --------------------------------------------------------------------
-function varargout = undoall_Callback(h, eventdata, handles, varargin)
-spc_undoAll;
+function smooth_all_Callback(~, ~, ~, varargin)
+spc_smoothAll();
+
+% --------------------------------------------------------------------
+function binning_all_Callback(~, ~, ~, varargin)
+spc_binningAll();
+
+% --------------------------------------------------------------------
+function undoall_Callback(~, ~, ~, varargin)
+spc_undoAll();
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Buttons
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % --------------------------------------------------------------------
-function varargout = spc_fit1_Callback(h, eventdata, handles, varargin)
-global spc
-betahat=spc_fitexpgauss;
-%spc_dispbeta;
-%betahat = spc_test_fit('single');
+function spc_fit1_Callback(~, ~, ~, varargin)
+spc_fitexpgauss();
 spc_redrawSetting(1);
 
 % --------------------------------------------------------------------
-function varargout = spc_fit2_Callback(h, eventdata, handles, varargin)
-global spc
-betahat=spc_fitexp2gauss;
-% spc_dispbeta;
-%betahat = spc_test_fit('double');
+function spc_fit2_Callback(~, ~, ~, varargin)
+spc_fitexp2gauss();
 spc_redrawSetting(1);
 
 % --------------------------------------------------------------------
-function varargout = spc_look_Callback(h, eventdata, handles, varargin)
-global spc gui
+function spc_look_Callback(~, ~, ~, varargin)
+global spc gui;
 range = spc.fit(gui.spc.proChannel).range;
 lifetime = spc.lifetime(range(1):1:range(2));
-x = [1:1:length(lifetime)];
-beta0 = spc_initialValue_double;
-
-% pop1 = beta0(1)/(beta0(1)+beta0(3));
-% pop2 = beta0(3)/(beta0(1)+beta0(3));
-% set(handles.pop1, 'String', num2str(pop1));
-% set(handles.pop2, 'String', num2str(pop2));
+x = 1:1:length(lifetime);
+beta0 = spc_initialValue_double();
 
 %Drawing
 fit = exp2gauss(beta0, x);
-t = [range(1):1:range(2)];
+t = range(1):1:range(2);
 t = t*spc.datainfo.psPerUnit/1000;
 
 %Drawing
-spc_drawfit (t, fit, lifetime, gui.spc.proChannel);
+spc_drawfit(t, fit, lifetime, gui.spc.proChannel);
 figure(gui.spc.figure.project);
 figure(gui.spc.figure.lifetime);
 figure(gui.spc.figure.lifetimeMap);
 figure(gui.spc.figure.scanImgF);
-spc_dispbeta;
+spc_dispbeta();
 
 % --------------------------------------------------------------------
-function varargout = spc_redraw_Callback(h, eventdata, handles, varargin)
-global spc gui
+function spc_redraw_Callback(~, ~, ~, varargin)
+global gui;
 
 spc_redrawSetting(1);
 figure(gui.spc.figure.project);
 figure(gui.spc.figure.lifetime);
 figure(gui.spc.figure.lifetimeMap);
 figure(gui.spc.figure.scanImgF);
-set(gui.spc.spc_main.spc_main, 'color',  [1, 1, 0.75])
+set(gui.spc.spc_main.spc_main, 'color',  [1, 1, 0.75]);
 
 
 
@@ -309,64 +345,61 @@ set(gui.spc.spc_main.spc_main, 'color',  [1, 1, 0.75])
 %Beta windows
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % --------------------------------------------------------------------
-function varargout = beta1_Callback(h, eventdata, handles, varargin)
-global spc gui
+function beta1_Callback(h, ~, ~, varargin)
+global spc gui;
 val1 = str2double(get(h, 'String'));
-spc.fit(gui.spc.proChannel).beta0(1) = val1; %*1000/spc.datainfo.psPerUnit;
-spc_dispbeta;
+spc.fit(gui.spc.proChannel).beta0(1) = val1;
+spc_dispbeta();
 
 % --------------------------------------------------------------------
-function varargout = beta2_Callback(h, eventdata, handles, varargin)
-global spc gui
+function beta2_Callback(h, ~, ~, varargin)
+global spc gui;
 val1 = str2double(get(h, 'String'));
 spc.fit(gui.spc.proChannel).beta0(2) = val1*1000/spc.datainfo.psPerUnit;
-spc_dispbeta;
+spc_dispbeta();
 
 % --------------------------------------------------------------------
-function varargout = beta3_Callback(h, eventdata, handles, varargin)
-global spc gui
+function beta3_Callback(h, ~, ~, varargin)
+global spc gui;
 val1 = str2double(get(h, 'String'));
-spc.fit(gui.spc.proChannel).beta0(3) = val1; %*1000/spc.datainfo.psPerUnit;
-spc_dispbeta;
+spc.fit(gui.spc.proChannel).beta0(3) = val1;
+spc_dispbeta();
 
 % --------------------------------------------------------------------
-function varargout = beta4_Callback(h, eventdata, handles, varargin)
-global spc gui
+function beta4_Callback(h, ~, ~, varargin)
+global spc gui;
 val1 = str2double(get(h, 'String'));
 spc.fit(gui.spc.proChannel).beta0(4) = val1*1000/spc.datainfo.psPerUnit;
-spc_dispbeta;
+spc_dispbeta();
 
 % --------------------------------------------------------------------
-function varargout = beta5_Callback(h, eventdata, handles, varargin)
-global spc gui
+function beta5_Callback(h, ~, ~, varargin)
+global spc gui;
 val1 = str2double(get(h, 'String'));
 spc.fit(gui.spc.proChannel).beta0(5) = val1*1000/spc.datainfo.psPerUnit;
-spc_dispbeta;
+spc_dispbeta();
 
 % --------------------------------------------------------------------
-function varargout = beta6_Callback(hObject, eventdata, handles)
-global spc gui
+function beta6_Callback(~, ~, ~)
+global spc gui;
 val1 = str2double(get(h, 'String'));
 spc.fit(gui.spc.proChannel).beta0(6) = val1*1000/spc.datainfo.psPerUnit;
-spc_dispbeta;
+spc_dispbeta();
 
 % --------------------------------------------------------------------
-function varargout = spc_fitstart_Callback(h, eventdata, handles, varargin)
-%spc_redrawSetting(1);
+function spc_fitstart_Callback(~, ~, ~, varargin)
 spc_redrawSetting(1);
 
 % --------------------------------------------------------------------
-function varargout = spc_fitend_Callback(h, eventdata, handles, varargin)
+function spc_fitend_Callback(~, ~, ~, varargin)
 % --------------------------------------------------------------------
-%spc_redrawSetting(1);
 spc_redrawSetting(1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Spc, page control
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function varargout = spc_page_Callback(h, eventdata, handles, varargin)
-global spc;
-global gui;
+function spc_page_Callback(~, ~, ~, varargin)
+global spc gui;
 
 current = spc.page;
 spc.page = str2num(get(gui.spc.spc_main.spc_page, 'String'));
@@ -379,25 +412,18 @@ if any(spc.page < 1)
 end
 spc.switches.currentPage = spc.page;
 
-
-%if all(current ~= spc.page)
-    %spc_maxProc_offLine;
-    spc_redrawSetting(1);
-    set(gui.spc.spc_main.spc_page, 'String', num2str(spc.page));
-%end
-% 
-spc_updateMainStrings;
+spc_redrawSetting(1);
+set(gui.spc.spc_main.spc_page, 'String', num2str(spc.page));
+spc_updateMainStrings();
 
 
 
 % --------------------------------------------------------------------
-function varargout = slider1_Callback(h, eventdata, handles, varargin)
-global spc
-global gui
+function slider1_Callback(~, ~, handles, varargin)
+global spc gui;
 
 current = spc.page;
 slider_value = get(handles.slider1, 'Value');
-slider_step = get(handles.slider1, 'sliderstep');
 page = round(slider_value);
 
 
@@ -413,20 +439,17 @@ end
 spc.page = min(current):page;
 spc.switches.currentPage = spc.page;
 set(gui.spc.spc_main.spc_page, 'String', num2str(spc.page));
-%spc_maxProc_offLine;
 spc_redrawSetting(1);
 
-spc_updateMainStrings;
+spc_updateMainStrings();
 
 %
 % --- Executes on slider movement.
-function minSlider_Callback(hObject, eventdata, handles)
-global spc;
-global gui;
+function minSlider_Callback(~, ~, handles)
+global spc gui;
 
 current = spc.page;
 slider_value = get(handles.minSlider, 'Value');
-slider_step = get(handles.minSlider, 'sliderstep');
 page = round(slider_value);
 
 
@@ -442,81 +465,56 @@ end
 spc.page = page:max(current);
 spc.switches.currentPage = spc.page;
 set(gui.spc.spc_main.spc_page, 'String', num2str(spc.page));
-%spc_maxProc_offLine;
 spc_redrawSetting(1);
 
 
-spc_updateMainStrings;
+spc_updateMainStrings();
 
 
 % --- Executes during object creation, after setting all properties.
-function minSlider_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to minSlider (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: slider controls usually have a light gray background.
+function minSlider_CreateFcn(hObject, ~, ~)
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
 % --------------------------------------------------------------------
-function varargout = spcN_Callback(h, eventdata, handles, varargin)
-%global spcs;
-global spc;
-
+function spcN_Callback(~, ~, handles, varargin)
 spcN = str2num(get(handles.spcN, 'String'));
-
 spc_changeCurrent(spcN);
-
-%set(handles.spcN, 'String', num2str(spcs.current));
-%set(handles.slider2, 'Value', (spcs.current-1)/100);
-%set(handles.filename, 'String', num2str(spc.filename));
-spc_updateMainStrings;
+spc_updateMainStrings();
 
 % --------------------------------------------------------------------
-function varargout = slider2_Callback(h, eventdata, handles, varargin)
-
+function slider2_Callback(~, ~, handles, varargin)
 slider_value = get(handles.slider2, 'Value');
-slider_step = get(handles.slider2, 'sliderstep');
 spcN = slider_value*100+1;
 
 spc_changeCurrent(spcN);
-    
-%set(handles.spcN, 'String', num2str(spcs.current));
-%set(handles.slider2, 'Value', (spcs.current-1)/100);
-%set(handles.filename, 'String', num2str(spc.filename));
-spc_updateMainStrings;
+spc_updateMainStrings();
 
 
 % --------------------------------------------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Utilities
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function varargout = fixtau1_Callback(h, eventdata, handles, varargin)
-global spc gui
+function fixtau1_Callback(h, ~, ~, varargin)
+global spc gui;
 spc.fit(gui.spc.proChannel).fixtau(2) = get(h, 'Value');
 
-function varargout = fixtau2_Callback(h, eventdata, handles, varargin)
-global spc gui
+function fixtau2_Callback(h, ~, ~, varargin)
+global spc gui;
 spc.fit(gui.spc.proChannel).fixtau(4) = get(h, 'Value');
 
 % --- Executes on button press in fix_g.
-function fix_g_Callback(hObject, eventdata, handles)
-global spc gui
+function fix_g_Callback(hObject, ~, ~)
+global spc gui;
 spc.fit(gui.spc.proChannel).fixtau(5) = get(hObject, 'Value');
 
 % --- Executes on button press in fix_delta.
-function fix_delta_Callback(hObject, eventdata, handles)
-global spc gui
+function fix_delta_Callback(hObject, ~, ~)
+global spc gui;
 spc.fit(gui.spc.proChannel).fixtau(6) = get(hObject, 'Value');
 
 % --- Executes on button press in pushbutton14.
-function pushbutton14_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton14 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-%timecourse.
-
+function pushbutton14_Callback(~, ~, ~)
 spc_auto(1);
 
 
@@ -524,13 +522,7 @@ spc_auto(1);
 
 
 % --- Executes during object creation, after setting all properties.
-function beta6_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to beta6 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+function beta6_CreateFcn(hObject, ~, ~)
 if ispc
     set(hObject,'BackgroundColor','white');
 else
@@ -539,399 +531,254 @@ end
 
 
 % --- Executes on button press in pushbutton15.
-function pushbutton15_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton15 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function pushbutton15_Callback(~, ~, ~)
 
 
 % --- Executes on button press in spc_opennext. Open the next file.
-function spc_opennext_Callback(hObject, eventdata, handles)
-% hObject    handle to spc_opennext (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-spc_opennext;
+function spc_opennext_Callback(~, ~, ~)
+spc_opennext();
 
 
 % --- Executes on button press in spc_openprevious. Open the Previous file.
-function spc_openprevious_Callback(hObject, eventdata, handles)
-% hObject    handle to spc_openprevious (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-spc_openprevious;
+function spc_openprevious_Callback(~, ~, ~)
+spc_openprevious();
 
 
 % --------------------------------------------------------------------
-function Roi_Callback(hObject, eventdata, handles)
-% hObject    handle to Roi (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function Roi_Callback(~, ~, ~)
 
 % --------------------------------------------------------------------
-function Roi0_Callback(hObject, eventdata, handles)
+function Roi0_Callback(~, ~, ~)
 spc_makeRoiA(0);
 % --------------------------------------------------------------------
-function Roi1_Callback(hObject, eventdata, handles)
+function Roi1_Callback(~, ~, ~)
 spc_makeRoiA(1);
 % --------------------------------------------------------------------
-function Roi2_Callback(hObject, eventdata, handles)
+function Roi2_Callback(~, ~, ~)
 spc_makeRoiA(2);
 % --------------------------------------------------------------------
-function Roi3_Callback(hObject, eventdata, handles)
+function Roi3_Callback(~, ~, ~)
 spc_makeRoiA(3);
 
 
 % --------------------------------------------------------------------
-function Roi4_Callback(hObject, eventdata, handles)
+function Roi4_Callback(~, ~, ~)
 spc_makeRoiA(4);
 
 % --------------------------------------------------------------------
-function Roi5_Callback(hObject, eventdata, handles)
+function Roi5_Callback(~, ~, ~)
 spc_makeRoiA(5);
 
 % --------------------------------------------------------------------
-function RoiMore_Callback(hObject, eventdata, handles)
+function RoiMore_Callback(~, ~, ~)
 prompt = 'Roi Number:';
 dlg_title = 'Roi';
 num_lines= 1;
 def     = {'6'};
 answer  = inputdlg(prompt,dlg_title,num_lines,def);
 
-spc_makeRoiA(str2num(answer{1}));
+spc_makeRoiA(str2double(answer{1}));
+
 % --------------------------------------------------------------------
-function asRoi_Callback(hObject, eventdata, handles)
-% hObject    handle to asRoi (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function asRoi_Callback(~, ~, ~)
 prompt = 'Roi Number:';
 dlg_title = 'Roi';
 num_lines= 1;
 def     = {'1'};
 answer  = inputdlg(prompt,dlg_title,num_lines,def);
 
-spc_makeRoiB(str2num(answer{1}));
+spc_makeRoiB(str2double(answer{1}));
 
 
 
-function File_N_Callback(hObject, eventdata, handles)
-% hObject    handle to File_N (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of File_N as text
-%        str2double(get(hObject,'String')) returns contents of File_N as a double
-
+function File_N_Callback(~, ~, handles)
 global spc;
-try
-    [filepath, basename, filenumber, max] = spc_AnalyzeFilename(spc.filename);
-    fileN = get(handles.File_N, 'String');
-    next_filenumber_str = '000';
-    next_filenumber_str ((end+1-length(fileN)):end) = num2str(fileN);
-    if max == 0
-        next_filename = [filepath, basename, next_filenumber_str, '.tif'];
-    else
-        next_filename = [filepath, basename, next_filenumber_str, '_max.tif'];
-    end
-    if exist(next_filename)
-        spc_openCurves (next_filename);
-    else
-        disp([next_filename, ' not exist!']);
-    end
-    spc_updateMainStrings;
+[filepath, basename, ~, max] = spc_AnalyzeFilename(spc.filename);
+fileN = get(handles.File_N, 'String');
+next_filenumber_str = '000';
+next_filenumber_str ((end+1-length(fileN)):end) = num2str(fileN);
+if max == 0
+    next_filename = [filepath, basename, next_filenumber_str, '.tif'];
+else
+    next_filename = [filepath, basename, next_filenumber_str, '_max.tif'];
 end
+if exist(next_filename, 'file')
+    spc_openCurves(next_filename);
+else
+    disp([next_filename, ' not exist!']);
+end
+spc_updateMainStrings();
 
 % --- Executes during object creation, after setting all properties.
-function File_N_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to File_N (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+function File_N_CreateFcn(hObject, ~, ~)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
 
 
-function edit14_Callback(hObject, eventdata, handles)
-% hObject    handle to edit14 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit14 as text
-%        str2double(get(hObject,'String')) returns contents of edit14 as a double
-
+function edit14_Callback(~, ~, ~)
 
 % --- Executes during object creation, after setting all properties.
-function edit14_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit14 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+function edit14_CreateFcn(hObject, ~, ~)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
 
 % --- Executes on button press in auto_A.
-function auto_A_Callback(hObject, eventdata, handles)
-% hObject    handle to auto_A (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function auto_A_Callback(~, ~, ~)
 
-spc_adjustTauOffset;
+spc_adjustTauOffset();
 
-function F_offset_Callback(hObject, eventdata, handles)
-% hObject    handle to F_offset (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function F_offset_Callback(~, ~, ~)
 
-% Hints: get(hObject,'String') returns contents of F_offset as text
-%        str2double(get(hObject,'String')) returns contents of F_offset as a double
-
-spc_redrawSetting (1);
+spc_redrawSetting(1);
 
 % --- Executes during object creation, after setting all properties.
-function F_offset_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to F_offset (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+function F_offset_CreateFcn(hObject, ~, ~)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
 % --------------------------------------------------------------------
-function fit_single_prf_Callback(hObject, eventdata, handles)
-% hObject    handle to fit_double_prf (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global spc
+function fit_single_prf_Callback(~, ~, ~)
+global spc;
 
-if ~isfield(spc.fit, 'prf');
-    spc_prfdefault; 
+if ~isfield(spc.fit, 'prf')
+    spc_prfdefault(); 
 end
 if length(spc.fit.prf) ~= spc.lifetime
-    spc_prfdefault;
+    spc_prfdefault();
 end
 
-spc_fitWithSingleExp;
-spc_dispbeta;
+spc_fitWithSingleExp();
+spc_dispbeta();
+
 % --------------------------------------------------------------------
-function fit_double_prf_Callback(hObject, eventdata, handles)
-% hObject    handle to fit_double_prf (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global spc
+function fit_double_prf_Callback(~, ~, ~)
+global spc;
 
-if ~isfield(spc.fit, 'prf');
-    spc_prfdefault; 
+if ~isfield(spc.fit, 'prf')
+    spc_prfdefault(); 
 end
 if length(spc.fit.prf) ~= spc.lifetime
-    spc_prfdefault;
+    spc_prfdefault();
 end
 
-spc_fitWithDoubleExp;
-spc_dispbeta;
+spc_fitWithDoubleExp();
+spc_dispbeta();
 
 
 % --- Executes on button press in fit_eachtime.
-function fit_eachtime_Callback(hObject, eventdata, handles)
-% hObject    handle to fit_eachtime (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of fit_eachtime
+function fit_eachtime_Callback(~, ~, ~)
 
 
 % --- Executes on button press in calcRoi.
-function calcRoi_Callback(hObject, eventdata, handles)
-% hObject    handle to calcRoi (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-spc_calcRoi;
+function calcRoi_Callback(~, ~, ~)
+spc_calcRoi();
 
 
 % --------------------------------------------------------------------
-function RecRoi_Callback(hObject, eventdata, handles)
-% hObject    handle to RecRoi (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-spc_recoverRois;
+function RecRoi_Callback(~, ~, ~)
+spc_recoverRois();
 
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over spc_opennext.
-function spc_opennext_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to spc_opennext (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function spc_opennext_ButtonDownFcn(~, ~, ~)
 
 
 % --------------------------------------------------------------------
-function Untitled_1_Callback(hObject, eventdata, handles)
-% hObject    handle to Untitled_1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function Untitled_1_Callback(~, ~, ~)
 
 
 % --------------------------------------------------------------------
-function s_profile_Callback(hObject, eventdata, handles)
-% hObject    handle to s_profile (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global gui
+function s_profile_Callback(~, ~, ~)
+global gui;
 figure(gui.spc.figure.project);
 
-spc_makepolyLines;
+spc_makepolyLines();
 
 % --------------------------------------------------------------------
-function polylines_Callback(hObject, eventdata, handles)
-% hObject    handle to polylines (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global spc
+function polylines_Callback(~, ~, ~)
+global spc;
 fn = spc.filename;
 fn = [fn, '_ROI2'];
 spc_DendriteAnalysis(fn);
 
 
 % --------------------------------------------------------------------
-function spc_averageMultipleImages_Callback(hObject, eventdata, handles)
-% hObject    handle to spc_averageMultipleImages (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-spc_averageMultipleImages;
 
-function calcRoiTo_CreateFcn(hObject, eventdata, handles)
+function calcRoiTo_CreateFcn(~, ~, ~)
 
-function calcRoiFrom_CreateFcn(hObject, eventdata, handles)
+function calcRoiFrom_CreateFcn(~, ~, ~)
 
 % --- Executes on button press in calcRoiBatch.
-function calcRoiBatch_Callback(hObject, eventdata, handles)
-% hObject    handle to calcRoiBatch (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
+function calcRoiBatch_Callback(~, ~, handles)
 fromVal = str2double(get(handles.calcRoiFrom, 'String'));
 toVal = str2double(get(handles.calcRoiTo, 'String'));
 for i = fromVal : toVal
     spc_openCurves(i);
     pause(0.05);
-    if length(findobj('Tag', 'RoiA0')) ~= 0
-        spc_calcRoi;
+    if ~isempty(findobj('Tag', 'RoiA0'))
+        spc_calcRoi();
     end
     spc_auto(1);
 end
 
 
 % --- Executes on button press in tauCheck.
-function tauCheck_Callback(hObject, eventdata, handles)
-% hObject    handle to tauCheck (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of tauCheck
-
+function tauCheck_Callback(~, ~, ~)
 
 % --- Executes on button press in fracCheck.
-function fracCheck_Callback(hObject, eventdata, handles)
-% hObject    handle to fracCheck (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of fracCheck
+function fracCheck_Callback(~, ~, ~)
 
 
 % --- Executes on button press in redCheck.
-function redCheck_Callback(hObject, eventdata, handles)
-% hObject    handle to redCheck (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of redCheck
+function redCheck_Callback(~, ~, ~)
 
 
 % --- Executes on button press in greenCheck.
-function greenCheck_Callback(hObject, eventdata, handles)
-% hObject    handle to greenCheck (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of greenCheck
+function greenCheck_Callback(~, ~, ~)
 
 
 % --- Executes on button press in RatioCheck.
-function RatioCheck_Callback(hObject, eventdata, handles)
-% hObject    handle to RatioCheck (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of RatioCheck
+function RatioCheck_Callback(~, ~, ~)
 
 
 % --- Executes on button press in Ch1.
-function Ch1_Callback(hObject, eventdata, handles)
-% hObject    handle to Ch1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of Ch1
+function Ch1_Callback(~, ~, ~)
 
 global gui
 gui.spc.proChannel = 1;
-spc_switchChannel;
+spc_switchChannel();
 
 
 
 % --- Executes on button press in Ch2.
-function Ch2_Callback(hObject, eventdata, handles)
-% hObject    handle to Ch2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function Ch2_Callback(~, ~, ~)
 
-% Hint: get(hObject,'Value') returns toggle state of Ch2
-
-global gui
+global gui;
 gui.spc.proChannel = 2;
-spc_switchChannel;
+spc_switchChannel();
 
 % --- Executes on button press in Ch3.
-function Ch3_Callback(hObject, eventdata, handles)
-% hObject    handle to Ch3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function Ch3_Callback(~, ~, ~)
 
-% Hint: get(hObject,'Value') returns toggle state of Ch3
-
-
-global gui
+global gui;
 gui.spc.proChannel = 3;
 spc_switchChannel;
 
 
 % --------------------------------------------------------------------
-function fastAnalysis_Callback(hObject, eventdata, handles)
-% hObject    handle to fastAnalysis (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-spc_calc_timeCourseFromStack;
+
 
 
 % --- Executes on button press in radiobutton4.
-function radiobutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton4 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton4
-global spc gui
+function radiobutton4_Callback(hObject, ~, ~)
+global spc gui;
 
 spc.switches.maxAve = get(hObject, 'value');
 set(gui.spc.figure.redAuto, 'Value', 1);
@@ -939,11 +786,8 @@ spc_redrawSetting(1);
 
 
 % --- Executes on button press in onePageRight.
-function onePageRight_Callback(hObject, eventdata, handles)
-% hObject    handle to onePageRight (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global spc gui
+function onePageRight_Callback(~, ~, ~)
+global spc gui;
 
 if length(spc.page) == spc.stack.nStack
     spc.page = 1;
@@ -962,14 +806,11 @@ end
 set(gui.spc.spc_main.spc_page, 'String', num2str(spc.page));
 spc_redrawSetting(1);
 
-spc_updateMainStrings;
+spc_updateMainStrings();
 
 % --- Executes on button press in onePageLeft.
-function onePageLeft_Callback(hObject, eventdata, handles)
-% hObject    handle to onePageLeft (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global spc gui
+function onePageLeft_Callback(~, ~, ~)
+global spc gui;
 
 if length(spc.page) == spc.stack.nStack
     spc.page = 1;
@@ -993,15 +834,12 @@ end
 set(gui.spc.spc_main.spc_page, 'String', num2str(spc.page));
 spc_redrawSetting(1);
 
-spc_updateMainStrings;
+spc_updateMainStrings();
 
 
 % --- Executes on button press in tenPageLeft.
-function tenPageLeft_Callback(hObject, eventdata, handles)
-% hObject    handle to tenPageLeft (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global spc gui
+function tenPageLeft_Callback(~, ~, ~)
+global spc gui;
 
 if length(spc.page) == spc.stack.nStack
     spc.page = 1;
@@ -1025,14 +863,11 @@ end
 set(gui.spc.spc_main.spc_page, 'String', num2str(spc.page));
 spc_redrawSetting(1);
 
-spc_updateMainStrings;
+spc_updateMainStrings();
 
 % --- Executes on button press in tenPageRight.
-function tenPageRight_Callback(hObject, eventdata, handles)
-% hObject    handle to tenPageRight (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global spc gui
+function tenPageRight_Callback(~, ~, ~)
+global spc gui;
 
 if length(spc.page) == spc.stack.nStack
     spc.page = 1;
@@ -1052,108 +887,56 @@ end
 set(gui.spc.spc_main.spc_page, 'String', num2str(spc.page));
 spc_redrawSetting(1);
 
-spc_updateMainStrings;
+spc_updateMainStrings();
 
 
 % --------------------------------------------------------------------
-function alignFrames_Callback(hObject, eventdata, handles)
-% hObject    handle to alignFrames (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global gui
+function alignFrames_Callback(~, ~, ~)
+global gui;
 
 slicesS = get(gui.spc.spc_main.spc_page, 'String');
-spc_alignFrames;
+spc_alignFrames();
 set(gui.spc.spc_main.spc_page, 'String', slicesS);
 spc_redrawSetting(1);
 spc_updateMainStrings;
 
 % --------------------------------------------------------------------
-function frameCurrentAnal_Callback(hObject, eventdata, handles)
-% hObject    handle to frameCurrentAnal (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global gui
 
-slicesS = get(gui.spc.spc_main.spc_page, 'String');
-slices = str2num(slicesS);
-spc_calc_timeCourseFromStack(slices);
-set(gui.spc.spc_main.spc_page, 'String', slicesS);
-spc_redrawSetting(1);
-spc_updateMainStrings;
+
+
 
 
 % --------------------------------------------------------------------
-function Frames_Callback(hObject, eventdata, handles)
-% hObject    handle to Frames (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+
 
 
 % --------------------------------------------------------------------
-function saveMovie_Callback(hObject, eventdata, handles)
-% hObject    handle to saveMovie (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-spc_makeMovieFromFrames;
+function TFilter_Callback(~, ~, ~)
+spc_filterFrames();
 
 
 % --------------------------------------------------------------------
-function TFilter_Callback(hObject, eventdata, handles)
-% hObject    handle to TFilter (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-spc_filterFrames;
-
-
-% --------------------------------------------------------------------
-function UT_average_Callback(hObject, eventdata, handles)
-% hObject    handle to UT_average (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-spc_frames_uncagingTAverage;
+function UT_average_Callback(~, ~, ~)
+spc_frames_uncagingTAverage();
 
 
 
-function beta7_Callback(hObject, eventdata, handles)
-% hObject    handle to beta7 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of beta7 as text
-%        str2double(get(hObject,'String')) returns contents of beta7 as a double
+function beta7_Callback(~, ~, ~)
 
 
 % --- Executes during object creation, after setting all properties.
-function beta7_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to beta7 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+function beta7_CreateFcn(hObject, ~, ~)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
 
 % --- Executes on button press in estimate_bg.
-function estimate_bg_Callback(hObject, eventdata, handles)
-% hObject    handle to estimate_bg (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-spc_estimate_bg;
+function estimate_bg_Callback(~, ~, ~)
+spc_estimate_bg();
 
 
 % --- Executes on button press in Saved.
-function Saved_Callback(hObject, eventdata, handles)
-% hObject    handle to Saved (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% global spc gui
-% spc.fit(gui.spc.proChannel).SavedFitParameters = get(h, 'Value');
+function Saved_Callback(~, ~, ~)
 
-% Hint: get(hObject,'Value') returns toggle state of Saved
+%#ok<*DEFNU>

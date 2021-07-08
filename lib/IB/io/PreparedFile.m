@@ -19,10 +19,18 @@ classdef PreparedFile < ROIFile
                     fileStruct = load(filepaths{i});
                     prepData = fileStruct.('prepData');
                     dataStruct = struct;
+                    
+                    % Mandatory fields
                     dataStruct.('alladj') = prepData.('alladj');
                     dataStruct.('numROI') = prepData.('numROI');
                     dataStruct.('dnaType') = prepData.('dnaType');
                     dataStruct.('solutions') = prepData.('solutions');
+                    
+                    % Possible fields
+                    if isfield(prepData, 'userPref')
+                        dataStruct.('userPref') = prepData.('userPref');
+                    end
+                    
                     this.filedata = [this.filedata, dataStruct];
                 end
             end
@@ -147,6 +155,28 @@ classdef PreparedFile < ROIFile
             end
         end
         
+        function [tf] = has_preferences(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'has_preferences' Accessor
+        %
+        % Checks if the file stored data regarding user preferences
+        %
+        % (OUT) "tf": True if any user preferences data is found, false otherwise
+        %
+            tf = isfield(obj.filedata, 'userPref');
+        end
+        
+        function [profile] = figure_defaults_profile(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'figure_defaults_profile' Accessor
+        %
+        % Returns the name of the preferred profile for figure defaults
+        %
+        % (OUT) "profile": String representing the name of a figure defaults profile
+        %
+            profile = obj.filedata.('userPref').('figProfile');
+        end
+        
         %% --------------------------------------------------------------------------------------------------------
         % 'lifetime' Accessor
         %
@@ -257,17 +287,24 @@ classdef PreparedFile < ROIFile
         %% --------------------------------------------------------------------------------------------------------
         % 'save' Method
         %
-        function save(filepath, roiData, dnaType, solutionInfo)
+        function save(filepath, roiData, dnaType, solutionInfo, varargin)
             adjTime = roiData.adjusted_time(ROIUtils.number_of_baseline_pts(solutionInfo));
             lifetime = roiData.lifetime();
             green = roiData.green();
             red = roiData.red();
             
             prepData = struct;
+            
+            % Save mandatory fields
             prepData.('alladj') = [adjTime, lifetime, green, red];
             prepData.('numROI') = roiData.roi_count();
             prepData.('dnaType') = dnaType;
             prepData.('solutions') = solutionInfo;
+            
+            % Save any optional fields
+            if nargin >= 5
+                prepData.('userPref') = varargin{1};
+            end
             
             save(filepath, 'prepData');
         end

@@ -152,6 +152,28 @@ classdef FLIMageFile < ROIFile
         function [solutions] = solution_info(~)
             solutions = {};
         end
+        
+        function [tf] = has_preferences(~)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'has_preferences' Accessor
+        %
+        % Checks if the file stored data regarding user preferences
+        %
+        % (OUT) "tf": Always false
+        %
+            tf = false;
+        end
+        
+        function [profile] = figure_defaults_profile(~)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'figure_defaults_profile' Accessor
+        %
+        % Returns the name of the preferred profile for figure defaults
+        %
+        % (OUT) "profile": an empty string
+        %
+            profile = '';
+        end
 
         %% --------------------------------------------------------------------------------------------------------
         % 'lifetime' Accessor

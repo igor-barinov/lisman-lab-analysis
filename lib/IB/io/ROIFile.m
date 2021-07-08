@@ -14,6 +14,9 @@ classdef (Abstract) ROIFile < ROIData
         [tf] = has_exp_info(obj);
         [dnaTypes] = dna_types(obj);
         [solutions] = solution_info(obj);
+        
+        [tf] = has_preferences(obj);
+        [profile] = figure_defaults_profile(obj);
     end
     
     methods (Abstract, Static)

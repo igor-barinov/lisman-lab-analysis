@@ -111,6 +111,12 @@ classdef FileMenu
                 otherwise
                     roiData = ROITable(time, lifetime, int, red);
             end
+            
+            % Load any user preferences
+            if openFile.has_preferences()
+                defaultName = openFile.figure_defaults_profile();
+                AppState.set_figure_default(defaultName);
+            end
 
             % Update program state
             AppState.set_open_files(handles, openFile);
@@ -158,6 +164,7 @@ classdef FileMenu
             dnaType = GUI.get_dna_type(handles);
             solutions = GUI.get_solution_info(handles);
             enabledROIs = GUI.get_enabled_rois(handles);
+            settingsMap = AppState.get_user_preferences();
 
             % Check if we have all data
             if isempty(dnaType)
@@ -199,15 +206,19 @@ classdef FileMenu
                 return;
             end
             savepath = fullfile(path, file);
+            
+            % Save any user preferences
+            userPreferences = struct;
+            userPreferences.('figProfile') = settingsMap('plot_default');
 
             % Save file according to selected type
             switch typeIdx
                 case 1
                     RawFile.save(savepath, saveData);
                 case 2
-                    PreparedFile.save(savepath, saveData, dnaType, solutions);
+                    PreparedFile.save(savepath, saveData, dnaType, solutions, userPreferences);
                 case 3
-                    AveragedFile.save(savepath, saveData, ROIUtils.trim_dna_type(dnaType), solutions);
+                    AveragedFile.save(savepath, saveData, ROIUtils.trim_dna_type(dnaType), solutions, userPreferences);
                 otherwise
                     warndlg('Cannot save the file under this type');
             end

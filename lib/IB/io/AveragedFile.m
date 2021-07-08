@@ -17,7 +17,22 @@ classdef AveragedFile < ROIFile
                 this.filedata = [];
                 for i = 1:numel(filepaths)
                     fileStruct = load(filepaths{i});
-                    this.filedata = [this.filedata, fileStruct];
+                    dataStruct = struct;
+                    
+                    % Load mandatory fields
+                    dataStruct.('filepath') = fileStruct.('filePath');
+                    dataStruct.('numROI') = fileStruct.('numROI');
+                    dataStruct.('time') = fileStruct.('time');
+                    dataStruct.('dnaType') = fileStruct.('dnaType');
+                    dataStruct.('solutions') = fileStruct.('solutions');
+                    dataStruct.('averages') = fileStruct.('averages');
+                    
+                    % Load possible fields
+                    if isfield(fileStruct.('userPref'))
+                        dataStruct.('userPref') = fileStruct.('userPref');
+                    end
+                    
+                    this.filedata = [this.filedata, dataStruct];
                 end
             end
         end
@@ -149,6 +164,28 @@ classdef AveragedFile < ROIFile
             for i = 1:numel(solutions)
                 solutions{i} = obj.filedata(i).('solutions');
             end
+        end
+        
+        function [tf] = has_preferences(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'has_preferences' Accessor
+        %
+        % Checks if the file stored data regarding user preferences
+        %
+        % (OUT) "tf": True if any user preferences data is found, false otherwise
+        %
+            tf = isfield(obj.filedata, 'userPref');
+        end
+        
+        function [profile] = figure_defaults_profile(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'figure_defaults_profile' Accessor
+        %
+        % Returns the name of the preferred profile for figure defaults
+        %
+        % (OUT) "profile": String representing the name of a figure defaults profile
+        %
+            profile = obj.filedata.('userPref').('figProfile');
         end
         
         %% --------------------------------------------------------------------------------------------------------
@@ -289,7 +326,7 @@ classdef AveragedFile < ROIFile
         % 
         % <filepath> = {dest, src1, src2, ...}
         %
-        function save(filepath, roiData, dnaType, solutionInfo)
+        function save(filepath, roiData, dnaType, solutionInfo, varargin)
             roiCount = roiData.roi_count();
             nBaselinePts = ROIUtils.number_of_baseline_pts(solutionInfo);
             adjTime = roiData.adjusted_time(nBaselinePts);
@@ -300,6 +337,7 @@ classdef AveragedFile < ROIFile
             normGreen = roiData.normalized_green(nBaselinePts);
             normRed = roiData.normalized_red(nBaselinePts);
             
+            % Save mandatory data
             fileStruct = struct;
             fileStruct.('filePath') = filepath(2:end);
             fileStruct.('numROI') = roiCount;
@@ -317,6 +355,11 @@ classdef AveragedFile < ROIFile
             [avgStruct.('redNormAvg'), avgStruct.('redNormSte')] = ROIUtils.average(normRed);
             
             fileStruct.('averages') = avgStruct;
+            
+            % Save optional data
+            if nargin >= 5
+                fileStruct.('userPref') = varargin{1};
+            end
             
             save(filepath, '-struct', 'fileStruct');
         end

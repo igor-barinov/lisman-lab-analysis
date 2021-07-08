@@ -36,11 +36,7 @@ classdef AppState
         % Assumes program .ini file is named according to release program
         % version
         %
-            version = Analysis_1_2_Versions.release();
-            filename = [version, '_SETTINGS.ini'];
-            [path, ~, ~] = fileparts(which(version));
-            path = [path, '\config\'];
-            iniFile = fullfile(path, filename);
+            iniFile = PreferencesApp.settings_filepath();
 
             % Create ini file if none exists
             fileID = fopen(iniFile, 'r');
@@ -57,8 +53,7 @@ classdef AppState
             settingsMap = containers.Map(settings, values);
             
             activeFigDefault = settingsMap('plot_default');
-            figDefaultFile = [version, '_', activeFigDefault, '.ini'];
-            iniFigDefault = fullfile(path, figDefaultFile);
+            iniFigDefault = PreferencesApp.figure_default_filepath(activeFigDefault);
             [figSettings, figValues] = IOUtils.read_ini_file(iniFigDefault);
             for i = 1:numel(figSettings)
                 figSetting = figSettings{i};
@@ -66,6 +61,17 @@ classdef AppState
                 settingsMap(figSetting) = figVal;
             end
             
+        end
+        
+        function set_figure_default(defaultName)
+            iniFile = PreferencesApp.settings_filepath();
+            [settings, settingVals] = IOUtils.read_ini_file(iniFile);
+            settingsMap = containers.Map(settings, settingVals);
+            
+            settingsMap('plot_default') = defaultName;
+            newSettings = keys(settingsMap);
+            newValues = values(settingsMap, newSettings);
+            IOUtils.create_ini_file(iniFile, newSettings, newValues);
         end
         
         function set_open_files(handles, openFileObj)
