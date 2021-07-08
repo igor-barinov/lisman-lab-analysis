@@ -8,6 +8,14 @@ x = range(1):range(2);
 tau_is_fixed = spc.fit(gui.spc.proChannel).fixtau;
 initial_beta = spc.fit(gui.spc.proChannel).beta0;
 beta0 = FLIMageFitting.Exp2GaussInitialPrms(x, lifetime, spc.datainfo.psPerUnit);
+
+for j = [2, 4, 5, 6]
+    if tau_is_fixed(j)
+        beta0(j) = initial_beta(j);% * 1000 / spc.datainfo.psPerUnit;
+    end
+end
+
+
 betahat = FLIMageFitting.Exp2GaussFit(beta0, x, lifetime);
 
 for j = [2, 4, 5, 6]

@@ -38,6 +38,8 @@ classdef FLIMageFitting
             beta0(2) = 1 / tau1;
             beta0(3) = maxX - 2 * tauG;
             beta0(4) = tauG;
+            
+            %beta0(2) = beta0(2) * 1000 / psPerUnit;
         end
         
         function [beta0] = Exp2GaussInitialPrms(x, y, psPerUnit)
@@ -59,6 +61,9 @@ classdef FLIMageFitting
             beta0(4) = 1 / tau1 / 0.5;
             beta0(5) = maxX - 1 * tauG;
             beta0(6) = tauG;
+            
+            %beta0(2) = beta0(2) * 1000 / psPerUnit;
+            %beta0(4) = beta0(2) * 1000 / psPerUnit;
         end
         
         function [betahat] = ExpGaussFit(beta0, x, y)
