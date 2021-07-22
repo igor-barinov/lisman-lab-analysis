@@ -1,6 +1,17 @@
 classdef Fitting
     methods (Static)
         function [beta] = convert_params(beta0, mode)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'convert_params' Method
+        %
+        % Converts function parameters into correct units
+        %
+        % (IN) "beta0": Vector containing the 6 parameters. Must work with 'spc_unpackParams'.
+        %
+        % (IN) "mode": String describing what type of conversion to perform. Possible conversions are 'spc2flimage' or 'flimage2spc'.
+        %
+        % (OUT) "beta": Vector containing the 6 converted parameters
+        %
             [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta0);
             
             if strcmp(mode, 'spc2flimage')
@@ -19,6 +30,21 @@ classdef Fitting
         end
         
         function [beta] = fix_params(beta0, betaFixed, isFixed)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'fix_params' Method
+        %
+        % Replaces a subset of input parameters with a set of fixed parameters
+        %
+        % (IN) "beta0": Vector containing the parameters to be replaced
+        %
+        % (IN) "betaFixed": Vector containing the fixed parameters that will act as replacements
+        %
+        % (IN) "isFixed": Logical array indicating which parameters should be replaced. 
+        %                 At a given index, 'true' indicates the parameter at that index will be replaced,
+        %                 and 'false' indicates otherwise.
+        %
+        % (OUT) "beta": Vector containing the newly replaced parameters
+        %
             beta = beta0;
             for i = 1:numel(beta)
                 if isFixed(i)
@@ -28,6 +54,17 @@ classdef Fitting
         end
         
         function [beta0] = spc_single_exp_initial_params(beta_in, y)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'spc_single_exp_initial_params' Method
+        %
+        % Generates the initial parameters for a single exponential fit under 'spc' rules
+        %
+        % (IN) "beta_in": Vector containing the 6 parameters (pop1, tau1, pop2, tau2, tau_d, tau_g) that are the basis for the generated parameters
+        %
+        % (IN) "y": Vector representing the dependent variable that will be fit to
+        %
+        % (OUT) "beta0": Vector containing the generated initial parameters
+        %
             [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta_in);
             
             tau1 = spc_nanoseconds(tau1);
@@ -121,14 +158,28 @@ classdef Fitting
         end
                 
         function [y] = spc_single_exp(beta, x)
+            global spc gui;
+            bg = str2double(get(gui.spc.spc_main.beta7, 'string'));
+            
+            
             [pop, tau, ~, ~, tau_d, tau_g] = spc_unpackParams(beta);
             
             y1 = pop*exp(tau_g^2/2/tau^2 - (x-tau_d)/tau);
             y2 = erfc((tau_g^2-tau*(x-tau_d))/(sqrt(2)*tau*tau_g));
             y=y1.*y2 / 2;
+            
+            
+            pulseI =spc.datainfo.pulseInt / spc.datainfo.psPerUnit*1000;
+            pre_y1 = pop*exp(tau_g^2/2/tau^2 - (x-tau_d+pulseI)/tau);
+            pre_y2 = erfc((tau_g^2-tau*(x-tau_d+pulseI))/(sqrt(2)*tau*tau_g));
+            pre_y = pre_y1.*pre_y2;
+            
+            y = (y + pre_y)/2 + bg;
         end
         
         function [y] = spc_double_exp(beta, x)
+            global spc;
+            
             [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta);
             
             y1 = pop1 * exp(tau_g^2/2/tau1^2 - (x-tau_d)/tau1);
@@ -139,18 +190,34 @@ classdef Fitting
             y2 = erfc((tau_g^2-tau2*(x-tau_d))/(sqrt(2)*tau2*tau_g));
             yb = y1.*y2 / 2;
             
-            y=ya + yb;
+            pulseI = spc.datainfo.pulseInt / spc.datainfo.psPerUnit*1000;
+            pre_y1 = pop1*exp(tau_g^2/2/tau1^2 - (x-tau_d+pulseI)/tau1);
+            pre_y2 = erfc((tau_g^2-tau1*(x-tau_d+pulseI))/(sqrt(2)*tau1*tau_g));
+            pre_y = pre_y1.*pre_y2;
+            
+            y=(ya + yb + pre_y)/2;
         end
                 
         function [y] = flimage_single_exp(beta, x)
+            global spc;
+            
             [pop, tau, ~, ~, tau_d, tau_g] = spc_unpackParams(beta);
             
             y1 = pop * exp(tau_g^2 * tau^2 / 2 - (x - tau_d) * tau);
             y2 = erfc((tau_g^2 * tau - (x - tau_d)) / (sqrt(2) * tau_g));
             y = y1.*y2 / 2;
+            
+            pulseI = spc.datainfo.pulseInt / spc.datainfo.psPerUnit*1000;
+            pre_y1 = pop*exp(tau_g^2 * tau^2 / 2- (x-tau_d+pulseI)*tau);
+            pre_y2 = erfc((tau_g^2* tau - (x-tau_d+pulseI))/(sqrt(2) * tau_g));
+            pre_y = pre_y1.*pre_y2;
+           
+            y = (y + pre_y)/2;
         end
         
         function [y] = flimage_double_exp(beta, x)
+            global spc;
+            
             [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta);
             
             y1 = pop1 * exp(tau_g^2 * tau1^2 / 2 - (x - tau_d) * tau1);
@@ -161,7 +228,12 @@ classdef Fitting
             y2 = erfc((tau_g^2 * tau2 - (x - tau_d)) / (sqrt(2) * tau_g));
             yb = y1.*y2 / 2;
             
-            y = ya + yb;
+            pulseI = spc.datainfo.pulseInt / spc.datainfo.psPerUnit*1000;
+            pre_y1 = pop1*exp(tau_g^2 * tau1^2 / 2 - (x-tau_d+pulseI)*tau1);
+            pre_y2 = erfc((tau_g^2*tau1 - (x-tau_d+pulseI))/(sqrt(2) * tau_g));
+            pre_y = pre_y1.*pre_y2;
+            
+            y = (ya + yb + pre_y);
         end
         
         function [betahat] = spc_fit_single_exp(beta0, x, y)
@@ -230,6 +302,7 @@ classdef Fitting
                 betahat = Fitting.convert_params(betahat, 'flimage2spc');
             else
                 betahat = spc_picoseconds(betahat);
+                betahat = Fitting.fix_params(betahat, beta_in, isFixed);
             end
         end
         

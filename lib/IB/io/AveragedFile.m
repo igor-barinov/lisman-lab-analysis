@@ -185,7 +185,9 @@ classdef AveragedFile < ROIFile
         %
         % (OUT) "profile": String representing the name of a figure defaults profile
         %
-            profile = obj.filedata.('userPref').('figProfile');
+            allPrefs = [obj.filedata.('userPref')];
+            allProfiles = {allPrefs.('figProfile')};
+            profile = allProfiles{1};
         end
         
         %% --------------------------------------------------------------------------------------------------------
