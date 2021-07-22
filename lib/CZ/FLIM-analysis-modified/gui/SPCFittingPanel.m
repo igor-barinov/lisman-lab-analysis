@@ -79,7 +79,7 @@ classdef SPCFittingPanel
         %
             global spc gui;
             val1 = str2double(get(hObject, 'String'));
-            spc.fit(gui.spc.proChannel).beta0(2) = spc.datainfo.psPerUnit/1000/val1;%val1*1000/spc.datainfo.psPerUnit;
+            spc.fit(gui.spc.proChannel).beta0(2) = val1;
             spc_dispbeta();
         end
         
@@ -95,7 +95,7 @@ classdef SPCFittingPanel
         %
             global spc gui;
             val1 = str2double(get(hObject, 'String'));
-            spc.fit(gui.spc.proChannel).beta0(4) = spc.datainfo.psPerUnit/1000/val1;%val1*1000/spc.datainfo.psPerUnit;
+            spc.fit(gui.spc.proChannel).beta0(4) = val1;
             spc_dispbeta();
         end
         
@@ -111,7 +111,7 @@ classdef SPCFittingPanel
         %
             global spc gui;
             val1 = str2double(get(hObject, 'String'));
-            spc.fit(gui.spc.proChannel).beta0(5) = spc.datainfo.psPerUnit/1000/val1;%val1*1000/spc.datainfo.psPerUnit;
+            spc.fit(gui.spc.proChannel).beta0(5) = val1;
             spc_dispbeta();
         end
         
@@ -119,7 +119,7 @@ classdef SPCFittingPanel
         %% "Fix" (Delta peak time) CHECKBOX -----------------------------------------------------------------------
         %
             global spc gui;
-            spc.fit(gui.spc.proChannel).fixtau(6) = get(hObject, 'Value');
+            spc.fit(gui.spc.proChannel).fixtau(5) = get(hObject, 'Value');
         end
         
         function GaussianWidth(hObject)
@@ -127,7 +127,7 @@ classdef SPCFittingPanel
         %
             global spc gui;
             val1 = str2double(get(hObject, 'String'));
-            spc.fit(gui.spc.proChannel).beta0(6) = spc.datainfo.psPerUnit/1000/val1;%val1*1000/spc.datainfo.psPerUnit;
+            spc.fit(gui.spc.proChannel).beta0(6) = val1;
             spc_dispbeta();
         end
         
@@ -135,7 +135,7 @@ classdef SPCFittingPanel
         %% "Fix" (Gaussian width) CHECKBOX ------------------------------------------------------------------------
         %
             global spc gui;
-            spc.fit(gui.spc.proChannel).fixtau(5) = get(hObject, 'Value');
+            spc.fit(gui.spc.proChannel).fixtau(6) = get(hObject, 'Value');
         end
         
         function EstimateBackground()

@@ -1,28 +1,63 @@
 classdef FLIMageFitting
-    methods (Static)        
         function [y] = ExpGauss(beta0, x)
-        %% --------------------------------------------------------------------------------------------------------
         % 'ExpGauss' Method
-        %
             beta3_sq = beta0(3)^2;
-            beta2_sq = beta0(2)^2;
-            y1 = beta0(1) * exp(beta3_sq * beta2_sq / 2 - (x - beta0(4)) * beta0(2));
-            y2 = erfc((beta3_sq * beta0(2) - (x - beta0(4))) / (sqrt(2) * beta0(3)));
-            y = y1 .* y2 /2;
-        end
-        
-        function [y] = Exp2Gauss(beta0, x)
         %% --------------------------------------------------------------------------------------------------------
-        % 'Exp2Gauss' Method
+        % as
         %
-            beta1 = [beta0(1), beta0(2), beta0(5), beta0(6)];
-            beta2 = [beta0(3), beta0(4), beta0(5), beta0(6)];
-            
-            y = FLIMageFitting.ExpGauss(beta1, x) + FLIMageFitting.ExpGauss(beta2, x);
-        end
+        % das
+        %
+        % (IN) "beta0": dsa
+        %
+        % (IN) "x": ads
+        %
+        % (OUT) "y": ads
+        %
+        % 'ExpGauss' Method
+            beta3_sq = beta0(3)^2;
+            y1 = beta0(1) * exp(beta3_sq * beta2_sq / 2 - (x - beta0(4)) * beta0(2));
+            y = y1 .* y2 /2;
         
-        function [beta0] = ExpGaussInitialPrms(x, y, psPerUnit)
         %% --------------------------------------------------------------------------------------------------------
+        %
+            beta2 = [beta0(3), beta0(4), beta0(5), beta0(6)];
+            y = FLIMageFitting.ExpGauss(beta1, x) + FLIMageFitting.ExpGauss(beta2, x);
+        
+        %% --------------------------------------------------------------------------------------------------------
+        %% --------------------------------------------------------------------------------------------------------
+        % dads
+        %
+        % ads
+        %
+        % (IN) "beta0": asd
+        %
+        % (IN) "x": das
+        %
+        % (OUT) "y": dsa
+        %
+        % 'Exp2Gauss' Method
+            beta1 = [beta0(1), beta0(2), beta0(5), beta0(6)];
+            
+        end
+        function [beta0] = ExpGaussInitialPrms(x, y, psPerUnit)
+        % 'ExpGaussInitialPrms' Method
+            [maxY, i] = max(y);
+            sumY = sum(y);
+            tau1 = sumY / maxY;
+            
+        %% --------------------------------------------------------------------------------------------------------
+        % das
+        %
+        % dsas
+        %
+        % (IN) "x": dsa
+        %
+        % (IN) "y": ads
+        %
+        % (IN) "psPerUnit": dsa
+        %
+        % (OUT) "beta0": dsa
+        %
         % 'ExpGaussInitialPrms' Method
         %
             [maxY, i] = max(y);

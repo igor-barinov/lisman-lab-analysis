@@ -6,7 +6,7 @@ function varargout = spc_main(varargin)
 %    FIG = SPC_MAIN launch spc_main GUI.
 %    SPC_MAIN('callback_name', ...) invoke the named callback.
 
-% Last Modified by GUIDE v2.5 01-Jul-2021 13:46:33
+% Last Modified by GUIDE v2.5 20-Jul-2021 14:05:44
 global gui;
 
 if nargin == 0  % LAUNCH GUI
@@ -385,6 +385,9 @@ SPCFittingPanel.FigureOffset();
 
 function auto_A_Callback(~, ~, ~)
 SPCFittingPanel.AutoFigureOffset();
+
+
+function checkUseSpcFit_Callback(~, ~, ~)
 
 %% ================================================================================================================
 
