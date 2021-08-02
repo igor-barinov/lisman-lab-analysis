@@ -164,6 +164,17 @@ classdef FLIMageFile < ROIFile
             tf = false;
         end
         
+        function [defaults] = plotting_defaults(~)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'plotting_defaults' Accessor
+        %
+        % Returns which plots will be active by default
+        %
+        % (OUT) "defaults": an empty struct array
+        %
+            defaults = [];
+        end
+        
         function [profile] = figure_defaults_profile(~)
         %% --------------------------------------------------------------------------------------------------------
         % 'figure_defaults_profile' Accessor

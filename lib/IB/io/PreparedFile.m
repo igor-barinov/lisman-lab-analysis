@@ -103,7 +103,7 @@ classdef PreparedFile < ROIFile
             [~, targetFile] = max(pointCounts);
             ROIs = obj.filedata(targetFile).('alladj');
             values = ROIs(:, 1);
-            values = values / 60 / 24;
+            %values = values / 60 / 24;
         end
         
         %% --------------------------------------------------------------------------------------------------------
@@ -164,6 +164,28 @@ classdef PreparedFile < ROIFile
         % (OUT) "tf": True if any user preferences data is found, false otherwise
         %
             tf = isfield(obj.filedata, 'userPref');
+        end
+        
+        function [defaults] = plotting_defaults(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'plotting_defaults' Accessor
+        %
+        % Returns which plots will be active by default
+        %
+        % (OUT) "defaults": a struct with describing which plots are active. 
+        % Each field will be a logical value where '1' indicates the plot is active, and '0' otherwise
+        %
+            allPrefs = [obj.filedata.('userPref')];
+            lifetimeDefaults = {allPrefs.('showLifetime')};
+            greenIntDefaults = {allPrefs.('showGreenInt')};
+            redIntDefaults = {allPrefs.('showRedInt')};
+            annotationDefaults = {allPrefs.('showAnnots')};
+            
+            defaults = struct;
+            defaults.('showLifetime') = lifetimeDefaults{1};
+            defaults.('showGreenInt') = greenIntDefaults{1};
+            defaults.('showRedInt') = redIntDefaults{1};
+            defaults.('showAnnots') = annotationDefaults{1};
         end
         
         function [profile] = figure_defaults_profile(obj)
@@ -290,6 +312,7 @@ classdef PreparedFile < ROIFile
         % 'save' Method
         %
         function save(filepath, roiData, dnaType, solutionInfo, varargin)
+            time = roiData.time();
             adjTime = roiData.adjusted_time(ROIUtils.number_of_baseline_pts(solutionInfo));
             lifetime = roiData.lifetime();
             green = roiData.green();
@@ -298,7 +321,7 @@ classdef PreparedFile < ROIFile
             prepData = struct;
             
             % Save mandatory fields
-            prepData.('alladj') = [adjTime, lifetime, green, red];
+            prepData.('alladj') = [time, lifetime, green, red];
             prepData.('numROI') = roiData.roi_count();
             prepData.('dnaType') = dnaType;
             prepData.('solutions') = solutionInfo;

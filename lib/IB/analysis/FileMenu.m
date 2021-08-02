@@ -116,6 +116,12 @@ classdef FileMenu
             if openFile.has_preferences()
                 defaultName = openFile.figure_defaults_profile();
                 AppState.set_figure_default(defaultName);
+                
+                plottingDefaults = openFile.plotting_defaults();
+                AppState.set_plotting_defaults(plottingDefaults.('showLifetime'), ...
+                                               plottingDefaults.('showGreenInt'), ...
+                                               plottingDefaults.('showRedInt'), ...
+                                               plottingDefaults.('showAnnots'));
             end
 
             % Update program state
@@ -210,6 +216,10 @@ classdef FileMenu
             % Save any user preferences
             userPreferences = struct;
             userPreferences.('figProfile') = settingsMap('plot_default');
+            userPreferences.('showLifetime') = settingsMap('show_lifetime');
+            userPreferences.('showGreenInt') = settingsMap('show_green_int');
+            userPreferences.('showRedInt') = settingsMap('show_red_int');
+            userPreferences.('showAnnots') = settingsMap('show_annotations');
 
             % Save file according to selected type
             switch typeIdx

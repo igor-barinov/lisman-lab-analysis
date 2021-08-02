@@ -42,3 +42,63 @@ Error in analysis_1_2_IB_070721 (line 43)
 Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('menuOpen_Callback',hObject,eventdata,guidata(hObject))
 
 
+[22-Jul-2021 11:14:32]: Index in position 2 exceeds array bounds.
+
+Error in ROIUtils.split_solution_info (line 365)
+            solNames = solutionInfo(:, 1);
+
+Error in PlotMenu.plot_averages (line 651)
+                    solutionInfo = ROIUtils.split_solution_info(allSolutions);
+
+Error in analysis_1_2_IB_070721>menuPlotAvg_Callback (line 332)
+    PlotMenu.plot_averages(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('menuPlotAvg_Callback',hObject,eventdata,guidata(hObject))
+
+
+[22-Jul-2021 11:15:44]: Expected one output from a curly brace or dot indexing expression, but there were 2 results.
+
+Error in PreparedFile/figure_defaults_profile (line 177)
+            profile = obj.filedata.('userPref').('figProfile');
+
+Error in FileMenu.open (line 117)
+                defaultName = openFile.figure_defaults_profile();
+
+Error in analysis_1_2_IB_070721>menuOpen_Callback (line 113)
+    FileMenu.open(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+
+[22-Jul-2021 11:18:29]: Expected one output from a curly brace or dot indexing expression, but there were 2 results.
+
+Error in PreparedFile/figure_defaults_profile (line 177)
+            profile = obj.filedata.('userPref').('figProfile');
+
+Error in FileMenu.open (line 117)
+                defaultName = openFile.figure_defaults_profile();
+
+Error in analysis_1_2_IB_070721>menuOpen_Callback (line 113)
+    FileMenu.open(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+

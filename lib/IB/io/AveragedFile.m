@@ -177,6 +177,28 @@ classdef AveragedFile < ROIFile
             tf = isfield(obj.filedata, 'userPref');
         end
         
+        function [defaults] = plotting_defaults(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'plotting_defaults' Accessor
+        %
+        % Returns which plots will be active by default
+        %
+        % (OUT) "defaults": a struct with describing which plots are active. 
+        % Each field will be a logical value where '1' indicates the plot is active, and '0' otherwise
+        %
+            allPrefs = [obj.filedata.('userPref')];
+            lifetimeDefaults = {allPrefs.('showLifetime')};
+            greenIntDefaults = {allPrefs.('showGreenInt')};
+            redIntDefaults = {allPrefs.('showRedInt')};
+            annotationDefaults = {allPrefs.('showAnnots')};
+            
+            defaults = struct;
+            defaults.('showLifetime') = lifetimeDefaults{1};
+            defaults.('showGreenInt') = greenIntDefaults{1};
+            defaults.('showRedInt') = redIntDefaults{1};
+            defaults.('showAnnots') = annotationDefaults{1};
+        end
+        
         function [profile] = figure_defaults_profile(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'figure_defaults_profile' Accessor

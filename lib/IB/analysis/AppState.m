@@ -85,6 +85,20 @@ classdef AppState
             IOUtils.create_ini_file(iniFile, newSettings, newValues);
         end
         
+        function set_plotting_defaults(showLifetime, showGreenInt, showRedInt, showAnnotations)
+            iniFile = PreferencesApp.settings_filepath();
+            [settings, settingVals] = IOUtils.read_ini_file(iniFile);
+            settingsMap = containers.Map(settings, settingVals);
+            
+            settingsMap('show_lifetime') = showLifetime;
+            settingsMap('show_green_int') = showGreenInt;
+            settingsMap('show_red_int') = showRedInt;
+            settingsMap('show_annotations') = showAnnotations;
+            newSettings = keys(settingsMap);
+            newValues = values(settingsMap, newSettings);
+            IOUtils.create_ini_file(iniFile, newSettings, newValues);
+        end
+        
         function set_open_files(handles, openFileObj)
         %% --------------------------------------------------------------------------------------------------------
         % 'set_open_files' Method

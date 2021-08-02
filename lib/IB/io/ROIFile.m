@@ -16,6 +16,7 @@ classdef (Abstract) ROIFile < ROIData
         [solutions] = solution_info(obj);
         
         [tf] = has_preferences(obj);
+        [defaults] = plotting_defaults(obj);
         [profile] = figure_defaults_profile(obj);
     end
     
