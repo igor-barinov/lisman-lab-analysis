@@ -449,6 +449,8 @@ classdef ROIUtils
             timeMap = @(x) coefs(2)*x + coefs(1);
 
             % Plot each solution series, stacking vertically
+            prevTimings = [];
+            prevNames = {};
             for i = 1:numel(allSolutions)
                 solutions = allSolutions{i};
                 solTimings = [solutions{:, 2}];
@@ -456,6 +458,9 @@ classdef ROIUtils
 
                 % Plot each timing once
                 uniqueTimings = unique(solTimings);
+                needAdditionalLines = ~isempty(setdiff(uniqueTimings, prevTimings));
+                needAdditionalText = ~isempty(setdiff(solNames, prevNames));
+                
                 for j = 1:numel(uniqueTimings)
                     % Get the start and end times/positions
                     startTiming = uniqueTimings(j);
@@ -471,11 +476,13 @@ classdef ROIUtils
                     % Plot line
                     lineWidth = [xStart, xEnd];
                     lineHeight = [yOffset yOffset];
-                    styleIdx = mod(j, 2) + 1;
-                    annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+                    if needAdditionalLines
+                        styleIdx = mod(j, 2) + 1;
+                        annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+                    end
 
                     % Combine solution names into a single string
-                    names = solNames(solTimings == startTiming);
+                    names = unique(solNames(solTimings == startTiming));
                     nameStr = names{1};
                     for s = 2:numel(names)
                         nameStr = [nameStr, ' ', names{s}];
@@ -490,7 +497,9 @@ classdef ROIUtils
                     end
                     
                     % Plot solution name
-                    annotation('textbox', txtBoxPos, 'String', nameStr, txtBoxOpts{:});
+                    if needAdditionalText
+                        annotation('textbox', txtBoxPos, 'String', nameStr, txtBoxOpts{:});
+                    end
 
                     % Move x-start to end of plotted annotation
                     %xStart = xEnd;
@@ -501,6 +510,8 @@ classdef ROIUtils
 
                 % Move offset down for next series
                 yOffset = yOffset - txtBoxHeight;
+                prevTimings = uniqueTimings;
+                prevNames = solNames;
             end
         end
         

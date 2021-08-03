@@ -118,10 +118,14 @@ classdef FileMenu
                 AppState.set_figure_default(defaultName);
                 
                 plottingDefaults = openFile.plotting_defaults();
-                AppState.set_plotting_defaults(plottingDefaults.('showLifetime'), ...
+                if ~isempty(plottingDefaults)
+                    AppState.set_plotting_defaults(plottingDefaults.('showLifetime'), ...
                                                plottingDefaults.('showGreenInt'), ...
                                                plottingDefaults.('showRedInt'), ...
                                                plottingDefaults.('showAnnots'));
+                end
+                
+                
             end
 
             % Update program state

@@ -237,27 +237,35 @@ classdef Fitting
         end
         
         function [betahat] = spc_fit_single_exp(beta0, x, y)
+            % Old SPC Single Exponential
             weight = sqrt(y)/sqrt(max(y));
             weight(y < 1)= 1/sqrt(max(y));
-            betahat = nlinfit(x, y, @Fitting.spc_single_exp, beta0, 'Weights', weight);
+            opts = statset('Display', 'iter');
+            betahat = nlinfit(x, y, @Fitting.spc_single_exp, beta0, opts, 'Weights', weight);
         end
         
         function [betahat] = spc_fit_double_exp(beta0, x, y)
+            % Old SPC Double Exponential
             weight = sqrt(y)/sqrt(max(y));
             weight(y < 1)= 1/sqrt(max(y));
-            betahat = nlinfit(x, y, @Fitting.spc_double_exp, beta0, 'Weights', weight);
+            opts = statset('Display', 'iter');
+            betahat = nlinfit(x, y, @Fitting.spc_double_exp, beta0, opts, 'Weights', weight);
         end
         
         function [betahat] = flimage_fit_single_exp(beta0, x, y)
+            % New FLIMage Single Exponential
             weights = ones(size(y)) ./ sqrt(y);
             weights(isnan(weights) | isinf(weights)) = 1;
-            betahat = nlinfit(x, y, @Fitting.flimage_single_exp, beta0, 'Weights', weights);
+            opts = statset('Display', 'iter');
+            betahat = nlinfit(x, y, @Fitting.flimage_single_exp, beta0, opts, 'Weights', weights);
         end
         
         function [betahat] = flimage_fit_double_exp(beta0, x, y)
+            % New FLIMage Double Exponential
             weights = ones(size(y)) ./ sqrt(y);
             weights(isnan(weights) | isinf(weights)) = 1;
-            betahat = nlinfit(x, y, @Fitting.flimage_double_exp, beta0, 'Weights', weights);
+            opts = statset('Display', 'iter');
+            betahat = nlinfit(x, y, @Fitting.flimage_double_exp, beta0, opts, 'Weights', weights);
         end
         
         function set_fit_warnings(mode)

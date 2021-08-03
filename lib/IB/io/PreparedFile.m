@@ -176,16 +176,20 @@ classdef PreparedFile < ROIFile
         % Each field will be a logical value where '1' indicates the plot is active, and '0' otherwise
         %
             allPrefs = [obj.filedata.('userPref')];
-            lifetimeDefaults = {allPrefs.('showLifetime')};
-            greenIntDefaults = {allPrefs.('showGreenInt')};
-            redIntDefaults = {allPrefs.('showRedInt')};
-            annotationDefaults = {allPrefs.('showAnnots')};
-            
-            defaults = struct;
-            defaults.('showLifetime') = lifetimeDefaults{1};
-            defaults.('showGreenInt') = greenIntDefaults{1};
-            defaults.('showRedInt') = redIntDefaults{1};
-            defaults.('showAnnots') = annotationDefaults{1};
+            if isfield(allPrefs, {'showLifetime', 'showGreenInt', 'showRedInt', 'showAnnots'})
+                lifetimeDefaults = {allPrefs.('showLifetime')};
+                greenIntDefaults = {allPrefs.('showGreenInt')};
+                redIntDefaults = {allPrefs.('showRedInt')};
+                annotationDefaults = {allPrefs.('showAnnots')};
+
+                defaults = struct;
+                defaults.('showLifetime') = lifetimeDefaults{1};
+                defaults.('showGreenInt') = greenIntDefaults{1};
+                defaults.('showRedInt') = redIntDefaults{1};
+                defaults.('showAnnots') = annotationDefaults{1};
+            else
+                defaults = [];
+            end
         end
         
         function [profile] = figure_defaults_profile(obj)

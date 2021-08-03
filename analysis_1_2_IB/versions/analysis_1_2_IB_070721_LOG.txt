@@ -102,3 +102,63 @@ Error in analysis_1_2_IB_070721 (line 43)
 Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('menuOpen_Callback',hObject,eventdata,guidata(hObject))
 
 
+[02-Aug-2021 11:06:52]: Reference to non-existent field 'showLifetime'.
+
+Error in PreparedFile/plotting_defaults (line 179)
+            lifetimeDefaults = {allPrefs.('showLifetime')};
+
+Error in FileMenu.open (line 120)
+                plottingDefaults = openFile.plotting_defaults();
+
+Error in analysis_1_2_IB_070721>menuOpen_Callback (line 113)
+    FileMenu.open(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+
+[02-Aug-2021 11:08:57]: Undefined function or variable 'allPref'.
+
+Error in PreparedFile/plotting_defaults (line 179)
+            if isfield(allPref, {'showLifetime', 'showGreenInt', 'showRedInt', 'showAnnots'})
+
+Error in FileMenu.open (line 120)
+                plottingDefaults = openFile.plotting_defaults();
+
+Error in analysis_1_2_IB_070721>menuOpen_Callback (line 113)
+    FileMenu.open(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+
+[03-Aug-2021 14:24:13]: Undefined function or variable 'lineWidth'.
+
+Error in ROIUtils.plot_annotations (line 493)
+                        txtBoxPos = [xStart, yOffset - 0.07, diff(lineWidth), txtBoxHeight];
+
+Error in PlotMenu.plot_all (line 173)
+                    ROIUtils.plot_annotations(gca, time, solutionInfo);
+
+Error in analysis_1_2_IB_070721>menuPlotAll_Callback (line 310)
+    PlotMenu.plot_all(hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
