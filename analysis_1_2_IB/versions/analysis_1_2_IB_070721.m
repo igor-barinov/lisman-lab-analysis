@@ -78,6 +78,20 @@ function varargout = analysis_1_2_IB_070721_OutputFcn(hObject, eventdata, handle
 varargout{1} = handles.output;
 
 
+
+%% ----------------------------------------------------------------------------------------------------------------
+% Close Method
+%
+% hObject    handle to mainFig (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+%
+function mainFig_CloseRequestFcn(hObject, ~, ~)
+GUI.try_callback(@GUI.close, hObject);
+
+
     
 
 %% GUI Utiltity Methods -------------------------------------------------------------------------------------------
@@ -109,33 +123,21 @@ end
 % 'menuOpen' Callback
 %
 function menuOpen_Callback(hObject, ~, ~)
-try
-    FileMenu.open(hObject);
-catch err
-    AppState.logdlg(err);
-end
+GUI.try_callback(@FileMenu.open, hObject)
 
 
 %% ----------------------------------------------------------------------------------------------------------------
 % 'menuSave' Callback
 %
 function menuSave_Callback(hObject, ~, ~)
-try
-    FileMenu.save(hObject);
-catch err
-    AppState.logdlg(err);
-end
+GUI.try_callback(@FileMenu.save, hObject);
 
 
 %% ----------------------------------------------------------------------------------------------------------------
 % 'menuClose' Callback
 %
 function menuClose_Callback(hObject, ~, ~)
-try
-    FileMenu.close(hObject);
-catch err
-    AppState.logdlg(err);
-end
+GUI.try_callback(@FileMenu.close, hObject);
 
 
 
@@ -147,66 +149,42 @@ end
 % 'dataTable' Cell Selection Callback
 %
 function dataTable_CellSelectionCallback(hObject, eventdata, ~)
-try
-    GUICallbacks.dataTable_select(hObject, eventdata);
-catch err
-    AppState.logdlg(err);
-end
+GUI.try_callback(@GUICallbacks.dataTable_select, hObject, eventdata);
 
 
 %% ----------------------------------------------------------------------------------------------------------------
 % 'dataTable' Cell Edit Callback 
 %
 function dataTable_CellEditCallback(hObject, eventdata, ~)
-try
-    GUICallbacks.dataTable_edit(hObject, eventdata);
-catch err
-    AppState.logdlg(err);
-end
+GUI.try_callback(@GUICallbacks.dataTable_edit, hObject, eventdata);
 
 
 %% ----------------------------------------------------------------------------------------------------------------
 % 'menuFix' Callback
 %
 function menuFix_Callback(hObject, ~, ~)
-try
-    DataMenu.fix(hObject);
-catch err
-    AppState.logdlg(err);
-end
+GUI.try_callback(@DataMenu.fix, hObject);
 
 
 %% ----------------------------------------------------------------------------------------------------------------
 % 'btnToggleAdjustedTime' Callback
 %
 function btnToggleAdjustedTime_Callback(hObject, ~, ~)
-try
-    GUICallbacks.btnToggleAdjustedTime(hObject);
-catch err
-    AppState.logdlg(err);
-end
+GUI.try_callback(@GUICallbacks.btnToggleAdjustedTime, hObject);
 
 
 %% ----------------------------------------------------------------------------------------------------------------
 % 'btnToggleNormVals' Callback
 %
 function btnToggleNormVals_Callback(hObject, ~, ~)
-try
-    GUICallbacks.btnToggleNormVals(hObject);
-catch err
-    AppState.logdlg(err);
-end
+GUI.try_callback(@GUICallbacks.btnToggleNormVals, hObject);
 
 
 %% ----------------------------------------------------------------------------------------------------------------
 % 'menuToggleNormVals' Callback
 %
 function menuToggleNormVals_Callback(hObject, ~, ~)
-try
-    DataMenu.toggle_norm_vals(hObject);
-catch err
-    AppState.logdlg(err);
-end
+GUI.try_callback(@DataMenu.toggle_norm_vals, hObject);
 
 
 %% ----------------------------------------------------------------------------------------------------------------
