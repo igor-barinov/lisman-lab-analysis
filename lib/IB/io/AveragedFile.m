@@ -28,7 +28,7 @@ classdef AveragedFile < ROIFile
                     dataStruct.('averages') = fileStruct.('averages');
                     
                     % Load possible fields
-                    if isfield(fileStruct, 'userPref')
+                    if isfield(fileStruct, 'userPref') && isfield(this.filedata, 'userPref')
                         dataStruct.('userPref') = fileStruct.('userPref');
                     end
                     
@@ -212,6 +212,10 @@ classdef AveragedFile < ROIFile
             profile = allProfiles{1};
         end
         
+        function [positions] = annotation_positions(~)
+            positions = {};
+        end
+        
         %% --------------------------------------------------------------------------------------------------------
         % 'lifetime' Accessor
         %
@@ -351,6 +355,17 @@ classdef AveragedFile < ROIFile
         % <filepath> = {dest, src1, src2, ...}
         %
         function save(filepath, roiData, dnaType, solutionInfo, varargin)
+            optionIndices = find(strcmp(varargin, 'IsAveraged'));
+            isAveraged = false;
+            
+            if ~isempty(optionIndices)
+                nameIdx = optionIndices(1);
+                valueIdx = nameIdx + 1;
+                if strcmp(varargin{valueIdx}, 'true')
+                    isAveraged = true;
+                end
+            end
+            
             roiCount = roiData.roi_count();
             nBaselinePts = ROIUtils.number_of_baseline_pts(solutionInfo);
             adjTime = roiData.adjusted_time(nBaselinePts);
@@ -370,13 +385,31 @@ classdef AveragedFile < ROIFile
             fileStruct.('solutions') = solutionInfo;
             
             avgStruct = struct;            
-            [avgStruct.('tauAvg'), avgStruct.('tauSte')] = ROIUtils.average(lifetime);
-            [avgStruct.('intAvg'), avgStruct.('intSte')] = ROIUtils.average(green);
-            [avgStruct.('redAvg'), avgStruct.('redSte')] = ROIUtils.average(red);
+            if isAveraged
+                avgStruct.('tauAvg') = lifetime(:, 1);
+                avgStruct.('tauSte') = lifetime(:, 2);
+                avgStruct.('intAvg') = green(:, 1);
+                avgStruct.('intSte') = green(:, 2);
+                avgStruct.('redAvg') = red(:, 1);
+                avgStruct.('redSte') = red(:, 2);
+                
+                avgStruct.('tauNormAvg') = normLifetime(:, 1);
+                avgStruct.('tauNormSte') = normLifetime(:, 2);
+                avgStruct.('intNormAvg') = normGreen(:, 1);
+                avgStruct.('intNormSte') = normGreen(:, 2);
+                avgStruct.('redNormAvg') = normRed(:, 1);
+                avgStruct.('redNormSte') = normRed(:, 2);
+            else
+                [avgStruct.('tauAvg'), avgStruct.('tauSte')] = ROIUtils.average(lifetime);
+                [avgStruct.('intAvg'), avgStruct.('intSte')] = ROIUtils.average(green);
+                [avgStruct.('redAvg'), avgStruct.('redSte')] = ROIUtils.average(red);
+
+                [avgStruct.('tauNormAvg'), avgStruct.('tauNormSte')] = ROIUtils.average(normLifetime);
+                [avgStruct.('intNormAvg'), avgStruct.('intNormSte')] = ROIUtils.average(normGreen);
+                [avgStruct.('redNormAvg'), avgStruct.('redNormSte')] = ROIUtils.average(normRed);
+            end
             
-            [avgStruct.('tauNormAvg'), avgStruct.('tauNormSte')] = ROIUtils.average(normLifetime);
-            [avgStruct.('intNormAvg'), avgStruct.('intNormSte')] = ROIUtils.average(normGreen);
-            [avgStruct.('redNormAvg'), avgStruct.('redNormSte')] = ROIUtils.average(normRed);
+            
             
             fileStruct.('averages') = avgStruct;
             
