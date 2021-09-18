@@ -169,6 +169,9 @@ classdef PreferencesApp
 
             activeDefault = settingsMap('plot_default');
             selection = find(contains(savedDefaults, activeDefault));
+            if isempty(selection)
+                selection = 1;
+            end
 
             set(hFigDefsList, 'String', savedDefaults);
             set(hFigDefsList, 'Value', selection);
