@@ -274,6 +274,17 @@ classdef RawFile < ROIFile
             profile = '';
         end
         
+        function [positions] = annotation_positions(~)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'annotation_positions' Accessor
+        %
+        % Returns the saved annotation positions
+        %
+        % (OUT) "positions": an empty cell array
+        %
+            positions = {};
+        end
+        
         function [values] = lifetime(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'lifetime' Accessor

@@ -18,6 +18,7 @@ classdef (Abstract) ROIFile < ROIData
         [tf] = has_preferences(obj);
         [defaults] = plotting_defaults(obj);
         [profile] = figure_defaults_profile(obj);
+        [positions] = annotation_positions(obj);
     end
     
     methods (Abstract, Static)

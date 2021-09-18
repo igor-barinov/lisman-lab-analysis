@@ -1,4 +1,4 @@
-classdef PreparedFile < ROIFile
+classdef AveragedFile < ROIFile
     properties
         filepaths cell
         filedata struct
@@ -6,9 +6,9 @@ classdef PreparedFile < ROIFile
     
     methods
         %% --------------------------------------------------------------------------------------------------------
-        % 'PreparedFile' Constructor
+        % 'AveragedFile' Constructor
         %
-        function [this] = PreparedFile(filepaths)
+        function [this] = AveragedFile(filepaths)
             if nargin == 0
                 this.filepaths = {};
                 this.filedata = [];
@@ -17,18 +17,19 @@ classdef PreparedFile < ROIFile
                 this.filedata = [];
                 for i = 1:numel(filepaths)
                     fileStruct = load(filepaths{i});
-                    prepData = fileStruct.('prepData');
                     dataStruct = struct;
                     
-                    % Mandatory fields
-                    dataStruct.('alladj') = prepData.('alladj');
-                    dataStruct.('numROI') = prepData.('numROI');
-                    dataStruct.('dnaType') = prepData.('dnaType');
-                    dataStruct.('solutions') = prepData.('solutions');
+                    % Load mandatory fields
+                    dataStruct.('filePath') = fileStruct.('filePath');
+                    dataStruct.('numROI') = fileStruct.('numROI');
+                    dataStruct.('time') = fileStruct.('time');
+                    dataStruct.('dnaType') = fileStruct.('dnaType');
+                    dataStruct.('solutions') = fileStruct.('solutions');
+                    dataStruct.('averages') = fileStruct.('averages');
                     
-                    % Possible fields
-                    if isfield(prepData, 'userPref')
-                        dataStruct.('userPref') = prepData.('userPref');
+                    % Load possible fields
+                    if isfield(fileStruct, 'userPref') && isfield(this.filedata, 'userPref')
+                        dataStruct.('userPref') = fileStruct.('userPref');
                     end
                     
                     this.filedata = [this.filedata, dataStruct];
@@ -40,23 +41,27 @@ classdef PreparedFile < ROIFile
         % 'type' Accessor
         %
         function [fileType] = type(~)
-            fileType = ROIFileType.Prepared;
+            fileType = ROIFileType.Averaged;
         end
         
         %% --------------------------------------------------------------------------------------------------------
         % 'source_files' Accessor
         %
         function [filepaths] = source_files(obj)
-            filepaths = obj.filepaths;
+            filepaths = {};
+            for i = 1:numel(obj.filedata)
+                filepaths = [filepaths, obj.filedata(i).('filePath')];
+            end
         end
         
         %% --------------------------------------------------------------------------------------------------------
         % 'experiment_names' Accessor
         %
         function [names] = experiment_names(obj)
-            names = cell(numel(obj.filepaths), 1);
+            srcFiles = obj.source_files();
+            names = cell(numel(srcFiles), 1);
             for i = 1:numel(names)
-                [~, names{i}, ~] = fileparts(obj.filepaths{i});
+                [~, names{i}, ~] = fileparts(srcFiles{i});
             end
         end
         
@@ -72,7 +77,7 @@ classdef PreparedFile < ROIFile
         %
         function [counts] = file_roi_counts(obj)
             counts = zeros(1, numel(obj.filedata));
-            for i = 1:numel(obj.filedata)
+            for i = 1:numel(counts)
                 counts(i) = obj.filedata(i).('numROI');
             end
         end
@@ -81,7 +86,7 @@ classdef PreparedFile < ROIFile
         % 'roi_count' Accessor
         %
         function [count] = roi_count(obj)
-            count = sum(obj.file_roi_counts());
+            count = numel(obj.filedata);
         end
         
         %% --------------------------------------------------------------------------------------------------------
@@ -89,9 +94,8 @@ classdef PreparedFile < ROIFile
         %
         function [counts] = point_counts(obj)
             counts = zeros(1, numel(obj.filedata));
-            for i = 1:numel(obj.filedata)
-                ROIs = obj.filedata(i).('alladj');
-                counts(i) = size(ROIs, 1);
+            for i = 1:numel(counts)
+                counts(i) = numel(obj.filedata(i).('time'));
             end
         end
         
@@ -101,16 +105,14 @@ classdef PreparedFile < ROIFile
         function [values] = time(obj)
             pointCounts = obj.point_counts();
             [~, targetFile] = max(pointCounts);
-            ROIs = obj.filedata(targetFile).('alladj');
-            values = ROIs(:, 1);
-            %values = values / 60 / 24;
+            values = obj.filedata(targetFile).('time');
         end
         
         %% --------------------------------------------------------------------------------------------------------
         % 'adjusted_time' Accessor
         %
         function [adjVals] = adjusted_time(obj, nBaselinePts)
-            time = obj.time() * 60 * 24;
+            time = obj.time();
             adjVals = time - time(nBaselinePts);
         end
         
@@ -126,12 +128,21 @@ classdef PreparedFile < ROIFile
         %
         function [labels] = roi_labels(obj)
             roiCount = obj.roi_count();
-            labels = cell(roiCount * 3 + 1, 1);
+            labels = cell(roiCount * 2 * 3 + 1, 1);
             labels{1} = 'Time';
+            
+            % N = 3
+            % 1 -> 1 2 |  7  8 | 13 14
+            % 2 -> 3 4 |  9 10 | 15 16
+            % 3 -> 5 6 | 11 12 | 17 18
+            % R -> 2R-1  2R | 2(R+N-1)+1  2(R+N)| 2(R+2N-1)+1 2(R+2N) 
             for i = 1:roiCount
-                labels{i+1}             = ['Tau #', num2str(i)];
-                labels{i+roiCount+1}    = ['Int #', num2str(i)];
-                labels{i+2*roiCount+1}  = ['Red #', num2str(i)];
+                labels{2*i}                 = ['Tau Avg #', num2str(i)];
+                labels{2*i+1}               = ['Tau Ste #', num2str(i)];
+                labels{2*(i+roiCount)}      = ['Int Avg #', num2str(i)];
+                labels{2*(i+roiCount)+1}    = ['Int Ste #', num2str(i)];
+                labels{2*(i+2*roiCount)}    = ['Red Avg #', num2str(i)];
+                labels{2*(i+2*roiCount)+1}  = ['Red Ste #', num2str(i)];
             end
         end
         
@@ -176,20 +187,16 @@ classdef PreparedFile < ROIFile
         % Each field will be a logical value where '1' indicates the plot is active, and '0' otherwise
         %
             allPrefs = [obj.filedata.('userPref')];
-            if isfield(allPrefs, {'showLifetime', 'showGreenInt', 'showRedInt', 'showAnnots'})
-                lifetimeDefaults = {allPrefs.('showLifetime')};
-                greenIntDefaults = {allPrefs.('showGreenInt')};
-                redIntDefaults = {allPrefs.('showRedInt')};
-                annotationDefaults = {allPrefs.('showAnnots')};
-
-                defaults = struct;
-                defaults.('showLifetime') = lifetimeDefaults{1};
-                defaults.('showGreenInt') = greenIntDefaults{1};
-                defaults.('showRedInt') = redIntDefaults{1};
-                defaults.('showAnnots') = annotationDefaults{1};
-            else
-                defaults = [];
-            end
+            lifetimeDefaults = {allPrefs.('showLifetime')};
+            greenIntDefaults = {allPrefs.('showGreenInt')};
+            redIntDefaults = {allPrefs.('showRedInt')};
+            annotationDefaults = {allPrefs.('showAnnots')};
+            
+            defaults = struct;
+            defaults.('showLifetime') = lifetimeDefaults{1};
+            defaults.('showGreenInt') = greenIntDefaults{1};
+            defaults.('showRedInt') = redIntDefaults{1};
+            defaults.('showAnnots') = annotationDefaults{1};
         end
         
         function [profile] = figure_defaults_profile(obj)
@@ -206,13 +213,6 @@ classdef PreparedFile < ROIFile
         end
         
         function [positions] = annotation_positions(~)
-        %% --------------------------------------------------------------------------------------------------------
-        % 'annotation_positions' Accessor
-        %
-        % Returns the saved annotation positions
-        %
-        % (OUT) "positions": cell array containing positional data for each annotation
-        %
             positions = {};
         end
         
@@ -220,84 +220,108 @@ classdef PreparedFile < ROIFile
         % 'lifetime' Accessor
         %
         function [values] = lifetime(obj)
-            roiCounts = obj.file_roi_counts();
+            roiCount = obj.roi_count();
             pointCounts = obj.point_counts();
             maxPointCount = max(pointCounts);
-            totalROICount = obj.roi_count();
             
-            values = NaN(maxPointCount, totalROICount);
-            roiIdx = 1;
-            for i = 1:numel(obj.filedata)
-                ROIs = obj.filedata(i).('alladj');
-                roiCount = roiCounts(i);
+            values = NaN(maxPointCount, roiCount * 2);
+            for i = 1:roiCount
                 nPoints = pointCounts(i);
-                tauVals = ROIs(:, 2:roiCount+1);
-                values(1:nPoints, roiIdx:roiIdx+roiCount-1) = tauVals;
-                roiIdx = roiIdx + roiCount;
+                averages = obj.filedata(i).('averages').('tauAvg');
+                errors = obj.filedata(i).('averages').('tauSte');
+                values(1:nPoints, 2*i - 1) = averages(1:nPoints);
+                values(1:nPoints, 2*i) = errors(1:nPoints);
             end
         end
         
         %% --------------------------------------------------------------------------------------------------------
         % 'normalized_lifetime' Accessor
         %
-        function [normVals] = normalized_lifetime(obj, nBaselinePts)
-            normVals = ROIUtils.normalize(obj.lifetime(), nBaselinePts);
+        function [normVals] = normalized_lifetime(obj, ~)
+            pointCounts = obj.point_counts();
+            maxPointCount = max(pointCounts);
+            roiCount = obj.roi_count();
+            
+            normVals = NaN(maxPointCount, roiCount * 2);
+            for i = 1:roiCount
+                nPoints = pointCounts(i);
+                averages = obj.filedata(i).('averages').('tauNormAvg');
+                errors = obj.filedata(i).('averages').('tauNormSte');
+                normVals(1:nPoints, 2*i - 1) = averages(1:nPoints);
+                normVals(1:nPoints, 2*i) = errors(1:nPoints);
+            end
         end
         
         %% --------------------------------------------------------------------------------------------------------
         % 'green' Accessor
         %
         function [values] = green(obj)
-            roiCounts = obj.file_roi_counts();
             pointCounts = obj.point_counts();
             maxPointCount = max(pointCounts);
-            totalROICount = obj.roi_count();
+            roiCount = obj.roi_count();
             
-            values = NaN(maxPointCount, totalROICount);
-            roiIdx = 1;
-            for i = 1:numel(obj.filedata)
-                ROIs = obj.filedata(i).('alladj');
-                roiCount = roiCounts(i);
+            values = NaN(maxPointCount, roiCount * 2);
+            for i = 1:roiCount
                 nPoints = pointCounts(i);
-                intVals = ROIs(:, 2+roiCount:2*roiCount+1);
-                values(1:nPoints, roiIdx:roiIdx+roiCount-1) = intVals;
-                roiIdx = roiIdx + roiCount;
+                averages = obj.filedata(i).('averages').('intAvg');
+                errors = obj.filedata(i).('averages').('intSte');
+                values(1:nPoints, 2*i - 1) = averages(1:nPoints);
+                values(1:nPoints, 2*i) = errors(1:nPoints);
             end
         end
         
         %% --------------------------------------------------------------------------------------------------------
         % 'normalized_green' Accessor
         %
-        function [normVals] = normalized_green(obj, nBaselinePts)
-            normVals = ROIUtils.normalize(obj.green(), nBaselinePts);
+        function [normVals] = normalized_green(obj, ~)
+            pointCounts = obj.point_counts();
+            maxPointCount = max(pointCounts);
+            roiCount = obj.roi_count();
+            
+            normVals = NaN(maxPointCount, roiCount * 2);
+            for i = 1:roiCount
+                nPoints = pointCounts(i);
+                averages = obj.filedata(i).('averages').('intNormAvg');
+                errors = obj.filedata(i).('averages').('intNormSte');
+                normVals(1:nPoints, 2*i - 1) = averages(1:nPoints);
+                normVals(1:nPoints, 2*i) = errors(1:nPoints);
+            end
         end
         
         %% --------------------------------------------------------------------------------------------------------
         % 'red' Accessor
         %
         function [values] = red(obj)
-            roiCounts = obj.file_roi_counts();
             pointCounts = obj.point_counts();
             maxPointCount = max(pointCounts);
-            totalROICount = obj.roi_count();
+            roiCount = obj.roi_count();
             
-            values = NaN(maxPointCount, totalROICount);
-            roiIdx = 1;
-            for i = 1:numel(obj.filedata)
-                ROIs = obj.filedata(i).('alladj');
-                roiCount = roiCounts(i);
+            values = NaN(maxPointCount, roiCount * 2);
+            for i = 1:roiCount
                 nPoints = pointCounts(i);
-                redVals = ROIs(:, 2+2*roiCount:3*roiCount+1);
-                values(1:nPoints, roiIdx:roiIdx+roiCount-1) = redVals;
-                roiIdx = roiIdx + roiCount;
+                averages = obj.filedata(i).('averages').('redAvg');
+                errors = obj.filedata(i).('averages').('redSte');
+                values(1:nPoints, 2*i - 1) = averages(1:nPoints);
+                values(1:nPoints, 2*i) = errors(1:nPoints);
             end
         end
         
         %% --------------------------------------------------------------------------------------------------------
         % 'normalized_red' Accessor
         %
-        function [normVals] = normalized_red(obj, nBaselinePts)
-            normVals = ROIUtils.normalize(obj.red(), nBaselinePts);
+        function [normVals] = normalized_red(obj, ~)
+            pointCounts = obj.point_counts();
+            maxPointCount = max(pointCounts);
+            roiCount = obj.roi_count();
+            
+            normVals = NaN(maxPointCount, roiCount * 2);
+            for i = 1:roiCount
+                nPoints = pointCounts(i);
+                averages = obj.filedata(i).('averages').('redNormAvg');
+                errors = obj.filedata(i).('averages').('redNormSte');
+                normVals(1:nPoints, 2*i - 1) = averages(1:nPoints);
+                normVals(1:nPoints, 2*i) = errors(1:nPoints);
+            end
         end
     end
     
@@ -310,10 +334,12 @@ classdef PreparedFile < ROIFile
             for i = 1:numel(filepaths)
                 try
                     fileStruct = load(filepaths{i});
-                    if isfield(fileStruct, 'prepData')
-                        prepData = fileStruct.('prepData');
-                        reqFields = {'alladj', 'numROI', 'dnaType', 'solutions'};
-                        if all(isfield(prepData, reqFields))
+                    reqFields = {'filePath', 'time', 'averages', 'numROI', 'dnaType', 'solutions'};
+                    if all(isfield(fileStruct, reqFields))
+                        avgStruct = fileStruct.('averages');
+                        reqFields = {'tauAvg', 'tauSte', 'intAvg', 'intSte', 'redAvg', 'redSte', ...
+                                     'tauNormAvg', 'tauNormSte', 'intNormAvg', 'intNormSte', 'redNormAvg', 'redNormSte'};
+                        if all(isfield(avgStruct, reqFields))
                             tf(i) = true;
                         end
                     end
@@ -325,28 +351,53 @@ classdef PreparedFile < ROIFile
         
         %% --------------------------------------------------------------------------------------------------------
         % 'save' Method
+        % 
+        % <filepath> = {dest, src1, src2, ...}
         %
         function save(filepath, roiData, dnaType, solutionInfo, varargin)
-            time = roiData.time();
-            adjTime = roiData.adjusted_time(ROIUtils.number_of_baseline_pts(solutionInfo));
+            optionIndices = find(strcmp(varargin, 'IsAveraged'));
+            if ~isempty(optionIndices)
+                nameIdx = optionIndices(1);
+                valueIdx = nameIdx + 1;
+                isAveraged = varargin{valueIdx};
+                if strcmp(isAveraged, 't
+            end
+            
+            roiCount = roiData.roi_count();
+            nBaselinePts = ROIUtils.number_of_baseline_pts(solutionInfo);
+            adjTime = roiData.adjusted_time(nBaselinePts);
             lifetime = roiData.lifetime();
             green = roiData.green();
             red = roiData.red();
+            normLifetime = roiData.normalized_lifetime(nBaselinePts);
+            normGreen = roiData.normalized_green(nBaselinePts);
+            normRed = roiData.normalized_red(nBaselinePts);
             
-            prepData = struct;
+            % Save mandatory data
+            fileStruct = struct;
+            fileStruct.('filePath') = filepath(2:end);
+            fileStruct.('numROI') = roiCount;
+            fileStruct.('time') = adjTime;
+            fileStruct.('dnaType') = dnaType;
+            fileStruct.('solutions') = solutionInfo;
             
-            % Save mandatory fields
-            prepData.('alladj') = [time, lifetime, green, red];
-            prepData.('numROI') = roiData.roi_count();
-            prepData.('dnaType') = dnaType;
-            prepData.('solutions') = solutionInfo;
+            avgStruct = struct;            
+            [avgStruct.('tauAvg'), avgStruct.('tauSte')] = ROIUtils.average(lifetime);
+            [avgStruct.('intAvg'), avgStruct.('intSte')] = ROIUtils.average(green);
+            [avgStruct.('redAvg'), avgStruct.('redSte')] = ROIUtils.average(red);
             
-            % Save any optional fields
+            [avgStruct.('tauNormAvg'), avgStruct.('tauNormSte')] = ROIUtils.average(normLifetime);
+            [avgStruct.('intNormAvg'), avgStruct.('intNormSte')] = ROIUtils.average(normGreen);
+            [avgStruct.('redNormAvg'), avgStruct.('redNormSte')] = ROIUtils.average(normRed);
+            
+            fileStruct.('averages') = avgStruct;
+            
+            % Save optional data
             if nargin >= 5
-                prepData.('userPref') = varargin{1};
+                fileStruct.('userPref') = varargin{1};
             end
             
-            save(filepath, 'prepData');
+            save(filepath, '-struct', 'fileStruct');
         end
     end
 end
