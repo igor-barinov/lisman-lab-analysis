@@ -102,7 +102,7 @@ for channelN = 1:nChannels
             end
         end
         
-        Ch(channelN).roiData = a;
+        Ch(channelN).roiData = a(1:nRoi-1);
         Ch(channelN).bgData = bg;
         
         % IB 11/15/20, 109-113
