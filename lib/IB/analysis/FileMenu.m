@@ -84,10 +84,14 @@ classdef FileMenu
                 end
             end
 
-            % Combine dna types
-            dnaType = ROIUtils.combine_dna_types(dnaTypes);
-            % Combine solution info
-            solutionInfo = ROIUtils.combine_solution_info(allSolutions);
+            % Combine dna types and Combine solution info
+            if openFile.type() == ROIFileType.Prepared()
+                dnaType = dnaTypes{1}; %ROIUtils.combine_dna_types(dnaTypes);
+                solutionInfo = allSolutions{1}; %ROIUtils.combine_solution_info(allSolutions);
+            else
+                dnaType = ROIUtils.combine_dna_types(dnaTypes);
+                solutionInfo = ROIUtils.combine_solution_info(allSolutions);
+            end
 
             % Validate solution info
             if openFile.has_exp_info() && ~ROIUtils.has_number_of_baseline_pts(solutionInfo)
@@ -232,7 +236,13 @@ classdef FileMenu
                 case 2
                     PreparedFile.save(savepath, saveData, dnaType, solutions, userPreferences);
                 case 3
-                    AveragedFile.save(savepath, saveData, ROIUtils.trim_dna_type(dnaType), solutions, userPreferences);
+                    if openFile.type() == ROIFileType.Averaged()
+                        optns = {'IsAveraged', 'true'};
+                    else
+                        optns = {};
+                    end
+                    
+                    AveragedFile.save(savepath, saveData, ROIUtils.trim_dna_type(dnaType), solutions, userPreferences, optns{:});
                 otherwise
                     warndlg('Cannot save the file under this type');
             end
