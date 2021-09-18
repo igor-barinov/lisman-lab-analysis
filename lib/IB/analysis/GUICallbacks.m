@@ -36,6 +36,10 @@ classdef GUICallbacks
             GUI.update_data_table(roiData);
         end
         
+        function menuToggleROI(hObject, ~)
+            GUI.try_callback(@DataMenu.toggle_roi, hObject);
+        end
+        
         function btnToggleAdjustedTime(hObject)
         %% --------------------------------------------------------------------------------------------------------
         % 'btnToggleAdjustedTime' Callback
@@ -346,6 +350,10 @@ classdef GUICallbacks
             if ~isempty(newSolutions)
                 GUI.update_solution_info(handles, newSolutions);
             end
+            
+            % Toggle Adjusted Time
+            GUI.toggle_button(handles.('btnToggleAdjustedTime'));
+            GUICallbacks.btnToggleAdjustedTime(handles.('btnToggleAdjustedTime'));
         end
     end
 end
