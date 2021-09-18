@@ -429,7 +429,9 @@ classdef ROIUtils
         %
         % Plots <allSolutions> as bars and text on <axis> that has <time> as x-data
         %
-        function plot_annotations(axis, time, allSolutions)
+        function [annotations] = plot_annotations(axis, time, allSolutions)
+            annotations = {};
+            
             % Define plotting options
             lineStyles = {'-', ':'};
             lineOpts = {'linewidth', 4};
@@ -478,7 +480,9 @@ classdef ROIUtils
                     lineHeight = [yOffset yOffset];
                     if needAdditionalLines
                         styleIdx = mod(j, 2) + 1;
-                        annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});    
+                        lineAnnot = annotation('line', lineWidth, lineHeight, 'linestyle', lineStyles{styleIdx}, lineOpts{:});
+                        %set(lineAnnot, 'id', TODO);
+                        annotations{end+1} = lineAnnot;
                     end
 
                     % Combine solution names into a single string
@@ -498,7 +502,7 @@ classdef ROIUtils
                     
                     % Plot solution name
                     if needAdditionalText
-                        annotation('textbox', txtBoxPos, 'String', nameStr, txtBoxOpts{:});
+                        annotations{end+1} = annotation('textbox', txtBoxPos, 'String', nameStr, txtBoxOpts{:});
                     end
 
                     % Move x-start to end of plotted annotation
