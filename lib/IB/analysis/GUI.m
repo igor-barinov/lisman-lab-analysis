@@ -1,5 +1,30 @@
 classdef GUI
     methods (Static)
+        function try_callback(callback, varargin)
+            try
+                callback(varargin{:});
+            catch err
+                AppState.logdlg(err);
+            end
+        end
+        
+        function close(handle)
+            handles = guidata(handle);
+            
+            answer = questdlg('Would you like to close all open figures?', 'Close Figures?');
+            if isempty(answer)
+                return;
+            end
+            
+            if strcmp(answer, 'Yes')
+                AppState.close_open_figures(handles);
+            end
+            
+            if ~strcmp(answer, 'Cancel')
+                delete(handle);
+            end
+        end
+        
         function set_ui_access(handle, enabled, childrenEnabled, ignoreParent)
         %% --------------------------------------------------------------------------------------------------------
         % 'set_ui_access' Method
@@ -184,25 +209,27 @@ classdef GUI
             [settingsMap] = AppState.get_user_preferences();
             if isempty(settingsMap)
                 warndlg('Could not load all user preferences');
+            else
+                showLifetime = settingsMap('show_lifetime');
+                showGreen = settingsMap('show_green_int');
+                showRed = settingsMap('show_red_int');
+                showAnnotations = settingsMap('show_annotations');
+
+                if strcmp(showLifetime, 'true')
+                    GUI.toggle_menu(handles.('menuShowLifetime'));
+                end
+                if strcmp(showGreen, 'true')
+                    GUI.toggle_menu(handles.('menuShowGreen'));
+                end
+                if strcmp(showRed, 'true')
+                    GUI.toggle_menu(handles.('menuShowRed'));
+                end
+                if strcmp(showAnnotations, 'true')
+                    GUI.toggle_menu(handles.('menuShowAnnots'));
+                end
             end
             
-            showLifetime = settingsMap('show_lifetime');
-            showGreen = settingsMap('show_green_int');
-            showRed = settingsMap('show_red_int');
-            showAnnotations = settingsMap('show_annotations');
-
-            if strcmp(showLifetime, 'true')
-                GUI.toggle_menu(handles.('menuShowLifetime'));
-            end
-            if strcmp(showGreen, 'true')
-                GUI.toggle_menu(handles.('menuShowGreen'));
-            end
-            if strcmp(showRed, 'true')
-                GUI.toggle_menu(handles.('menuShowRed'));
-            end
-            if strcmp(showAnnotations, 'true')
-                GUI.toggle_menu(handles.('menuShowAnnots'));
-            end
+            
             
         end
         
@@ -429,12 +456,13 @@ classdef GUI
 
             for i = 1:newROICount
                 tagStr = ['menuToggleROI', num2str(i)];
+                callbackFn = @GUICallbacks.menuToggleROI;
                 hMenu = uimenu(handles.('menuToggleROI'), ...
                                'Text', ['ROI #', num2str(i)], ...
                                'Checked', 'on', ...
                                'Tag', tagStr, ...
                                'UserData', MENU_DATA_ID, ...
-                               'Callback', {'toggleROI_Callback', handles});
+                               'Callback', callbackFn);
                 newHandles.(tagStr) = hMenu;
             end
             guidata(handles.('mainFig'), newHandles);
