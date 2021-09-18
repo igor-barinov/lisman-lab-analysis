@@ -1,4 +1,8 @@
 classdef AppState
+    properties (Constant)
+        MainFigFieldName = 'mainFig';
+    end
+    
     methods (Static)
         
         function logdlg(lastErr)
@@ -112,7 +116,7 @@ classdef AppState
         % File data is stored in 'OPEN_FILE_OBJ' field of program's
         % appdata
         %
-            setappdata(handles.('mainFig'), 'OPEN_FILE_OBJ', openFileObj);
+            setappdata(handles.(AppState.MainFigFieldName), 'OPEN_FILE_OBJ', openFileObj);
         end
         
         function [openFileObj] = get_open_files(handles)
@@ -129,7 +133,7 @@ classdef AppState
         % Assumes that program's appdata has a previously created field
         % 'OPEN_FILE_OBJ'
         %
-            openFileObj = getappdata(handles.('mainFig'), 'OPEN_FILE_OBJ');
+            openFileObj = getappdata(handles.(AppState.MainFigFieldName), 'OPEN_FILE_OBJ');
         end
         
         function set_roi_data(handles, newROIData)
@@ -144,7 +148,7 @@ classdef AppState
         %
         % ROI data is stored in 'ROI_DATA' field of program's appdata
         %
-            setappdata(handles.('mainFig'), 'ROI_DATA', newROIData);
+            setappdata(handles.(AppState.MainFigFieldName), 'ROI_DATA', newROIData);
         end
         
         function [roiData] = get_roi_data(handles)
@@ -161,7 +165,7 @@ classdef AppState
         % Assumes that program's appdata has previously created field
         % 'ROI_DATA'
         %
-            roiData = getappdata(handles.('mainFig'), 'ROI_DATA');
+            roiData = getappdata(handles.(AppState.MainFigFieldName), 'ROI_DATA');
         end
 
         function update_data_selection(handles, newSelection)
@@ -178,7 +182,7 @@ classdef AppState
         %
         % Selected indices are stored 'DATA_SELECTION' field of program's appdata 
         %
-            setappdata(handles.('mainFig'), 'DATA_SELECTION', newSelection);
+            setappdata(handles.(AppState.MainFigFieldName), 'DATA_SELECTION', newSelection);
         end
         
         function [selection] = get_data_selection(handles)
@@ -196,9 +200,30 @@ classdef AppState
         % Assumes program's appdata has previously created field
         % 'DATA_SELECTION'
         %
-            selection = getappdata(handles.('mainFig'), 'DATA_SELECTION');
+            selection = getappdata(handles.(AppState.MainFigFieldName), 'DATA_SELECTION');
         end
         
+        function append_open_figure(handles, newFigure)
+            figures = AppState.get_open_figures(handles);
+            figures{end+1} = newFigure;
+            setappdata(handles.(AppState.MainFigFieldName), 'OPEN_FIGURES', figures);
+        end
+        
+        function close_open_figures(handles)
+            figures = AppState.get_open_figures(handles);
+            for i = 1:numel(figures)
+                if ishandle(figures{i})
+                    close(figures{i});
+                end
+                
+            end
+            
+            setappdata(handles.(AppState.MainFigFieldName), 'OPEN_FIGURES', {});
+        end
+        
+        function [figures] = get_open_figures(handles)
+            figures = getappdata(handles.(AppState.MainFigFieldName), 'OPEN_FIGURES');
+        end
         
     end
 end
