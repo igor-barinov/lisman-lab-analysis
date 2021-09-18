@@ -107,7 +107,9 @@ classdef PlotMenu
             end
 
             % Remove disabled ROIs from legend
-            legendEntries = legendEntries(enabledROIs);
+            if openFile.type() ~= ROIFileType.Averaged()
+                legendEntries = legendEntries(enabledROIs);
+            end
             
             % Load graph settings
             ltX = str2double(settingsMap('lt_x'));
@@ -145,7 +147,7 @@ classdef PlotMenu
 
             % Plot lifetime if necessary
             if isLifetimePlot
-                figure('Name', 'Lifetime Over Time', 'Position', ltSize);
+                ltFigure = figure('Name', 'Lifetime Over Time', 'Position', ltSize);
                 switch openFile.type()
                     case ROIFileType.Averaged
                         averages = lifetime(:, 2*enabledIndices - 1);
@@ -174,12 +176,13 @@ classdef PlotMenu
                 end
 
                 ROIUtils.set_x_limits(time);
+                
+                AppState.append_open_figure(handles, ltFigure);
             end
 
             % Plot intensity if necessary
             if isIntPlot
-
-                figure('Name', 'Green Int. Over Time', 'Position', greenSize);
+                greenFigure = figure('Name', 'Green Int. Over Time', 'Position', greenSize);
                 switch openFile.type()
                     case ROIFileType.Averaged
                         averages = int(:, 2*enabledIndices - 1);
@@ -208,12 +211,13 @@ classdef PlotMenu
                 end
 
                 ROIUtils.set_x_limits(time);
+                
+                AppState.append_open_figure(handles, greenFigure);
             end
 
             % Plot red if necessary
             if isRedPlot
-
-                figure('Name', 'Red Int. Over Time', 'Position', redSize);
+                redFigure = figure('Name', 'Red Int. Over Time', 'Position', redSize);
                 switch openFile.type()  
                     case ROIFileType.Averaged
                         averages = red(:, 2*enabledIndices - 1);
@@ -242,6 +246,8 @@ classdef PlotMenu
                 end
 
                 ROIUtils.set_x_limits(time);
+                
+                AppState.append_open_figure(handles, redFigure);
             end
         end
         
@@ -397,8 +403,7 @@ classdef PlotMenu
 
             % Plot lifetime if necessary
             if isLifetimePlot
-
-                figure('Name', 'Lifetime Over Time', 'Position', ltSize);
+                ltFigure = figure('Name', 'Lifetime Over Time', 'Position', ltSize);
                 switch openFile.type()
                     case ROIFileType.Averaged
                         lifetime = ROIUtils.select_averages(lifetime, selectedROIs);
@@ -428,12 +433,13 @@ classdef PlotMenu
                 end
 
                 ROIUtils.set_x_limits(time);
+                
+                AppState.append_open_figure(handles, ltFigure);
             end
 
             % Plot intensity if necessary
             if isIntPlot
-
-                figure('Name', 'Green Int. Over Time', 'Position', greenSize);
+                greenFigure = figure('Name', 'Green Int. Over Time', 'Position', greenSize);
                 switch openFile.type()
                     case ROIFileType.Averaged
                         int = ROIUtils.select_averages(int, selectedROIs);
@@ -463,12 +469,13 @@ classdef PlotMenu
                 end
 
                 ROIUtils.set_x_limits(time);
+                
+                AppState.append_open_figure(handles, greenFigure);
             end
 
             % Plot red if necessary
             if isRedPlot
-
-                figure('Name', 'Red Int. Over Time', 'Position', redSize);
+                redFigure = figure('Name', 'Red Int. Over Time', 'Position', redSize);
                 switch openFile.type()
                     case ROIFileType.Averaged
                         red = ROIUtils.select_averages(red, selectedROIs);
@@ -498,6 +505,8 @@ classdef PlotMenu
                 end
 
                 ROIUtils.set_x_limits(time);
+                
+                AppState.append_open_figure(handles, redFigure);
             end
         end
         
@@ -632,8 +641,7 @@ classdef PlotMenu
 
             % Plot lifetime if necessary
             if isLifetimePlot
-
-                figure('Name', 'Lifetime Over Time', 'Position', ltSize);
+                ltFigure = figure('Name', 'Lifetime Over Time', 'Position', ltSize);
                 [averages, errors] = ROIUtils.average(lifetime(:, enabledROIs));
                 ROIUtils.plot_averages(time, averages, errors);
 
@@ -653,12 +661,13 @@ classdef PlotMenu
                 end
 
                 ROIUtils.set_x_limits(time);
+                
+                AppState.append_open_figure(handles, ltFigure);
             end
 
             % Plot intensity if necessary
             if isIntPlot
-
-                figure('Name', 'Green Int. Over Time', 'Position', greenSize);
+                greenFigure = figure('Name', 'Green Int. Over Time', 'Position', greenSize);
                 [averages, errors] = ROIUtils.average(int(:, enabledROIs));
                 ROIUtils.plot_averages(time, averages, errors);
 
@@ -678,12 +687,13 @@ classdef PlotMenu
                 end
 
                 ROIUtils.set_x_limits(time);
+                
+                AppState.append_open_figure(handles, greenFigure);
             end
 
             % Plot red if necessary
             if isRedPlot
-
-                figure('Name', 'Red Int. Over Time', 'Position', redSize);
+                redFigure = figure('Name', 'Red Int. Over Time', 'Position', redSize);
                 [averages, errors] = ROIUtils.average(red(:, enabledROIs));
                 ROIUtils.plot_averages(time, averages, errors);
 
@@ -703,6 +713,8 @@ classdef PlotMenu
                 end
 
                 ROIUtils.set_x_limits(time);
+                
+                AppState.append_open_figure(handles, redFigure);
             end
         end
         
@@ -716,8 +728,8 @@ classdef PlotMenu
         %
             % Get current program state
             handles = guidata(hObject);
-            dnaType = GUI.get_dna_type(handles);
-            solutions = GUI.get_solution_info(handles);
+            %dnaType = GUI.get_dna_type(handles);
+            %solutions = GUI.get_solution_info(handles);
             GUI.toggle_menu(hObject);
 
             % Check if we have enough info for annotations
