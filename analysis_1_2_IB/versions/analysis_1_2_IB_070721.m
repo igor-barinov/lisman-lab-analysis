@@ -422,8 +422,10 @@ end
 %% Tools Menu Methods ---------------------------------------------------------------------------------------------
 % -----------------------------------------------------------------------------------------------------------------
 
-function menuPreferences_Callback(~, ~, ~)
-uiwait(analysis_1_2_user_options);
+function menuPreferences_Callback(hObject, ~, ~)
+GUI.try_callback(@GUICallbacks.menuPreferences, hObject);
+
+
 function menuSPC_Callback(~, ~, ~)
 spc_drawInit;
 function menuImstack_Callback(~, ~, ~)
