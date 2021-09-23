@@ -289,7 +289,7 @@ classdef GUICallbacks
 
             filePath = fullfile(path, file);
             switch filterIdx
-                case 1
+                case 1 % Word doc
                     % Show status due to processing time
                     statusdlg = waitbar(0, 'Reading Word Doc...');
 
@@ -319,7 +319,7 @@ classdef GUICallbacks
                         dlgContent = ['\fontsize{14}', notes];
                         msgbox(dlgContent, dlgStyle);
                     end
-                case 2
+                case 2 % ROI File
                     % Get the type of file chosen
                     filepaths = { filePath };
                     if PreparedFile.follows_format(filepaths)
@@ -340,6 +340,24 @@ classdef GUICallbacks
                         warndlg('This file does not have experiment info');
                         return;
                     end
+                    
+                    if infoFile.has_preferences()
+                        prefLoadAns = questdlg('Would you like to load the preferences from this file?', 'Load Preferences', 'Yes', 'No', 'Yes');
+                        
+                        if strcmp(prefLoadAns, 'Yes')
+                            plotDefaults = infoFile.plotting_defaults();
+                            figProfile = infoFile.figure_defaults_profile();
+                            AppState.set_plotting_defaults(plotDefaults.('showLifetime'), ...
+                                                           plotDefaults.('showGreenInt'), ...
+                                                           plotDefaults.('showRedInt'), ...
+                                                           plotDefaults.('showAnnots'));
+                                                       
+                            profileExists = AppState.set_figure_default(figProfile);
+                            if ~profileExists
+                                warndlg('Could not load figure default: does not exist on this machine');
+                            end
+                        end
+                    end
             end
 
 
@@ -354,6 +372,12 @@ classdef GUICallbacks
             % Toggle Adjusted Time
             GUI.toggle_button(handles.('btnToggleAdjustedTime'));
             GUICallbacks.btnToggleAdjustedTime(handles.('btnToggleAdjustedTime'));
+        end
+        
+        function menuPreferences(hObject)
+            handles = guidata(hObject);
+            uiwait(analysis_1_2_user_options);
+            GUI.update_plotting_options(handles);
         end
     end
 end
