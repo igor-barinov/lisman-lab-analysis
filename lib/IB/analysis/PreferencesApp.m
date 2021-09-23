@@ -83,7 +83,13 @@ classdef PreferencesApp
             filename = [version, '_', defaultName, '.ini'];
             filepath = fullfile(path, filename);
         end
-                
+        
+        function [tf] = figure_default_exists(defaultName)
+            iniFile = PreferencesApp.figure_default_filepath(defaultName);
+            [settings, values] = IOUtils.read_ini_file(iniFile);
+            tf = ~isempty(settings) && ~isempty(values);
+        end
+        
         function [settings, values] = initial_figure_settings()
         %% --------------------------------------------------------------------------------------------------------
         % 'initial_figure_settings' Method
