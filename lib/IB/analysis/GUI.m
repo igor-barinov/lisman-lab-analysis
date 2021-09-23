@@ -148,20 +148,6 @@ classdef GUI
             GUI.set_ui_access(handles.('menuToggle'), true, true, false);   % Data -> Toggle -> *
             GUI.set_ui_access(handles.('menuPlot'), true, true, false);     % Plot -> *
             GUI.set_ui_access(handles.('menuTools'), true, true, false);    % Tools -> *
-
-            % Disable all plotting options
-            if GUI.menu_is_toggled(handles.('menuShowLifetime'))
-                GUI.toggle_menu(handles.('menuShowLifetime'));
-            end
-            if GUI.menu_is_toggled(handles.('menuShowGreen'))
-                GUI.toggle_menu(handles.('menuShowGreen'));
-            end
-            if GUI.menu_is_toggled(handles.('menuShowRed'))
-                GUI.toggle_menu(handles.('menuShowRed'));
-            end
-            if GUI.menu_is_toggled(handles.('menuShowAnnots'))
-                GUI.toggle_menu(handles.('menuShowAnnots'));
-            end
             
 
             switch fileType        
@@ -205,32 +191,7 @@ classdef GUI
                     GUI.set_ui_access(handles.('menuTools'), true, true, false);
             end
 
-            % Change plotting options based on preferences
-            [settingsMap] = AppState.get_user_preferences();
-            if isempty(settingsMap)
-                warndlg('Could not load all user preferences');
-            else
-                showLifetime = settingsMap('show_lifetime');
-                showGreen = settingsMap('show_green_int');
-                showRed = settingsMap('show_red_int');
-                showAnnotations = settingsMap('show_annotations');
-
-                if strcmp(showLifetime, 'true')
-                    GUI.toggle_menu(handles.('menuShowLifetime'));
-                end
-                if strcmp(showGreen, 'true')
-                    GUI.toggle_menu(handles.('menuShowGreen'));
-                end
-                if strcmp(showRed, 'true')
-                    GUI.toggle_menu(handles.('menuShowRed'));
-                end
-                if strcmp(showAnnotations, 'true')
-                    GUI.toggle_menu(handles.('menuShowAnnots'));
-                end
-            end
-            
-            
-            
+            GUI.update_plotting_options(handles);
         end
         
         function update_win_title(handles)
@@ -466,6 +427,46 @@ classdef GUI
                 newHandles.(tagStr) = hMenu;
             end
             guidata(handles.('mainFig'), newHandles);
+        end
+        
+        function update_plotting_options(handles)
+            % Disable all plotting options
+            if GUI.menu_is_toggled(handles.('menuShowLifetime'))
+                GUI.toggle_menu(handles.('menuShowLifetime'));
+            end
+            if GUI.menu_is_toggled(handles.('menuShowGreen'))
+                GUI.toggle_menu(handles.('menuShowGreen'));
+            end
+            if GUI.menu_is_toggled(handles.('menuShowRed'))
+                GUI.toggle_menu(handles.('menuShowRed'));
+            end
+            if GUI.menu_is_toggled(handles.('menuShowAnnots'))
+                GUI.toggle_menu(handles.('menuShowAnnots'));
+            end
+            
+            % Change plotting options based on preferences
+            [settingsMap] = AppState.get_user_preferences();
+            if isempty(settingsMap)
+                warndlg('Could not load all user preferences');
+            else
+                showLifetime = settingsMap('show_lifetime');
+                showGreen = settingsMap('show_green_int');
+                showRed = settingsMap('show_red_int');
+                showAnnotations = settingsMap('show_annotations');
+
+                if strcmp(showLifetime, 'true')
+                    GUI.toggle_menu(handles.('menuShowLifetime'));
+                end
+                if strcmp(showGreen, 'true')
+                    GUI.toggle_menu(handles.('menuShowGreen'));
+                end
+                if strcmp(showRed, 'true')
+                    GUI.toggle_menu(handles.('menuShowRed'));
+                end
+                if strcmp(showAnnotations, 'true')
+                    GUI.toggle_menu(handles.('menuShowAnnots'));
+                end
+            end
         end
         
     end
