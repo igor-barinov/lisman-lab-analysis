@@ -77,16 +77,20 @@ classdef AppState
             end
             
         end
-        
-        function set_figure_default(defaultName)
-            iniFile = PreferencesApp.settings_filepath();
-            [settings, settingVals] = IOUtils.read_ini_file(iniFile);
-            settingsMap = containers.Map(settings, settingVals);
+                
+        function [tf] = set_figure_default(defaultName)
+            tf = PreferencesApp.figure_default_exists(defaultName);
             
-            settingsMap('plot_default') = defaultName;
-            newSettings = keys(settingsMap);
-            newValues = values(settingsMap, newSettings);
-            IOUtils.create_ini_file(iniFile, newSettings, newValues);
+            if tf
+                iniFile = PreferencesApp.settings_filepath();
+                [settings, settingVals] = IOUtils.read_ini_file(iniFile);
+                settingsMap = containers.Map(settings, settingVals);
+
+                settingsMap('plot_default') = defaultName;
+                newSettings = keys(settingsMap);
+                newValues = values(settingsMap, newSettings);
+                IOUtils.create_ini_file(iniFile, newSettings, newValues);
+            end
         end
         
         function set_plotting_defaults(showLifetime, showGreenInt, showRedInt, showAnnotations)
