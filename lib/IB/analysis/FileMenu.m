@@ -118,9 +118,6 @@ classdef FileMenu
             
             % Load any user preferences
             if openFile.has_preferences()
-                defaultName = openFile.figure_defaults_profile();
-                AppState.set_figure_default(defaultName);
-                
                 plottingDefaults = openFile.plotting_defaults();
                 if ~isempty(plottingDefaults)
                     AppState.set_plotting_defaults(plottingDefaults.('showLifetime'), ...
@@ -129,7 +126,8 @@ classdef FileMenu
                                                plottingDefaults.('showAnnots'));
                 end
                 
-                
+                defaultName = openFile.figure_defaults_profile();
+                [figDefaultExists] = AppState.set_figure_default(defaultName);
             end
 
             % Update program state
