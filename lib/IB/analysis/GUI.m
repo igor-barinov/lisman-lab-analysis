@@ -11,6 +11,12 @@ classdef GUI
         function close(handle)
             handles = guidata(handle);
             
+            [allFigures] = AppState.get_open_figures(handles);
+            if isempty(allFigures)
+                delete(handle);
+                return;
+            end
+            
             answer = questdlg('Would you like to close all open figures?', 'Close Figures?');
             if isempty(answer)
                 return;

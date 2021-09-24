@@ -370,8 +370,10 @@ classdef GUICallbacks
             end
             
             % Toggle Adjusted Time
-            GUI.toggle_button(handles.('btnToggleAdjustedTime'));
-            GUICallbacks.btnToggleAdjustedTime(handles.('btnToggleAdjustedTime'));
+            if ~GUI.button_is_toggled(handles.('btnToggleAdjustedTime'))
+                GUI.toggle_button(handles.('btnToggleAdjustedTime'));
+                GUICallbacks.btnToggleAdjustedTime(handles.('btnToggleAdjustedTime'));
+            end
         end
         
         function menuPreferences(hObject)
