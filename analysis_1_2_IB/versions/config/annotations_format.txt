@@ -1,2 +1,0 @@
-<fig>_annot="line,<xStart>,<xEnd>,<y>,<style>"
-<fig>_annot="textbox,<x>,<y>,<w>,<h>,<str>"
