@@ -14,6 +14,11 @@ for j = 1:length(Rois)
     delete(Texts(j));
 end
 
+exists = ishandle(gui.spc.figure.roiB);
+gui.spc.figure.roiB(~exists) = [];
+
+
+
 % try
 %     spc.fit.spc_roi(str2num(RoiNstr)) = [];
 % end
