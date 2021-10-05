@@ -77,6 +77,7 @@ classdef SPCMainPanel
             for i = fromVal : toVal
                 spc_openCurves(i);
                 pause(0.05);
+                spc_recoverRois();
                 if ~isempty(findobj('Tag', 'RoiA0'))
                     spc_calcRoi();
                 end
