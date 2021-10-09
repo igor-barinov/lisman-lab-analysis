@@ -93,6 +93,7 @@ end
 % IB 11/9/20,
 [filepath, basename, fileNum, ~, ~] = spc_AnalyzeFilename(spc.filename);
 savedFile = fullfile(filepath, [basename, '_ROI2.mat']);
+spc.fitIsNew = false;
 
 if exist(savedFile, 'file') == 2 % ROI2 file exists
     disp(['Reading ROI2', savedFile]);
@@ -102,22 +103,24 @@ if exist(savedFile, 'file') == 2 % ROI2 file exists
     if SavedFitParameters == 1 %nicko temp fix
         if isfield(savedData.(structField), 'fitsave') % fit was saved
             loadedFit = savedData.(structField).fitsave;
-            if isstruct(loadedFit) && ...
-                    isfield(loadedFit, 'beta0') && ...
-                    isfield(loadedFit, 'fixtau') && ...
-                    isfield(loadedFit, 'range') && ...
-                    isfield(loadedFit, 'lutlim') && ...
-                    isfield(loadedFit, 'lifetime_limit') && ...
-                    numel(loadedFit) >= fileNum && ...
-                    ~isempty(loadedFit(fileNum).beta0)
-                fitsave= loadedFit; %nicko 11.10.20
+            fitsave= loadedFit; %nicko 11.10.20
+            try
                 spc.fit(gui.spc.proChannel).beta0 = fitsave(fileNum).beta0;
                 spc.fit(gui.spc.proChannel).fixtau = fitsave(fileNum).fixtau;
                 spc.fit(gui.spc.proChannel).range = fitsave(fileNum).range;
                 spc.fit(gui.spc.proChannel).lutlim = fitsave(fileNum).lutlim;
                 spc.fit(gui.spc.proChannel).lifetime_limit = fitsave(fileNum).lifetime_limit;
-            else
+            catch
                 msgbox('file was not analyzed , current fit parameteres are used', 'replace');
+            end
+            
+            try
+                set(gui.spc.figure.projectLowerlimit, 'String', fitsave(fileNum).projectLim{1});
+                set(gui.spc.figure.projectUpperlimit, 'String', fitsave(fileNum).projectLim{2});
+                set(gui.spc.figure.lifetimeLowerlimit, 'String', fitsave(fileNum).lifetimeLim{1});
+                set(gui.spc.figure.lifetimeUpperlimit, 'String', fitsave(fileNum).lifetimeLim{2});
+            catch
+                msgbox('project and lifetime limits were not found, using previous values', 'replace');
             end
         end
     end

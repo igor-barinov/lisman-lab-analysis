@@ -111,6 +111,13 @@ for channelN = 1:nChannels
         fitsave(fn).range = spc.fit(gui.spc.proChannel).range;
         fitsave(fn).lutlim = spc.fit(gui.spc.proChannel).lutlim;
         fitsave(fn).lifetime_limit = spc.fit(gui.spc.proChannel).lifetime_limit;
+        projectLow = get(gui.spc.figure.projectLowerlimit, 'String');
+        projectUp = get(gui.spc.figure.projectUpperlimit, 'String');
+        lifetimeLow = get(gui.spc.figure.lifetimeLowerlimit, 'String');
+        lifetimeUp = get(gui.spc.figure.lifetimeUpperlimit, 'String');
+        
+        fitsave(fn).projectLim = {projectLow, projectUp};
+        fitsave(fn).lifetimeLim = {lifetimeLow, lifetimeUp};
         Ch(channelN).fitsave = fitsave;
         
         if isfield(gui.spc.figure, 'polyRoi')
