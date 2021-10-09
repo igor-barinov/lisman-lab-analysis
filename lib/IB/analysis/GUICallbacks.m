@@ -257,16 +257,7 @@ classdef GUICallbacks
             % Update table
             GUI.update_data_table(handles);
         end
-        
-        function btnChooseBaseline(hObject)
-        %% --------------------------------------------------------------------------------------------------------
-        % 'btnChooseBaseline' Callback
-        %
-        % TODO: open dialog to let user choose which solution is baseline
-        %
-            handles = guidata(hObject);
-        end
-        
+              
         function btnImportInfo(hObject)
         %% --------------------------------------------------------------------------------------------------------
         % 'btnImportInfo' Callback
