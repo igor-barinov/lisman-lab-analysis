@@ -22,7 +22,7 @@ function varargout = analysis_1_2_user_options(varargin)
 
 % Edit the above text to modify the response to help analysis_1_2_user_options
 
-% Last Modified by GUIDE v2.5 14-Jun-2021 21:56:19
+% Last Modified by GUIDE v2.5 09-Oct-2021 12:37:50
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -45,7 +45,7 @@ end
 
 
 % --- Executes just before analysis_1_2_user_options is made visible.
-function analysis_1_2_user_options_OpeningFcn(hObject, eventdata, handles, varargin)
+function analysis_1_2_user_options_OpeningFcn(hObject, ~, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -66,7 +66,7 @@ PreferencesApp.startup(handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = analysis_1_2_user_options_OutputFcn(hObject, eventdata, handles) 
+function varargout = analysis_1_2_user_options_OutputFcn(~, ~, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -76,227 +76,102 @@ function varargout = analysis_1_2_user_options_OutputFcn(hObject, eventdata, han
 varargout{1} = handles.output;
 
 function btnSaveChanges_Callback(hObject, ~, ~)
-try
-    PreferencesApp.btnSaveChanges(hObject);
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.btnSaveChanges, @PreferencesApp.logdlg, hObject);
 
 function show_lifetime_Callback(hObject, ~, ~)
-try
-    PreferencesApp.checkBoxSetting(hObject, 'show_lifetime');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.checkBoxSetting, @PreferencesApp.logdlg, hObject, 'show_lifetime');
 
 function show_green_int_Callback(hObject, ~, ~)
-try
-    PreferencesApp.checkBoxSetting(hObject, 'show_green_int');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.checkBoxSetting, @PreferencesApp.logdlg, hObject, 'show_green_int');
 
 function show_red_int_Callback(hObject, ~, ~)
-try
-    PreferencesApp.checkBoxSetting(hObject, 'show_red_int');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.checkBoxSetting, @PreferencesApp.logdlg, hObject, 'show_red_int');
 
 function show_annotations_Callback(hObject, ~, ~)
-try
-    PreferencesApp.checkBoxSetting(hObject, 'show_annotations');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.checkBoxSetting, @PreferencesApp.logdlg, hObject, 'show_annotations');
 
 function lt_x_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'lt_x');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'lt_x');
 
 function lt_y_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'lt_y');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'lt_y');
 
 function lt_w_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'lt_w');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'lt_w');
 
 function lt_h_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'lt_h');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'lt_h');
 
 function lt_x_min_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'lt_x_min');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'lt_x_min');
 
 function lt_x_max_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'lt_x_max');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'lt_x_max');
 
 function lt_y_min_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'lt_y_min');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'lt_y_min');
 
 function lt_y_max_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'lt_y_max');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'lt_y_max');
 
 function green_y_max_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'green_y_max');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'green_y_max');
 
 function green_y_min_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'green_y_min');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'green_y_min');
 
 function green_x_max_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'green_x_max');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'green_x_max');
 
 function green_x_min_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'green_x_min');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'green_x_min');
 
 function green_h_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'green_h');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'green_h');
 
 function green_w_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'green_w');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'green_w');
 
 function green_y_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'green_y');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'green_y');
 
 function green_x_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'green_x');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'green_x');
 
 function red_x_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'red_x');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'red_x');
 
 function red_y_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'red_y');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'red_y');
 
 function red_w_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'red_w');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'red_w');
 
 function red_h_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'red_h');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'red_h');
 
 function red_x_min_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'red_x_min');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'red_x_min');
 
 function red_x_max_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'red_x_max');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'red_x_max');
 
 function red_y_min_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'red_y_min');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'red_y_min');
 
 function red_y_max_Callback(hObject, ~, ~)
-try
-    PreferencesApp.textInputSetting(hObject, 'red_y_max');
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'red_y_max');
 
 function savedDefsList_Callback(hObject, ~, ~)
-try
-    PreferencesApp.savedDefsList(hObject);
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.savedDefsList, @PreferencesApp.logdlg, hObject);
 
 function btnAddDefault_Callback(hObject, ~, ~)
-try
-    PreferencesApp.btnAddDefault(hObject);
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.btnAddDefault, @PreferencesApp.logdlg, hObject);
 
 function btnRemoveDefault_Callback(hObject, ~, ~)
-try
-    PreferencesApp.btnRemoveDefault(hObject);
-catch err
-    PreferencesApp.logdlg(err);
-end
+GUI.try_callback(@PreferencesApp.btnRemoveDefault, @PreferencesApp.logdlg, hObject);
+
+function btnEditDefault_Callback(hObject, ~, ~)
+GUI.try_callback(@PreferencesApp.btnEditDefault, @PreferencesApp.logdlg, hObject);
 
 %#ok<*DEFNU>
