@@ -2,6 +2,7 @@ function spc_initGlobalParams()
     global spc gui;
     spc.SPCdata.scan_rout_x = 3;
     spc.SPCdata.resolution=64; %number of channels;
+    spc.datainfo.scan_rx = 3;
     spc.datainfo.scan_x = 128;
     spc.datainfo.scan_y = 128*spc.SPCdata.scan_rout_x;
     spc.stack.image1{1}=zeros(spc.SPCdata.resolution, spc.datainfo.scan_y, spc.datainfo.scan_x);
