@@ -24,6 +24,7 @@ classdef PreferencesApp
             settingsMap = containers.Map(allSettings, allValues);
 
             PreferencesApp.set_settings_map(handles, settingsMap);
+            PreferencesApp.set_edit_status(handles, false);
             PreferencesApp.update_gui(handles);
         end
         
@@ -48,6 +49,13 @@ classdef PreferencesApp
                 errordlg('Could not log error. See console for details');
                 error(getReport(lastErr));
             end
+        end
+        
+        function [filepath] = settings_template_filepath()
+            [path, ~, ~] = fileparts(which(version));
+            path = [path, '\config\'];
+            filename = 'template.ini';
+            filepath = fullfile(path, filename);
         end
         
         function [filepath] = settings_filepath()
@@ -115,6 +123,11 @@ classdef PreferencesApp
             end
         end
         
+        function [settings, values] = initial_plotting_settings()
+            settings = {'show_lifetime', 'show_green_int', 'show_red_int', 'show_annotations'};
+            values = {'true', 'true', 'true', 'true'};
+        end
+        
         function set_settings_map(handles, newSettingsMap)
         %% --------------------------------------------------------------------------------------------------------
         % 'set_settings_map' Method
@@ -135,6 +148,14 @@ classdef PreferencesApp
             settingsMap = getappdata(handles.('mainFig'), 'SETTINGS_MAP');
         end
         
+        function set_edit_status(handles, tf)
+            setappdata(handles.('mainFig'), 'EDIT_STATUS', tf);
+        end
+        
+        function [tf] = get_edit_status(handles)
+            tf = getappdata(handles.('mainFig'), 'EDIT_STATUS');
+        end
+        
         function update_gui(handles)
         %% --------------------------------------------------------------------------------------------------------
         % 'update_gui' Method
@@ -144,7 +165,15 @@ classdef PreferencesApp
         % (IN) "handles": struct containing all of the program's GUI data
         %
             settingsMap = PreferencesApp.get_settings_map(handles);
+            isEditting = PreferencesApp.get_edit_status(handles);
             guiFields = fieldnames(handles);
+
+            if isEditting
+                enableGUI = 'on';
+            else
+                enableGUI = 'off';
+            end
+            
 
             for i = 1:numel(guiFields)
                 hGUI = handles.(guiFields{i});
@@ -160,6 +189,8 @@ classdef PreferencesApp
                     else
                         set(hGUI, 'String', value);
                     end
+                    
+                    set(hGUI, 'Enable', enableGUI);
                 end
             end
 
@@ -194,6 +225,13 @@ classdef PreferencesApp
             % Get program state
             handles = guidata(handle);
             settingsMap = PreferencesApp.get_settings_map(handles);
+            isEditting = PreferencesApp.get_edit_status(handles);
+            
+            if ~isEditting
+                return;
+            end
+            PreferencesApp.set_edit_status(handles, false);
+            
 
             % Save figure defaults
             [figSettings, figValues] = PreferencesApp.initial_figure_settings();
@@ -213,8 +251,8 @@ classdef PreferencesApp
             iniFile = PreferencesApp.settings_filepath();
             IOUtils.create_ini_file(iniFile, newSettings, newValues);
 
-            % Close the window
-            close(handles.('mainFig'));
+            % Update GUI
+            PreferencesApp.update_gui(handles);
         end
         
         function checkBoxSetting(handle, settingName)
@@ -372,6 +410,15 @@ classdef PreferencesApp
             PreferencesApp.set_settings_map(handles, settingsMap);
             PreferencesApp.update_gui(handles);
         end
-        
+       
+        function btnEditDefault(handle)
+            handles = guidata(handle);
+            
+            isEditting = PreferencesApp.get_edit_status(handles);
+            if ~isEditting
+                PreferencesApp.set_edit_status(handles, true);
+                PreferencesApp.update_gui(handles);
+            end
+        end
     end
 end
