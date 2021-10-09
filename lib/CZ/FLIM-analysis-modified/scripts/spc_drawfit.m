@@ -7,7 +7,7 @@ global gui;
 
 residual = (lifetime(:) - fit(:)) ./ sqrt(lifetime(:));
 
-if max(abs(residual)) > 10
+if spc.fitIsNew && max(abs(residual)) > 10
     msg = sprintf('Max residual is greater than 10 (%f)', max(abs(residual)));
     warndlg(msg);
 end

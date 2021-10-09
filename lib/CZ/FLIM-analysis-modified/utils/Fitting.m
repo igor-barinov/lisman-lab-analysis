@@ -275,6 +275,7 @@ classdef Fitting
         end
         
         function [betahat, curve] = fit(beta_in, isFixed, x, y, mode)
+            global spc;
             if strcmp(mode, 'spc_single')
                 beta0 = Fitting.spc_single_exp_initial_params(beta_in, y);
                 beta0 = Fitting.fix_params(beta0, beta_in, isFixed);
@@ -312,6 +313,8 @@ classdef Fitting
                 betahat = spc_picoseconds(betahat);
                 betahat = Fitting.fix_params(betahat, beta_in, isFixed);
             end
+            
+            spc.fitIsNew = true;
         end
         
         
