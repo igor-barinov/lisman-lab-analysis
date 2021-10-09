@@ -16,7 +16,7 @@ classdef GUI
             end
             
             [allFigures] = AppState.get_open_figures(handles);
-            if isempty(allFigures)
+            if isempty(allFigures) || ~any(ishandle(allFigures))
                 delete(handle);
                 return;
             end
