@@ -46,9 +46,8 @@ classdef AppState
             % Create ini file if none exists
             fileID = fopen(iniFile, 'r');
             if fileID == -1
-                settings = {'show_green_int', 'show_lifetime', 'show_red_int'};
-                defaultValues = {'false', 'false', 'false'};
-                IOUtils.create_ini_file(iniFile, settings, defaultValues);
+                [defaultSettings, defaultValues] = IOUtils.read_ini_file(PreferencesApp.settings_template_filepath());
+                IOUtils.create_ini_file(iniFile, defaultSettings, defaultValues);
             else
                 fclose(fileID);
             end
