@@ -1,0 +1,119 @@
+[09-Oct-2021 13:29:44]: Dot indexing is not supported for variables of this type.
+
+Error in PreferencesApp.set_edit_status (line 147)
+            setappdata(handles.('mainFig'), 'EDIT_STATUS', tf);
+
+Error in PreferencesApp.btnEditDefault (line 414)
+                PreferencesApp.set_edit_status(true);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_user_options>btnEditDefault_Callback (line 175)
+GUI.try_callback(@PreferencesApp.btnEditDefault, @PreferencesApp.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_user_options (line 42)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_user_options('btnEditDefault_Callback',hObject,eventdata,guidata(hObject))
+
+
+[09-Oct-2021 13:30:08]: Error using matlab.ui.container.Menu/get
+Invalid or deleted object.
+
+Error in GUI.menu_is_toggled (line 109)
+            enableState = get(handle, 'Checked');
+
+Error in GUI.update_plotting_options (line 444)
+            if GUI.menu_is_toggled(handles.('menuShowLifetime'))
+
+Error in GUICallbacks.menuPreferences (line 373)
+            GUI.update_plotting_options(handles);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_100921>menuPreferences_Callback (line 338)
+GUI.try_callback(@GUICallbacks.menuPreferences, @AppState.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_100921 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuPreferences_Callback',hObject,eventdata,guidata(hObject))
+
+
+[09-Oct-2021 13:44:38]: Index in position 2 exceeds array bounds.
+
+Error in ROIUtils.split_solution_info (line 365)
+            solNames = solutionInfo(:, 1);
+
+Error in PlotMenu.plot_all (line 209)
+                    solutionInfo = ROIUtils.split_solution_info(allSolutions);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_100921>menuPlotAll_Callback (line 255)
+GUI.try_callback(@PlotMenu.plot_all, @AppState.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_100921 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[09-Oct-2021 13:45:23]: Index in position 2 exceeds array bounds.
+
+Error in ROIUtils.split_solution_info (line 365)
+            solNames = solutionInfo(:, 1);
+
+Error in PlotMenu.plot_all (line 209)
+                    solutionInfo = ROIUtils.split_solution_info(allSolutions);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_100921>menuPlotAll_Callback (line 255)
+GUI.try_callback(@PlotMenu.plot_all, @AppState.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_100921 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+
+[09-Oct-2021 13:45:50]: Index in position 2 exceeds array bounds.
+
+Error in ROIUtils.split_solution_info (line 365)
+            solNames = solutionInfo(:, 1);
+
+Error in PlotMenu.plot_all (line 209)
+                    solutionInfo = ROIUtils.split_solution_info(allSolutions);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_100921>menuPlotAll_Callback (line 255)
+GUI.try_callback(@PlotMenu.plot_all, @AppState.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_100921 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+
+

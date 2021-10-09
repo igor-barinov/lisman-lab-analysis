@@ -516,3 +516,116 @@ Error in analysis_1_2_IB_070721 (line 43)
 Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('mainFig_CloseRequestFcn',hObject,eventdata,guidata(hObject))
 
 
+[09-Oct-2021 12:27:51]: Dot indexing is not supported for variables of this type.
+
+Error in AppState.get_open_figures (line 229)
+            figures = getappdata(handles.(AppState.MainFigFieldName), 'OPEN_FIGURES');
+
+Error in GUI.close (line 14)
+            [allFigures] = AppState.get_open_figures(handles);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_070721>mainFig_CloseRequestFcn (line 92)
+GUI.try_callback(@GUI.close, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('mainFig_CloseRequestFcn',hObject,eventdata,guidata(hObject))
+
+
+[09-Oct-2021 12:28:06]: Dot indexing is not supported for variables of this type.
+
+Error in AppState.get_open_figures (line 229)
+            figures = getappdata(handles.(AppState.MainFigFieldName), 'OPEN_FIGURES');
+
+Error in GUI.close (line 14)
+            [allFigures] = AppState.get_open_figures(handles);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_070721>mainFig_CloseRequestFcn (line 92)
+GUI.try_callback(@GUI.close, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('mainFig_CloseRequestFcn',hObject,eventdata,guidata(hObject))
+
+
+[09-Oct-2021 12:29:04]: Dot indexing is not supported for variables of this type.
+
+Error in AppState.get_open_figures (line 229)
+            figures = getappdata(handles.(AppState.MainFigFieldName), 'OPEN_FIGURES');
+
+Error in GUI.close (line 14)
+            [allFigures] = AppState.get_open_figures(handles);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_070721>mainFig_CloseRequestFcn (line 92)
+GUI.try_callback(@GUI.close, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('mainFig_CloseRequestFcn',hObject,eventdata,guidata(hObject))
+
+
+[09-Oct-2021 12:29:24]: Error using guidata (line 87)
+Object must be a figure or one of its child objects.
+
+Error in GUI.close (line 13)
+            handles = guidata(handle);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_070721>mainFig_CloseRequestFcn (line 92)
+GUI.try_callback(@GUI.close, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('mainFig_CloseRequestFcn',hObject,eventdata,guidata(hObject))
+
+
+[09-Oct-2021 12:29:48]: Dot indexing is not supported for variables of this type.
+
+Error in AppState.get_open_figures (line 229)
+            figures = getappdata(handles.(AppState.MainFigFieldName), 'OPEN_FIGURES');
+
+Error in GUI.close (line 14)
+            [allFigures] = AppState.get_open_figures(handles);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_070721>mainFig_CloseRequestFcn (line 92)
+GUI.try_callback(@GUI.close, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_070721 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_070721('mainFig_CloseRequestFcn',hObject,eventdata,guidata(hObject))
+
+

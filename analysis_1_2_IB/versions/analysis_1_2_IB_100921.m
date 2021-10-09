@@ -335,7 +335,7 @@ GUI.try_callback(@GUICallbacks.btnImportInfo, @AppState.logdlg, hObject);
 % -----------------------------------------------------------------------------------------------------------------
 
 function menuPreferences_Callback(hObject, ~, ~)
-GUI.try_callback(@GUICallbacks.menuPreferences, hObject);
+GUI.try_callback(@GUICallbacks.menuPreferences, @AppState.logdlg, hObject);
 
 
 function menuSPC_Callback(~, ~, ~)
