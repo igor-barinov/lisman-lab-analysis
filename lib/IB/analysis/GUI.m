@@ -1,10 +1,10 @@
 classdef GUI
     methods (Static)
-        function try_callback(callback, varargin)
+        function try_callback(callback, errHandler, varargin)
             try
                 callback(varargin{:});
             catch err
-                AppState.logdlg(err);
+                errHandler(err);
             end
         end
         
