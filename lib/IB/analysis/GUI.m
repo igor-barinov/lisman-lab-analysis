@@ -10,6 +10,10 @@ classdef GUI
         
         function close(handle)
             handles = guidata(handle);
+            if isempty(handles)
+                delete(handle);
+                return;
+            end
             
             [allFigures] = AppState.get_open_figures(handles);
             if isempty(allFigures)
