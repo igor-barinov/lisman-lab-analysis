@@ -1,6 +1,8 @@
 function spc_openCurves(fname)
 global spc gui fitsave;
 
+loadbar = waitbar(0, 'Opening file...');
+
 no_lastProject = 0;
 try
     spc.lastProject = spc.project;
@@ -18,7 +20,8 @@ else
     fname = sprintf('%s%s%03d%s', filepath, basename, filenumber, ext1); %???
 end
 
-disp(['Reading SPC.  ', fname]);
+waitbar(0.25, loadbar, 'Reading SPC file...');
+%disp(['Reading SPC.  ', fname]);
 
 if ~exist(fname, 'file')
     disp('No such file (spc_openCurves L39)');
@@ -69,7 +72,9 @@ elseif ~error
 else
     
 end
-disp(['Reading.not SPC', filename]);
+
+waitbar(0.5, loadbar, 'Reading non SPC file...');
+%disp(['Reading.not SPC', filename]);
 
 spc.switches.redImg = 0;
 if exist(filename, 'file') == 2
@@ -96,7 +101,8 @@ savedFile = fullfile(filepath, [basename, '_ROI2.mat']);
 spc.fitIsNew = false;
 
 if exist(savedFile, 'file') == 2 % ROI2 file exists
-    disp(['Reading ROI2', savedFile]);
+    %disp(['Reading ROI2', savedFile]);
+    waitbar(0.75, loadbar, 'Reading ROI2 file...');
     savedData = load(savedFile);
     structField = [basename, '_ROI2'];
     SavedFitParameters=gui.spc.spc_main.Saved.Value;
@@ -120,7 +126,9 @@ if exist(savedFile, 'file') == 2 % ROI2 file exists
                 set(gui.spc.figure.lifetimeLowerlimit, 'String', fitsave(fileNum).lifetimeLim{1});
                 set(gui.spc.figure.lifetimeUpperlimit, 'String', fitsave(fileNum).lifetimeLim{2});
             catch
-                msgbox('project and lifetime limits were not found, using previous values', 'replace');
+                warning('off', 'backtrace');
+                warning('project and lifetime limits were not found, using previous values');
+                warning('on', 'backtrace');
             end
         end
     end
@@ -139,6 +147,8 @@ else
     disp('ROI2 is not found');
 end
 % IB 11/9/20, end
+
+
 
 spc_redrawSetting(1);
 
@@ -258,3 +268,5 @@ if ~no_lastProject
         set(gui.spc.figure.polyLineB, 'XData', xx+shift(1), 'YData', yy+shift(2));
     end
 end %LAST_PROJECT
+waitbar(1.0, loadbar);
+close(loadbar);
