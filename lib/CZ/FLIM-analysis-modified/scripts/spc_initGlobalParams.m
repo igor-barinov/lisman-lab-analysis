@@ -16,6 +16,7 @@ function spc_initGlobalParams()
         spc.fit(i).beta0 = [1,0,1,0,0,0];
         spc.fit(i).fixtau = [0,0,0,0,0,0];
     end
+    spc.fitIsNew = false;
     spc.switches.logscale = 1;
     spc.SPCdata.scan_size_x = spc.datainfo.scan_x;
     spc.datainfo.psPerUnit = 200;
