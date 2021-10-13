@@ -98,57 +98,15 @@ end
 % IB 11/9/20,
 [filepath, basename, fileNum, ~, ~] = spc_AnalyzeFilename(spc.filename);
 savedFile = fullfile(filepath, [basename, '_ROI2.mat']);
-spc.fitIsNew = false;
 
-if exist(savedFile, 'file') == 2 % ROI2 file exists
-    %disp(['Reading ROI2', savedFile]);
-    waitbar(0.75, loadbar, 'Reading ROI2 file...');
-    savedData = load(savedFile);
-    structField = [basename, '_ROI2'];
-    SavedFitParameters=gui.spc.spc_main.Saved.Value;
-    if SavedFitParameters == 1 %nicko temp fix
-        if isfield(savedData.(structField), 'fitsave') % fit was saved
-            loadedFit = savedData.(structField).fitsave;
-            fitsave= loadedFit; %nicko 11.10.20
-            try
-                spc.fit(gui.spc.proChannel).beta0 = fitsave(fileNum).beta0;
-                spc.fit(gui.spc.proChannel).fixtau = fitsave(fileNum).fixtau;
-                spc.fit(gui.spc.proChannel).range = fitsave(fileNum).range;
-                spc.fit(gui.spc.proChannel).lutlim = fitsave(fileNum).lutlim;
-                spc.fit(gui.spc.proChannel).lifetime_limit = fitsave(fileNum).lifetime_limit;
-            catch
-                msgbox('file was not analyzed , current fit parameteres are used', 'replace');
-            end
-            
-            try
-                set(gui.spc.figure.projectLowerlimit, 'String', fitsave(fileNum).projectLim{1});
-                set(gui.spc.figure.projectUpperlimit, 'String', fitsave(fileNum).projectLim{2});
-                set(gui.spc.figure.lifetimeLowerlimit, 'String', fitsave(fileNum).lifetimeLim{1});
-                set(gui.spc.figure.lifetimeUpperlimit, 'String', fitsave(fileNum).lifetimeLim{2});
-            catch
-                warning('off', 'backtrace');
-                warning('project and lifetime limits were not found, using previous values');
-                warning('on', 'backtrace');
-            end
-        end
-    end
-    
-    set(gui.spc.spc_main.spc_fitstart, 'String', num2str(round(spc.fit(gui.spc.proChannel).range(1)*spc.datainfo.psPerUnit/100)/10));
-    set(gui.spc.spc_main.spc_fitend, 'String', num2str(round(spc.fit(gui.spc.proChannel).range(2)*spc.datainfo.psPerUnit/100)/10));
-    
-    
-    set(gui.spc.figure.lifetimeUpperlimit, 'String', num2str(spc.fit(gui.spc.proChannel).lifetime_limit(1)));
-    set(gui.spc.figure.lifetimeLowerlimit, 'String', num2str(spc.fit(gui.spc.proChannel).lifetime_limit(2)));
-    
-    set(gui.spc.figure.LutLowerlimit, 'String', num2str(spc.fit(gui.spc.proChannel).lutlim(1)));
-    set(gui.spc.figure.LutUpperlimit, 'String', num2str(spc.fit(gui.spc.proChannel).lutlim(2)));
-    
-else
-    disp('ROI2 is not found');
+waitbar(0.75, loadbar, 'Reading ROI2 file...');
+try
+    spc_loadROI2(savedFile, fileNum);
+catch
+    warning('off', 'backtrace');
+    warning('Could not load ROI2 file');
+    warning('on', 'backtrace');
 end
-% IB 11/9/20, end
-
-
 
 spc_redrawSetting(1);
 
