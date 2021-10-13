@@ -178,7 +178,8 @@ classdef Fitting
         end
         
         function [y] = spc_double_exp(beta, x)
-            global spc;
+            global spc gui;
+            bg = str2double(get(gui.spc.spc_main.beta7, 'string'));
             
             [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta);
             
@@ -195,11 +196,12 @@ classdef Fitting
             pre_y2 = erfc((tau_g^2-tau1*(x-tau_d+pulseI))/(sqrt(2)*tau1*tau_g));
             pre_y = pre_y1.*pre_y2;
             
-            y=(ya + yb + pre_y)/2;
+            y=(ya + yb + pre_y)/2 + bg;
         end
                 
         function [y] = flimage_single_exp(beta, x)
-            global spc;
+            global spc gui;
+            bg = str2double(get(gui.spc.spc_main.beta7, 'string'));
             
             [pop, tau, ~, ~, tau_d, tau_g] = spc_unpackParams(beta);
             
@@ -212,11 +214,12 @@ classdef Fitting
             pre_y2 = erfc((tau_g^2* tau - (x-tau_d+pulseI))/(sqrt(2) * tau_g));
             pre_y = pre_y1.*pre_y2;
            
-            y = (y + pre_y)/2;
+            y = (y + pre_y)/2 + bg;
         end
         
         function [y] = flimage_double_exp(beta, x)
-            global spc;
+            global spc gui;
+            bg = str2double(get(gui.spc.spc_main.beta7, 'string'));
             
             [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta);
             
@@ -233,7 +236,7 @@ classdef Fitting
             pre_y2 = erfc((tau_g^2*tau1 - (x-tau_d+pulseI))/(sqrt(2) * tau_g));
             pre_y = pre_y1.*pre_y2;
             
-            y = (ya + yb + pre_y);
+            y = (ya + yb + pre_y) + bg;
         end
         
         function [betahat] = spc_fit_single_exp(beta0, x, y)
@@ -275,7 +278,6 @@ classdef Fitting
         end
         
         function [betahat, curve] = fit(beta_in, isFixed, x, y, mode)
-            global spc;
             if strcmp(mode, 'spc_single')
                 beta0 = Fitting.spc_single_exp_initial_params(beta_in, y);
                 beta0 = Fitting.fix_params(beta0, beta_in, isFixed);
@@ -313,8 +315,6 @@ classdef Fitting
                 betahat = spc_picoseconds(betahat);
                 betahat = Fitting.fix_params(betahat, beta_in, isFixed);
             end
-            
-            spc.fitIsNew = true;
         end
         
         
