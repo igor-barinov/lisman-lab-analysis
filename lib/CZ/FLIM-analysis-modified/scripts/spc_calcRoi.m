@@ -64,27 +64,24 @@ for channelN = 1:nChannels
         spc_switchChannel;
         
         if get(gui.spc.spc_main.fit_eachtime, 'Value')
-                try
-                    betahat=spc_fitexp1gauss;
-                    spc_redrawSetting(1);
-                    fit_error = 0;
-                catch
-                    fit_error = 1;
-                end
-           
-            fit_error = 1;
             try
-                    betahat=spc_fitexp2gauss;
-                    spc_redrawSetting(1);
-                    fit_error = 0;
-                catch
-                    fit_error = 1;
+                spc_fitexpgauss();
+                spc_fitexp2gauss();
+                spc_redrawSetting(1);
+
+                fitRange = spc.fit(gui.spc.proChannel).range;
+                x = fitRange(1):fitRange(2);
+                y = spc.lifetime(x);
+                yhat = spc.fit(channelN).curve;
+
+                resid = (y(:) - yhat(:)) ./ sqrt(y(:));
+                if max(abs(resid)) > 10
+                    spc.badFits = [spc.badFits, fn];
                 end
-            else
-            fit_error = 1;
+            catch
+                spc.badFits = [spc.badFits, fn];
+            end
         end
-        
-        pause(0.1);
         
         nRoi = length(gui.spc.figure.roiB);
         if ~spc.switches.noSPC
@@ -105,19 +102,7 @@ for channelN = 1:nChannels
         Ch(channelN).roiData = a(1:nRoi-1);
         Ch(channelN).bgData = bg;
         
-        % IB 11/15/20, 109-113
-        fitsave(fn).beta0 = spc.fit(gui.spc.proChannel).beta0;
-        fitsave(fn).fixtau = spc.fit(gui.spc.proChannel).fixtau;
-        fitsave(fn).range = spc.fit(gui.spc.proChannel).range;
-        fitsave(fn).lutlim = spc.fit(gui.spc.proChannel).lutlim;
-        fitsave(fn).lifetime_limit = spc.fit(gui.spc.proChannel).lifetime_limit;
-        projectLow = get(gui.spc.figure.projectLowerlimit, 'String');
-        projectUp = get(gui.spc.figure.projectUpperlimit, 'String');
-        lifetimeLow = get(gui.spc.figure.lifetimeLowerlimit, 'String');
-        lifetimeUp = get(gui.spc.figure.lifetimeUpperlimit, 'String');
-        
-        fitsave(fn).projectLim = {projectLow, projectUp};
-        fitsave(fn).lifetimeLim = {lifetimeLow, lifetimeUp};
+        spc_saveFitParams(fn);
         Ch(channelN).fitsave = fitsave;
         
         if isfield(gui.spc.figure, 'polyRoi')
@@ -130,7 +115,7 @@ for channelN = 1:nChannels
             nPoly = 0;
         end
         if nPoly
-            la = spc_calcpolyLines;
+            la = spc_calcpolyLines();
             %evalc([fname, '(', num2str(channelN) ,').polyLines{fn} = la']);
             %evalc(['tmp=', fname, '(', num2str(channelN), ').polyLines']);
             Ch(channelN).polyLines{fn} = la;
