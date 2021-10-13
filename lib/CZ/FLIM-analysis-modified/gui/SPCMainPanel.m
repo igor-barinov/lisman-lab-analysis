@@ -72,16 +72,25 @@ classdef SPCMainPanel
         function CalcRoisBatch(handles)
         %% "calcRois Batch" BUTTON --------------------------------------------------------------------------------
         %
+            global spc;
+            spc.badFits = [];
             fromVal = str2double(get(handles.calcRoiFrom, 'String'));
             toVal = str2double(get(handles.calcRoiTo, 'String'));
             for i = fromVal : toVal
                 spc_openCurves(i);
-                pause(0.05);
                 spc_recoverRois();
                 if ~isempty(findobj('Tag', 'RoiA0'))
                     spc_calcRoi();
                 end
                 spc_auto(1);
+            end
+            
+            if ~isempty(spc.badFits)
+                errMsg = sprintf('The following images produced high residuals (>10) or failed:\n');
+                for n = spc.badFits
+                    errMsg = [errMsg, sprintf('\tImage %d\n', n)];
+                end
+                warndlg(errMsg, 'High Residuals', 'replace');
             end
         end
         
