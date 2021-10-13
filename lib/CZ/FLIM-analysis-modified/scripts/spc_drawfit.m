@@ -7,11 +7,6 @@ global gui;
 
 residual = (lifetime(:) - fit(:)) ./ sqrt(lifetime(:));
 
-if spc.fitIsNew && max(abs(residual)) > 10
-    msg = sprintf('Max residual is greater than 10 (%f)', max(abs(residual)));
-    warndlg(msg);
-end
-
 %axes(gui.spc.figure.lifetimeaxes);
 
 set(gui.spc.figure.lifetimePlot, 'XData', t, 'YData', lifetime(:));
