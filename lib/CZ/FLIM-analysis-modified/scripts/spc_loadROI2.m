@@ -1,4 +1,4 @@
-function spc_loadROI2(filepath, fileNum)
+function spc_loadROI2(basename, filepath, fileNum)
 global spc gui fitsave;
     savedData = load(filepath);
     structField = [basename, '_ROI2'];

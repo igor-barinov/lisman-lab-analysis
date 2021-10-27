@@ -5,7 +5,7 @@ function [betahat] = spc_fitexp2gauss()
 
     range = spc.fit(gui.spc.proChannel).range;
     lifetime = spc.lifetime(range(1):1:range(2));
-    x = range(1):range(2);
+    x = (range(1):range(2));% - 1;
 
     beta_in = spc.fit(gui.spc.proChannel).beta0;
 

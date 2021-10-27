@@ -101,7 +101,7 @@ savedFile = fullfile(filepath, [basename, '_ROI2.mat']);
 
 waitbar(0.75, loadbar, 'Reading ROI2 file...');
 try
-    spc_loadROI2(savedFile, fileNum);
+    spc_loadROI2(basename, savedFile, fileNum);
 catch
     warning('off', 'backtrace');
     warning('Could not load ROI2 file');

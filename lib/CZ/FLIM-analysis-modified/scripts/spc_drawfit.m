@@ -7,6 +7,12 @@ global gui;
 
 residual = (lifetime(:) - fit(:)) ./ sqrt(lifetime(:));
 
+%x = spc_nanoseconds(t);
+%for i = 1:numel(x)
+    %xypair = sprintf('(%.3f, %.3f) -> %.3f\n', x(i), lifetime(i), fit(i));
+    %disp(xypair);
+%end
+
 %axes(gui.spc.figure.lifetimeaxes);
 
 set(gui.spc.figure.lifetimePlot, 'XData', t, 'YData', lifetime(:));

@@ -6,7 +6,7 @@ function varargout = spc_main(varargin)
 %    FIG = SPC_MAIN launch spc_main GUI.
 %    SPC_MAIN('callback_name', ...) invoke the named callback.
 
-% Last Modified by GUIDE v2.5 20-Jul-2021 14:05:44
+% Last Modified by GUIDE v2.5 27-Oct-2021 13:06:43
 global gui;
 
 if nargin == 0  % LAUNCH GUI
@@ -31,7 +31,8 @@ elseif ischar(varargin{1}) % INVOKE NAMED SUBFUNCTION OR CALLBACK
 			feval(varargin{:}); % FEVAL switchyard
 		end
     catch err
-		disp(err);
+        errMsg = sprintf('Caught the following exception:\n%s', getReport(err, 'extended', 'hyperlinks', 'off'));
+        warning(errMsg);
     end
 end
 %% ================================================================================================================
@@ -393,3 +394,14 @@ function checkUseSpcFit_Callback(~, ~, ~)
 
 
 %#ok<*DEFNU>
+
+
+% --- Executes on button press in fit_eachtime.
+function fit_eachtime_Callback(hObject, eventdata, handles)
+global gui;
+gui.spc.spc_main.new_old = get(handles.fit_eachtime, 'Value');
+% hObject    handle to fit_eachtime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of fit_eachtime

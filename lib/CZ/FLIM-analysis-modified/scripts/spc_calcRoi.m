@@ -63,10 +63,18 @@ for channelN = 1:nChannels
         gui.spc.proChannel = channelN;
         spc_switchChannel;
         
-        if get(gui.spc.spc_main.fit_eachtime, 'Value')
+        if gui.spc.fit_eachtime
             try
-                spc_fitexpgauss();
-                spc_fitexp2gauss();
+                if gui.spc.spc_main.new_old
+                    set(handles.checkUseSpcFit, 'Value', 1);
+                    %spc_fitexpgauss();
+                    spc_fitexp2gauss();
+                    set(handles.checkUseSpcFit, 'Value', 0);
+                    spc_fitexp2gauss();
+                else
+                    spc_fitexpgauss();
+                    spc_fitexp2gauss();
+                end
                 spc_redrawSetting(1);
 
                 fitRange = spc.fit(gui.spc.proChannel).range;

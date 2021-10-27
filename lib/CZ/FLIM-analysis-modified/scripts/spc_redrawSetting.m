@@ -184,6 +184,7 @@ function spc_redrawSetting(recalc)
         range = spc.fit(gui.spc.proChannel).range;
         t = range(1):1:range(2);
         lifetime = spc.lifetime(t);
+        %t = t - 1;
         t = spc_picoseconds(t);
         try
             fitCurve = spc.fit(gui.spc.proChannel).curve;

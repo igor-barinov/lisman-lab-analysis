@@ -72,7 +72,8 @@ classdef SPCMainPanel
         function CalcRoisBatch(handles)
         %% "calcRois Batch" BUTTON --------------------------------------------------------------------------------
         %
-            global spc;
+            global spc gui;
+            gui.spc.fit_eachtime = 1;
             spc.badFits = [];
             fromVal = str2double(get(handles.calcRoiFrom, 'String'));
             toVal = str2double(get(handles.calcRoiTo, 'String'));
@@ -92,6 +93,7 @@ classdef SPCMainPanel
                 end
                 warndlg(errMsg, 'High Residuals', 'replace');
             end
+            gui.spc.fit_eachtime = 1;
         end
         
         function Channel1()
