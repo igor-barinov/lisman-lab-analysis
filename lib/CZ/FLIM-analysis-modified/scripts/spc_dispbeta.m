@@ -1,11 +1,18 @@
 function spc_dispbeta
     global gui spc;
     handles = gui.spc.spc_main;
-    
+   
     if isfield(spc.fit(gui.spc.proChannel), 'beta0')    
+
         betahat = spc.fit(gui.spc.proChannel).beta0;
 
-        [~, tau, ~, tau2, peaktime, tau_g] = spc_unpackParams(betahat);
+        if numel(betahat) > 6
+            [~, tau, ~, tau2, peaktime, tau_g, bg] = spc_unpackParams(betahat);
+        else
+            [~, tau, ~, tau2, peaktime, tau_g] = spc_unpackParams(betahat);
+            bg = get(handles.beta7, 'String');
+        end
+        
         fixtau = spc.fit(gui.spc.proChannel).fixtau;
 
         set(handles.fixtau1, 'Value', fixtau(2));
@@ -21,6 +28,7 @@ function spc_dispbeta
 
         set(handles.beta5, 'String', num2str(peaktime));
         set(handles.beta6, 'String', num2str(tau_g));
+        set(handles.beta7, 'String', num2str(bg));
 
         pop1 = betahat(1)/(betahat(3)+betahat(1));
         pop2 = betahat(3)/(betahat(3)+betahat(1));

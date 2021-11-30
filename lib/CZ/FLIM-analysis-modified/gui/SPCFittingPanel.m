@@ -147,7 +147,7 @@ classdef SPCFittingPanel
         function FitStart()
         %% "Fit start (ns)" TEXTBOX -------------------------------------------------------------------------------
         %
-            spc_redrawSetting(1);
+             spc_redrawSetting(1);
         end
         
         function FitEnd()

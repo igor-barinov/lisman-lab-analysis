@@ -11,6 +11,8 @@ function spc_drawInit
     spc_initScanImageWindow(ScSize);
     
     gui.spc.scanChannel = 2;
+    gui.spc.spc_main.new_old = 0;
+    
     spc_main();
     spc_selectAll();
 

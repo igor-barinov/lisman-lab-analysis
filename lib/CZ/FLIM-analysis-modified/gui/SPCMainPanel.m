@@ -79,7 +79,6 @@ classdef SPCMainPanel
             toVal = str2double(get(handles.calcRoiTo, 'String'));
             for i = fromVal : toVal
                 spc_openCurves(i);
-                spc_recoverRois();
                 if ~isempty(findobj('Tag', 'RoiA0'))
                     spc_calcRoi();
                 end
@@ -93,7 +92,7 @@ classdef SPCMainPanel
                 end
                 warndlg(errMsg, 'High Residuals', 'replace');
             end
-            gui.spc.fit_eachtime = 1;
+            gui.spc.fit_eachtime = 0;
         end
         
         function Channel1()

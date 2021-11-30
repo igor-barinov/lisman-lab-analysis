@@ -58,18 +58,20 @@ for channelN = 1:nChannels
             a = Ch(channelN).roiData;
             bg = Ch(channelN).bgData;
         end
-        
+       
         
         gui.spc.proChannel = channelN;
         spc_switchChannel;
         
+        %exist gui.spc.fit_eachtime
+     if ~exist('gui.spc.fit_eachtime')% nicko
         if gui.spc.fit_eachtime
             try
                 if gui.spc.spc_main.new_old
-                    set(handles.checkUseSpcFit, 'Value', 1);
+                    set(gui.spc.spc_main.checkUseSpcFit, 'Value', 1);
                     %spc_fitexpgauss();
                     spc_fitexp2gauss();
-                    set(handles.checkUseSpcFit, 'Value', 0);
+                    set(gui.spc.spc_main.checkUseSpcFit, 'Value', 0);
                     spc_fitexp2gauss();
                 else
                     spc_fitexpgauss();
@@ -90,6 +92,7 @@ for channelN = 1:nChannels
                 spc.badFits = [spc.badFits, fn];
             end
         end
+      end
         
         nRoi = length(gui.spc.figure.roiB);
         if ~spc.switches.noSPC

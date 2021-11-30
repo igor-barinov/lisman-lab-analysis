@@ -24,5 +24,3 @@ else
 end
 
 spc_updateMainStrings;
-%update the ROIs, too. 
-%spc_recoverRois;

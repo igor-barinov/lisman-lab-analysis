@@ -12,12 +12,7 @@ classdef Fitting
         %
         % (OUT) "beta": Vector containing the 6 converted parameters
         %
-            if numel(beta0) > 6
-                [pop1, tau1, pop2, tau2, tau_d, tau_g, bg] = spc_unpackParams(beta0);
-            else
-                [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta0);
-                bg = 0;
-            end
+            [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta0);
             
             if strcmp(mode, 'spc2flimage')
                 tau1 = spc_picoseconds(1 / tau1);
@@ -31,7 +26,7 @@ classdef Fitting
                 tau_g = spc_picoseconds(tau_g);
             end
             
-            beta = spc_packParams(pop1, tau1, pop2, tau2, tau_d, tau_g, bg);
+            beta = spc_packParams(pop1, tau1, pop2, tau2, tau_d, tau_g);
         end
         
         function [beta] = fix_params(beta0, betaFixed, isFixed)
@@ -51,7 +46,7 @@ classdef Fitting
         % (OUT) "beta": Vector containing the newly replaced parameters
         %
             beta = beta0;
-            for i = 1:numel(isFixed)
+            for i = 1:numel(beta)
                 if isFixed(i)
                     beta(i) = betaFixed(i);
                 end
@@ -144,7 +139,6 @@ classdef Fitting
         end
         
         function [beta0] = flimage_double_exp_initial_params(x, y)
-            global gui;
             [maxY, i] = max(y);
             maxX = x(i);
             sumY = sum(y);
@@ -159,11 +153,9 @@ classdef Fitting
             tau_d = maxX - 1 * tauG;
             tau_g = tauG;
             
-            bg = str2double(get(gui.spc.spc_main.beta7, 'string'));
-            
             fprintf('maxX = %.5f, tauG = %.5f\n', maxX, tauG);
             
-            beta0 = spc_packParams(pop1, tau1, pop2, tau2, tau_d, tau_g, bg);
+            beta0 = spc_packParams(pop1, tau1, pop2, tau2, tau_d, tau_g);
         end
                 
         function [y] = spc_single_exp(beta, x)
@@ -279,7 +271,7 @@ classdef Fitting
             global spc gui;
             bg = str2double(get(gui.spc.spc_main.beta7, 'string'));
             
-            [pop1, tau1, pop2, tau2, tau_d, tau_g, bg] = spc_unpackParams(beta);
+            [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta);
             
             y1 = pop1 * exp(tau_g^2 * tau1^2 / 2 - (x - tau_d) * tau1);
             y2 = erfc((tau_g^2 * tau1 - (x - tau_d)) / (sqrt(2) * tau_g));

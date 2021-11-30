@@ -1,8 +1,9 @@
 function spc_openCurves(fname)
 global spc gui fitsave;
 
-loadbar = waitbar(0, 'Opening file...');
-
+% loadbar = waitbar(1, 'Opening file...');
+% pause (0.5)
+% close (loadbar)
 no_lastProject = 0;
 try
     spc.lastProject = spc.project;
@@ -12,7 +13,7 @@ end
 
 if ~ischar(fname)
     filenumber1 = fname;
-    [filepath, basename, ~, ~, ~, ext1] = spc_AnalyzeFilename(spc.filename); %Take info from pre-existing file.
+    [filepath, basename, ~, ~, ~, ext1] = spc_AnalyzeFilename(spc.filename); %Takes info from pre-existing file.
     fname = sprintf('%s%s%03d%s', filepath, basename, filenumber1, ext1); %???
     
 else
@@ -20,9 +21,9 @@ else
     fname = sprintf('%s%s%03d%s', filepath, basename, filenumber, ext1); %???
 end
 
-% waitbar(0.25, loadbar, 'Reading SPC file...');
-disp(['Reading SPC file name.  ', fname]);
-
+% f=waitbar(0.25,'Reading SPC file...');%nicko
+% close (f)
+disp ('Found SPC file...')%nicko
 if ~exist(fname, 'file')
     disp('No such file (spc_openCurves L39)');
     return;
@@ -32,10 +33,12 @@ end
 if contains(fname, '.sdt')
     error = spc_readdata(fname);
 elseif contains(fname, '.mat')
-    load(fname);% 'Loads SPC file 
+    load(fname);
+    disp ('Found SPC.mat file...')%nicko
     error = 0;
 elseif contains(fname, '.tif')
     error = spc_loadTiff(fname);
+    disp ('Found SPC.tif file...')%nicko
 end
 spc.switches.redImg = 0;
 
@@ -62,20 +65,21 @@ filename = '';
 [filepath, basename, filenumber, ~, spc1, ext1] = spc_AnalyzeFilename(fname);
 if error == 2 %Not spc file.
     if contains(ext1, 'tif')
-        filename = sprintf('%s%s%03d%s', filepath, basename, filenumber, ext1); %Tif but nof spc file
+        filename = sprintf('%s%s%03d%s', filepath, basename, filenumber, ext1); %Tiff but nof spc file
     end
 elseif ~error
     if spc1
         filepath = filepath(1:end-4);
-        filename = sprintf('%s%s%03d%s', filepath, basename, filenumber, ext1); %Tif and spc file.
+        filename = sprintf('%s%s%03d%s', filepath, basename, filenumber, ext1); %Tiff and spc file.
     end
 else
     
 end
 
-waitbar(0.5, loadbar, 'Reading non SPC file...');
-%disp(['Reading.not SPC', filename]);
-
+% f=waitbar(0.5,'Reading non SPC file...');
+% pause (0.5)
+% close (f)
+disp ('Reading non SPC file...')%nicko
 spc.switches.redImg = 0;
 if exist(filename, 'file') == 2
     try
@@ -98,10 +102,13 @@ end
 % IB 11/9/20,
 [filepath, basename, fileNum, ~, ~] = spc_AnalyzeFilename(spc.filename);
 savedFile = fullfile(filepath, [basename, '_ROI2.mat']);
-
-waitbar(0.75, loadbar, 'Reading ROI2 file...');
+% f=waitbar(0.5, 'Reading ROI2 file...');
+% pause (0.5)
+% close (f)
+disp ('Reading ROI2 file...')%nicko
 try
     spc_loadROI2(basename, savedFile, fileNum);
+%     no_lastProject=1; %nicko
 catch
     warning('off', 'backtrace');
     warning('Could not load ROI2 file');
@@ -226,5 +233,4 @@ if ~no_lastProject
         set(gui.spc.figure.polyLineB, 'XData', xx+shift(1), 'YData', yy+shift(2));
     end
 end %LAST_PROJECT
-waitbar(1.0, loadbar);
-close(loadbar);
+

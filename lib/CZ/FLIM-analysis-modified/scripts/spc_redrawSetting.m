@@ -116,8 +116,6 @@ function spc_redrawSetting(recalc)
         set(gui.spc.spc_main.spc_fitstart, 'String', num2str(range(1)));
         set(gui.spc.spc_main.spc_fitend, 'String', num2str(range(2)));
 
-
-
         spc_drawAll();
     end
 

@@ -6,7 +6,13 @@ global gui;
 %lifetime = spc.lifetime(range(1):1:range(2));
 
 residual = (lifetime(:) - fit(:)) ./ sqrt(lifetime(:));
-
+    bg_residual_max=[1:3];
+    bg_residual_min=[1:3];
+  N=length(bg_residual_max);
+     for i=1:N
+        bg_residual_max(1,i)=max(residual(1:3));
+        bg_residual_min(i)=min(residual(1:3));
+     end
 %x = spc_nanoseconds(t);
 %for i = 1:numel(x)
     %xypair = sprintf('(%.3f, %.3f) -> %.3f\n', x(i), lifetime(i), fit(i));
@@ -22,7 +28,7 @@ if (spc.switches.logscale == 0)
     set(gui.spc.figure.lifetimeAxes, 'YScale', 'linear');
 else
     set(gui.spc.figure.lifetimeAxes, 'YScale', 'log');
-end;
+end
 
 set(gui.spc.figure.lifetimeAxes, 'XTick', []);
 
@@ -37,5 +43,3 @@ if (res ~= 0 & length(t) == length(res))
 end
 
 spc.fit(channel).residual = residual;
-%spc.fit(channel).curve = fit;
-%spc.fit.beta0 = beta0;

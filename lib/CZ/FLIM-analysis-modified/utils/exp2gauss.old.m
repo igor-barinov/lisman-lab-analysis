@@ -84,16 +84,16 @@ y=y1.*y2;
 % account for residual intensity near baseline
 % y1, y2, and ya are same as above except they are shifted to the left by
 % amount 'pulseI'
-y1 = beta0(1)*exp(tau_g^2/2/tau1^2 - (x-tau_d+pulseI)/tau1);
-y2 = erfc((tau_g^2-tau1*(x-tau_d+pulseI))/(sqrt(2)*tau1*tau_g));
-ya=y1.*y2 +y;
+%y1 = beta0(1)*exp(tau_g^2/2/tau1^2 - (x-tau_d+pulseI)/tau1);
+%y2 = erfc((tau_g^2-tau1*(x-tau_d+pulseI))/(sqrt(2)*tau1*tau_g));
+ya = y; %y1.*y2 +y;
 
 % Final value for first exponential; ya/2 because adding pre-pulse to
 % regular exponential doubles all amplitudes
 ya = ya/2;
 
 
-% ********* Second Exponential calculation ************
+% ********* First Exponential calculation ************
 % Calculations are the same except that the second exponential relies on
 % pop2 and tau2 instead of pop1 and tau1
 
@@ -101,12 +101,13 @@ y1 = beta0(3)*exp(tau_g^2/2/tau2^2 - (x-tau_d)/tau2);
 y2 = erfc((tau_g^2-tau2*(x-tau_d))/(sqrt(2)*tau2*tau_g));
 y=y1.*y2;
 
-%'Prepuls for the second exp' ; nicko
-y1 = beta0(3)*exp(tau_g^2/2/tau2^2 - (x-tau_d+pulseI)/tau2);
-y2 = erfc((tau_g^2-tau2*(x-tau_d+pulseI))/(sqrt(2)*tau2*tau_g));
+%y1 = beta0(3)*exp(tau_g^2/2/tau2^2 - (x-tau_d+pulseI)/tau2);
+%y2 = erfc((tau_g^2-tau2*(x-tau_d+pulseI))/(sqrt(2)*tau2*tau_g));
 
-yb = y1.*y2 + y;
+yb = y; %y1.*y2 + y;
 yb = yb/2;
 
 % Final value for double exponential
 y=ya+yb;
+
+%}

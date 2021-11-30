@@ -12,8 +12,9 @@ function spc_saveFitParams(fileNum)
     lifetimeUp = get(gui.spc.figure.lifetimeUpperlimit, 'String');
     scanimgLow = get(gui.spc.figure.redLowerlimit, 'String');
     scanimgUp = get(gui.spc.figure.redUpperlimit, 'String');
-
+    bgr = get(gui.spc.spc_main.beta7, 'String');
     fitsave(fileNum).projectLim = {projectLow, projectUp};
     fitsave(fileNum).lifetimeLim = {lifetimeLow, lifetimeUp};
     fitsave(fileNum).scanimgLim = {scanimgLow, scanimgUp};
+    fitsave(fileNum).background = {bgr};
 end

@@ -12,12 +12,7 @@ classdef Fitting
         %
         % (OUT) "beta": Vector containing the 6 converted parameters
         %
-            if numel(beta0) > 6
-                [pop1, tau1, pop2, tau2, tau_d, tau_g, bg] = spc_unpackParams(beta0);
-            else
-                [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta0);
-                bg = 0;
-            end
+            [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta0);
             
             if strcmp(mode, 'spc2flimage')
                 tau1 = spc_picoseconds(1 / tau1);
@@ -31,7 +26,7 @@ classdef Fitting
                 tau_g = spc_picoseconds(tau_g);
             end
             
-            beta = spc_packParams(pop1, tau1, pop2, tau2, tau_d, tau_g, bg);
+            beta = spc_packParams(pop1, tau1, pop2, tau2, tau_d, tau_g);
         end
         
         function [beta] = fix_params(beta0, betaFixed, isFixed)
@@ -51,12 +46,13 @@ classdef Fitting
         % (OUT) "beta": Vector containing the newly replaced parameters
         %
             beta = beta0;
-            for i = 1:numel(isFixed)
+            for i = 1:numel(beta)
                 if isFixed(i)
                     beta(i) = betaFixed(i);
                 end
             end
         end
+        
         function [beta0] = spc_single_exp_initial_params(beta_in, y)
         %% --------------------------------------------------------------------------------------------------------
         % 'spc_single_exp_initial_params' Method
@@ -144,7 +140,6 @@ classdef Fitting
         end
         
         function [beta0] = flimage_double_exp_initial_params(x, y)
-            global gui;
             [maxY, i] = max(y);
             maxX = x(i);
             sumY = sum(y);
@@ -159,11 +154,9 @@ classdef Fitting
             tau_d = maxX - 1 * tauG;
             tau_g = tauG;
             
-            bg = str2double(get(gui.spc.spc_main.beta7, 'string'));
-            
             fprintf('maxX = %.5f, tauG = %.5f\n', maxX, tauG);
             
-            beta0 = spc_packParams(pop1, tau1, pop2, tau2, tau_d, tau_g, bg);
+            beta0 = spc_packParams(pop1, tau1, pop2, tau2, tau_d, tau_g);
         end
                 
         function [y] = spc_single_exp(beta, x)
@@ -186,19 +179,18 @@ classdef Fitting
 %             y = (y + pre_y)/2 + bg;
 
             pulseI=spc.datainfo.pulseInt / spc.datainfo.psPerUnit*1000;
-            %First exp
+            
             y1 = pop*exp(tau_g^2/2/tau^2 - (x-tau_d)/tau);
             y2 = erfc((tau_g^2-tau*(x-tau_d))/(sqrt(2)*tau*tau_g));
             y=y1.*y2;
 
-                %"Pre" pulse
-                y1 = pop*exp(tau_g^2/2/tau^2 - (x-tau_d+pulseI)/tau);
-                y2 = erfc((tau_g^2-tau*(x-tau_d+pulseI))/(sqrt(2)*tau*tau_g));
-                ya = y1.*y2;
-            
-             %First exp + "Pre" pulse + bg
-             y=y+ya;
-             y=y/2 + bg;
+            %"Pre" pulse
+            y1 = pop*exp(tau_g^2/2/tau^2 - (x-tau_d+pulseI)/tau);
+            y2 = erfc((tau_g^2-tau*(x-tau_d+pulseI))/(sqrt(2)*tau*tau_g));
+
+
+            y = y1.*y2+y ;
+            y=y/2 + bg;
             
 
         end
@@ -206,7 +198,7 @@ classdef Fitting
         function [y] = spc_double_exp(beta, x)
             global spc gui;
             bg = str2double(get(gui.spc.spc_main.beta7, 'string'));
-            %bg=0; %nicko
+            
             [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta);
             
             pulseI=spc.datainfo.pulseInt / spc.datainfo.psPerUnit*1000;
@@ -228,31 +220,29 @@ classdef Fitting
 %             pre_y = pre_y1.*pre_y2;
 %             
 %             y=(ya + yb + pre_y)/2 + bg;
-            % First Exp 
+            
             y1 = pop1*exp(tau_g^2/2/tau1^2 - (x-tau_d)/tau1);
             y2 = erfc((tau_g^2-tau1*(x-tau_d))/(sqrt(2)*tau1*tau_g));
             y=y1.*y2;
 
-                %"Pre" pulse for the first exp ; nicko
-                y1 = pop1*exp(tau_g^2/2/tau1^2 - (x-tau_d+pulseI)/tau1);
-                y2 = erfc((tau_g^2-tau1*(x-tau_d+pulseI))/(sqrt(2)*tau1*tau_g));
-                ya = y1.*y2;
-            % First exp + "Pre" pulse for the fist exp; nicko
-            ya = (ya+y)/2;
+            %"Pre" pulse
+            y1 = pop1*exp(tau_g^2/2/tau1^2 - (x-tau_d+pulseI)/tau1);
+            y2 = erfc((tau_g^2-tau1*(x-tau_d+pulseI))/(sqrt(2)*tau1*tau_g));
 
-            % Second Exp
+            ya = y1.*y2+y;
+            ya = ya/2;
+
             y1 = pop2*exp(tau_g^2/2/tau2^2 - (x-tau_d)/tau2);
             y2 = erfc((tau_g^2-tau2*(x-tau_d))/(sqrt(2)*tau2*tau_g));
             y=y1.*y2;
-            
-               %"Pre" pulse for the second exp ; nicko
-               y1 = pop2*exp(tau_g^2/2/tau2^2 - (x-tau_d+pulseI)/tau2);
-               y2 = erfc((tau_g^2-tau2*(x-tau_d+pulseI))/(sqrt(2)*tau2*tau_g));
-               yb = y1.*y2;
-             % Second exp + "Pre" pulse for the second exp ; nicko
-             yb = (yb+y)/2;
-             
-             %total first + second exp with prepulses;nicko
+
+            y1 = pop2*exp(tau_g^2/2/tau2^2 - (x-tau_d+pulseI)/tau2);
+            y2 = erfc((tau_g^2-tau2*(x-tau_d+pulseI))/(sqrt(2)*tau2*tau_g));
+            %  figure ;
+            %  plot (x, y);% nicko test
+             yb = y1.*y2+y;
+            yb = yb/2;
+
             y=ya+yb+bg;
         end
                 
@@ -264,8 +254,7 @@ classdef Fitting
             
             y1 = pop * exp(tau_g^2 * tau^2 / 2 - (x - tau_d) * tau);
             y2 = erfc((tau_g^2 * tau - (x - tau_d)) / (sqrt(2) * tau_g));
-            %y = y1.*y2 / 2;%nicko
-            y = y1.*y2;%nicko
+            y = y1.*y2 / 2;
             
             pulseI = spc.datainfo.pulseInt / spc.datainfo.psPerUnit*1000;
             pre_y1 = pop*exp(tau_g^2 * tau^2 / 2- (x-tau_d+pulseI)*tau);
@@ -279,32 +268,24 @@ classdef Fitting
             global spc gui;
             bg = str2double(get(gui.spc.spc_main.beta7, 'string'));
             
-            [pop1, tau1, pop2, tau2, tau_d, tau_g, bg] = spc_unpackParams(beta);
+            [pop1, tau1, pop2, tau2, tau_d, tau_g] = spc_unpackParams(beta);
             
             y1 = pop1 * exp(tau_g^2 * tau1^2 / 2 - (x - tau_d) * tau1);
             y2 = erfc((tau_g^2 * tau1 - (x - tau_d)) / (sqrt(2) * tau_g));
-            %ya = y1.*y2 / 2;%nicko
-            ya = y1.*y2;%nicko
+            ya = y1.*y2 / 2;
             
             y1 = pop2 * exp(tau_g^2 * tau2^2 / 2 - (x - tau_d) * tau2);
             y2 = erfc((tau_g^2 * tau2 - (x - tau_d)) / (sqrt(2) * tau_g));
-            %yb = y1.*y2 / 2;%nicko
-            yb = y1.*y2;%nicko
+            yb = y1.*y2 / 2;
             
-            %prepuls for the first exp %nicko
             pulseI = spc.datainfo.pulseInt / spc.datainfo.psPerUnit*1000;
             pre_y1 = pop1*exp(tau_g^2 * tau1^2 / 2 - (x-tau_d+pulseI)*tau1);
             pre_y2 = erfc((tau_g^2*tau1 - (x-tau_d+pulseI))/(sqrt(2) * tau_g));
-            pre_ya = pre_y1.*pre_y2;
+            pre_y = pre_y1.*pre_y2;
             
-            %prepuls for the second exp %nicko
-            pre_y1 = pop1*exp(tau_g^2 * tau2^2 / 2 - (x-tau_d+pulseI)*tau2);
-            pre_y2 = erfc((tau_g^2*tau2 - (x-tau_d+pulseI))/(sqrt(2) * tau_g));
-            pre_yb = pre_y1.*pre_y2;
-
-            y = (ya + yb + pre_ya + pre_yb)/2 + bg;%nicko
-%             y = (ya + yb + pre_ya + pre_yb);
-% 
+            %y = ya + yb;
+            
+            y = (ya + yb + pre_y) + bg;
         end
         
         function [betahat] = spc_fit_single_exp(beta0, x, y)
@@ -339,7 +320,6 @@ classdef Fitting
             %model = @(b) Fitting.flimage_double_exp(b, x);
             %betahat = lsqcurvefit(@Fitting.flimage_double_exp, beta0, x, y);
             betahat = nlinfit(x, y, @Fitting.flimage_double_exp, beta0, opts, 'Weights', weights);
-%               betahat = mle(data, 'Distribution','Poisson','Start',beta0); 
         end
         
         function set_fit_warnings(mode)
@@ -347,24 +327,6 @@ classdef Fitting
             warning(mode, 'stats:nlinfit:ModelConstantWRTParam');
             warning(mode, 'stats:nlinfit:IterationLimitExceeded');
         end
-        
-%         function [betahat] = flimage_fit_double_exp(beta0, x, y)%nicko
-%         for MLE fitting
-%             % New FLIMage Double Exponential
-%             weights = ones(size(y)) ./ sqrt(y);
-%             weights(isnan(weights) | isinf(weights)) = 1;
-%             opts = statset('Display', 'iter');
-%             %model = @(b) Fitting.flimage_double_exp(b, x);
-%             %betahat = lsqcurvefit(@Fitting.flimage_double_exp, beta0, x, y);
-% %             betahat = nlinfit(x, y, @Fitting.flimage_double_exp, beta0, opts, 'Weights', weights);
-%               betahat = mle(data, 'Distribution','Poisson','Start',beta0); 
-%         end
-%         
-%         function set_fit_warnings(mode)
-%             warning(mode, 'MATLAB:rankDeficientMatrix');
-%             warning(mode, 'stats:nlinfit:ModelConstantWRTParam');
-%             warning(mode, 'stats:nlinfit:IterationLimitExceeded');
-%         end
         
         function [betahat, curve] = fit(beta_in, isFixed, x, y, mode)     
             %oldPrec = digits(64);

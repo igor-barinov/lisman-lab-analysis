@@ -65,7 +65,8 @@ function spc_drawLifetime()
                 imageMod = reshape((index(:) .*  imageMod(:)), spc.size(1), spc.SPCdata.scan_size_y, spc.SPCdata.scan_size_x);
             end
         catch
-            display('Problem in ROIPOLY (spc_drawLifetime)');
+%             display('Problem in ROIPOLY (spc_drawLifetime)');%nicko
+            disp('Problem in ROIPOLY (spc_drawLifetime)');
             spc.roipoly = spc.project*0 + 1;
         end
     end
