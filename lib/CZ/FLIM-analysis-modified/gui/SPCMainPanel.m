@@ -66,6 +66,9 @@ classdef SPCMainPanel
         function CalcRois()
         %% "calcRois" BUTTON --------------------------------------------------------------------------------------
         %
+            global gui;
+            
+            gui.spc.fit_eachtime = 0;
             spc_calcRoi();
         end
         
