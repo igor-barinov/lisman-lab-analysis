@@ -2,7 +2,7 @@ function [Aout, header] = im2_opentif(filename)
 
 global spc gui
 
-largeFile = 100;
+% largeFile = 100;
 
 fileInfo = imfinfo(filename);
 frames = length(fileInfo);
@@ -12,22 +12,20 @@ state.imageProc.colorMap = 0;
 header = fileInfo(1).ImageDescription;
 Aout = ones(imHeight, imWidth, frames);
 
-if frames > largeFile
-    gui.spc.waitbar = waitbar(0,'Opening Tif image...', 'Name', 'Open TIF Image', 'Pointer', 'watch');
-else
-    gui.spc.waitbar = -1;
-end
-
+% if frames > largeFile
+%     gui.spc.waitbar = waitbar(0,'Opening Tif image...', 'Name', 'Open TIF Image', 'Pointer', 'watch');
+% else
+%     gui.spc.waitbar = -1;
+% end
 for i = 1:frames
         Aout(:,:,i) = imread(filename, i);
-        if frames > largeFile
-            waitbar(i/frames, gui.spc.waitbar);
-        end
+%         if frames > largeFile
+%             waitbar(i/frames, gui.spc.waitbar);
+%         end
 end
-
-if ishandle(gui.spc.waitbar)
-    close(gui.spc.waitbar);
-end
+% if ishandle(gui.spc.waitbar)
+%     close(gui.spc.waitbar);
+% end
 % delim = strfind(header, ';');
 % evalc(header(1:delim(1)));
 % for j=1:length(delim)-1
