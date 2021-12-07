@@ -8,7 +8,8 @@ spc_recoverRois; %nicko
     if fitParamsAreSaved && isfield(savedData.(structField), 'fitsave')
         fitsave = savedData.(structField).fitsave;
         try
-            spc.fit(gui.spc.proChannel).beta0 = fitsave(fileNum).beta0;
+            nSavedParams = numel(fitsave(fileNum).beta0);
+            spc.fit(gui.spc.proChannel).beta0(1:nSavedParams) = fitsave(fileNum).beta0;
             spc.fit(gui.spc.proChannel).fixtau = fitsave(fileNum).fixtau;
             spc.fit(gui.spc.proChannel).range = fitsave(fileNum).range;
             spc.fit(gui.spc.proChannel).lutlim = fitsave(fileNum).lutlim;
