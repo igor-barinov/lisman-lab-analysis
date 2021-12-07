@@ -5,13 +5,15 @@ classdef SPCFileMenu
         %
             global fitsave;
             [fname,pname] = uigetfile('*.sdt;*.mat;*.tif','Select spc-file');
-            cd (pname);
-            filestr = [pname, fname];
-            if exist(filestr, 'file') == 2
-                    fitsave = []; % IB fix 11/15/20
-                    spc_openCurves(filestr);
+            if ~isequal(fname, 0) && ~isequal(pname, 0) % if not cancel
+                cd (pname);
+                filestr = [pname, fname];
+                if exist(filestr, 'file') == 2
+                        fitsave = []; % IB fix 11/15/20
+                        spc_openCurves(filestr);
+                end
+                spc_updateMainStrings();
             end
-            spc_updateMainStrings();
         end
         
         function SaveTifMovieAs()
