@@ -103,19 +103,19 @@ for channelN = 1:nChannels
         spc_redrawSetting(0, 1);
     end
     
-    if get(gui.spc.spc_main.fit_eachtime, 'Value')
-        try
-            betahat=spc_fitexp2gauss;
-            spc_redrawSetting(1);
-            fit_error = 0;
-        catch
-            fit_error = 1;
-        end
-    else
-        fit_error = 1;
-    end
-    
-    pause(0.1);
+%     if get(gui.spc.spc_main.fit_eachtime, 'Value')
+%         try
+%             betahat=spc_fitexp2gauss;
+%             spc_redrawSetting(1);
+%             fit_error = 0;
+%         catch
+%             fit_error = 1;
+%         end
+%     else
+%         fit_error = 1;
+%     end
+%     
+%     pause(0.1);
     
     p1 = spc.fit(gui.spc.proChannel).beta0(1);
     p2 = spc.fit(gui.spc.proChannel).beta0(3);
