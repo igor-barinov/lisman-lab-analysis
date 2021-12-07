@@ -1,5 +1,5 @@
 function spc_openCurves(fname)
-global spc gui fitsave;
+global spc gui;
 
 loadbar = waitbar(0, 'Opening file...');
 
@@ -20,7 +20,7 @@ else
     fname = sprintf('%s%s%03d%s', filepath, basename, filenumber, ext1); %???
 end
 
-% waitbar(0.25, loadbar, 'Reading SPC file...');
+waitbar(0.25, loadbar, 'Reading SPC file...');
 disp(['Reading SPC file name.  ', fname]);
 
 if ~exist(fname, 'file')
