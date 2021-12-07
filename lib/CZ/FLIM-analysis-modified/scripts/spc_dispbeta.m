@@ -5,13 +5,7 @@ function spc_dispbeta
     if isfield(spc.fit(gui.spc.proChannel), 'beta0')    
 
         betahat = spc.fit(gui.spc.proChannel).beta0;
-
-        if numel(betahat) > 6
-            [~, tau, ~, tau2, peaktime, tau_g, bg] = spc_unpackParams(betahat);
-        else
-            [~, tau, ~, tau2, peaktime, tau_g] = spc_unpackParams(betahat);
-            bg = get(handles.beta7, 'String');
-        end
+        [~, tau, ~, tau2, peaktime, tau_g, bg] = spc_unpackParams(betahat);
         
         fixtau = spc.fit(gui.spc.proChannel).fixtau;
 
