@@ -24,10 +24,9 @@ function spc_dispbeta
         set(handles.beta6, 'String', num2str(tau_g));
         
         if (spc.fit(gui.spc.proChannel).background ~= 0)
-            set(handles.beta7, 'String', num2str(spc.fit(gui.spc.proChannel).background));
-        else
-            set(handles.beta7, 'String', num2str(bg));
-        end
+            e
+        
+        set(handles.beta7, 'String', num2str(bg));
 
         pop1 = betahat(1)/(betahat(3)+betahat(1));
         pop2 = betahat(3)/(betahat(3)+betahat(1));

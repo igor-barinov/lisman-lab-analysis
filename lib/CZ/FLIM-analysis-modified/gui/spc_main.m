@@ -6,7 +6,7 @@ function varargout = spc_main(varargin)
 %    FIG = SPC_MAIN launch spc_main GUI.
 %    SPC_MAIN('callback_name', ...) invoke the named callback.
 
-% Last Modified by GUIDE v2.5 07-Dec-2021 17:35:31
+% Last Modified by GUIDE v2.5 08-Dec-2021 12:05:06
 global gui;
 
 if nargin == 0  % LAUNCH GUI

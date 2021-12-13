@@ -298,6 +298,16 @@ classdef Fitting
 %               betahat = mle(data, 'Distribution','Poisson','Start',beta0); 
         end
         
+        function [betahat] = mle_fit_single_exp(beta0, ~, ~)
+            betahMaxLkh = fminsearch(@maxLkh_expgauss, [beta0,1000]);
+            betahat = betahMaxLkh(1:7);
+        end
+        
+        function [betahat] = mle_fit_double_exp(beta0, ~, ~)
+            betahMaxLkh = fminsearch(@maxLkh_exp2gauss, [beta0,1000]);
+            betahat = betahMaxLkh(1:7);
+        end
+        
         function set_fit_warnings(mode)
             warning(mode, 'MATLAB:rankDeficientMatrix');
             warning(mode, 'stats:nlinfit:ModelConstantWRTParam');
@@ -346,6 +356,18 @@ classdef Fitting
                 beta0 = Fitting.fix_params(beta0, beta_in, isFixed);
                 fittingMethod = @Fitting.flimage_fit_double_exp;
                 fittingModel = @Fitting.flimage_double_exp;
+            elseif strcmp(mode, 'mle_single')
+                beta_in = Fitting.convert_params(beta_in, 'spc2flimage');
+                beta0 = Fitting.flimage_single_exp_initial_params(x, y);
+                beta0 = Fitting.fix_params(beta0, beta_in, isFixed);
+                fittingMethod = @Fitting.mle_fit_single_exp;
+                fittingModel = @Fitting.flimage_single_exp;
+            elseif strcmp(mode, 'mle_double')
+                beta_in = Fitting.convert_params(beta_in, 'spc2flimage');
+                beta0 = Fitting.flimage_double_exp_initial_params(x, y);
+                beta0 = Fitting.fix_params(beta0, beta_in, isFixed);
+                fittingMethod = @Fitting.mle_fit_double_exp;
+                fittingModel = @Fitting.flimage_double_exp;
             end
             
             % (temporarily) Turn of warnings that can be ignored
@@ -358,7 +380,7 @@ classdef Fitting
             curve = fittingModel(betahat, x);
             
             % Convert parameters to correct units
-            if strcmp(mode, 'flimage_single') || strcmp(mode, 'flimage_double')
+            if strcmp(mode, 'flimage_single') || strcmp(mode, 'flimage_double') || strcmp(mode, 'mle_single') || strcmp(mode, 'mle_double')
                 betahat = Fitting.convert_params(betahat, 'flimage2spc');
             else
                 betahat = spc_picoseconds(betahat);
