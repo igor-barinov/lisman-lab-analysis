@@ -2,6 +2,7 @@ function error = spc_loadTiff (fname)
 global spc;
 global gui;
 
+
 error = 0;
 finfo = imfinfo (fname);
 header = finfo(1).ImageDescription;

@@ -23,11 +23,16 @@ classdef SPCMainPanel
             spc_dispbeta();
 
 
-            set(handles.fracCheck, 'Value', 1);
+            set(handles.fracCheck, 'Value', 0);
             set(handles.tauCheck, 'Value', 1);
             set(handles.greenCheck, 'Value', 1);
             set(handles.redCheck, 'Value', 1);
             set(handles.RatioCheck, 'Value', 0);
+            %set(handles.RatioCheck, 'Value', 0);
+%             set(handles.New_Old, 'Value', 0);
+%             set(handles.fit_eachtime, 'Value', 1);
+%             set(handles.fit_eachtime, 'Value', 0);
+            set(handles.RecoverROI, 'Value', 1);
         end
         
         function ImageNumber(handles)
@@ -66,9 +71,6 @@ classdef SPCMainPanel
         function CalcRois()
         %% "calcRois" BUTTON --------------------------------------------------------------------------------------
         %
-            global gui;
-            
-            gui.spc.fit_eachtime = 0;
             spc_calcRoi();
         end
         
@@ -76,7 +78,8 @@ classdef SPCMainPanel
         %% "calcRois Batch" BUTTON --------------------------------------------------------------------------------
         %
             global spc gui;
-            gui.spc.fit_eachtime = 1;
+%             gui.spc.fit_eachtime = 1;
+            spc.fit_eachtime = 1;%nicko
             spc.badFits = [];
             fromVal = str2double(get(handles.calcRoiFrom, 'String'));
             toVal = str2double(get(handles.calcRoiTo, 'String'));
@@ -95,7 +98,8 @@ classdef SPCMainPanel
                 end
                 warndlg(errMsg, 'High Residuals', 'replace');
             end
-            gui.spc.fit_eachtime = 0;
+%              gui.spc.fit_eachtime = 0;
+            spc.fit_eachtime = 0;%nicko
         end
         
         function Channel1()

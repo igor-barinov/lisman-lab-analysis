@@ -65,8 +65,11 @@ for channelN = 1:nChannels
         
         %exist gui.spc.fit_eachtime
 %         gui.spc.fit_eachtime = 1;%nicko
-     if ~exist('gui.spc.spc_main.fit_eachtime')% nicko
-        if get(gui.spc.spc_main.fit_eachtime,'value')==1
+
+%      if ~exist('gui.spc.spc_main.fit_eachtime')% nicko
+%         if get(gui.spc.spc_main.fit_eachtime,'value')==1
+%        if exist('spc.fit_eachtime')% nicko
+         if spc.fit_eachtime
             try
                 if gui.spc.spc_main.new_old
                     set(gui.spc.spc_main.checkUseSpcFit, 'Value', 1);
@@ -93,7 +96,7 @@ for channelN = 1:nChannels
                 spc.badFits = [spc.badFits, fn];
             end
         end
-      end
+%       end
         
         nRoi = length(gui.spc.figure.roiB);
         if ~spc.switches.noSPC

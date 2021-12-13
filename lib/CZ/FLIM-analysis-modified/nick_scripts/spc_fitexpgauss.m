@@ -17,9 +17,7 @@ function [betahat] = spc_fitexpgauss()
     else
         [betahat, curve] = Fitting.fit(beta_in, spc.fit(gui.spc.proChannel).fixtau, x, lifetime, 'flimage_single');
     end
-    
-    
-
+     
     spc.fit(gui.spc.proChannel).beta0 = betahat;
     spc.fit(gui.spc.proChannel).curve = curve;
 

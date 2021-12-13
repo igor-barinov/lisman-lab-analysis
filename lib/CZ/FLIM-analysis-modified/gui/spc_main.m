@@ -6,7 +6,7 @@ function varargout = spc_main(varargin)
 %    FIG = SPC_MAIN launch spc_main GUI.
 %    SPC_MAIN('callback_name', ...) invoke the named callback.
 
-% Last Modified by GUIDE v2.5 08-Dec-2021 12:05:06
+% Last Modified by GUIDE v2.5 23-Nov-2021 12:12:57
 global gui;
 
 if nargin == 0  % LAUNCH GUI
@@ -395,3 +395,37 @@ function checkUseSpcFit_Callback(~, ~, ~)
 
 
 %#ok<*DEFNU>
+
+
+% --- Executes on button press in fit_eachtime.
+
+% function fit_eachtime_Callback(hObject, eventdata, handles)%nicko next 4
+% lines
+% global gui;
+% gui.spc.spc_main.new_old = get(spc.fit_eachtime, 'Value');
+
+% hObject    handle to fit_eachtime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of fit_eachtime
+
+
+% --- Executes on button press in RecoverROI.
+
+function RecoverROI_Callback(hObject, eventdata, handles)
+
+% hObject    handle to RecoverROI (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% RecoverROI=get(hObject,'Value');
+% Hint: get(hObject,'Value') returns toggle state of RecoverROI
+
+
+% --- Executes on button press in Saved.
+function Saved_Callback(hObject, eventdata, handles)
+% hObject    handle to Saved (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of Saved

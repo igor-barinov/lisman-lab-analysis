@@ -8,7 +8,6 @@ function spc_initGlobalParams()
     spc.stack.image1{1}=zeros(spc.SPCdata.resolution, spc.datainfo.scan_y, spc.datainfo.scan_x);
     spc.size=size(spc.stack.image1{1});
     spc.SPCdata.line_compression = 0;
-% Redefined later, seems redundant - igorb
 %     for i = 1:3
 %         spc.fit(i).range = [1,spc.SPCdata.resolution];
 %         spc.fit(i).lifetime_limit = [1.7, 2.4];

@@ -1,9 +1,10 @@
 function spc_recoverRois
 global spc
 global gui
+% set (gui.spc.spc_main.RecoverROI, 'Value')==1;
 RecoverROI=get(gui.spc.spc_main.RecoverROI, 'Value');
-if ~RecoverROI==1
-    else
+ if RecoverROI
+%     else
     [filepath, basename, fn, max] = spc_AnalyzeFilename(spc.filename);
         if isfield(gui.spc, 'calcRoi') && ishandle(gui.spc.calcRoi)
             figure(gui.spc.calcRoi);

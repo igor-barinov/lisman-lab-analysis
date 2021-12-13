@@ -1,0 +1,4 @@
+function [fn] = likelihood_fn(mode, x, y)
+    if strcmp(mode, 'single')
+        elsi
+end

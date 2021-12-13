@@ -9,8 +9,8 @@ function [betahat] = spc_fitexp2gauss()
 
     beta_in = spc.fit(gui.spc.proChannel).beta0;
 
-    use_spc_fitting = get(handles.checkUseSpcFit, 'Value');
-    use_mle_fitting = get(handles.useMLEFit, 'Value');
+   use_spc_fitting = get(handles.checkUseSpcFit, 'Value');
+   use_mle_fitting = get(handles.useMLEFit, 'Value');
     if use_spc_fitting
         [betahat, curve] = Fitting.fit(beta_in, spc.fit(gui.spc.proChannel).fixtau, x, lifetime, 'spc_double');
     elseif use_mle_fitting
@@ -18,7 +18,6 @@ function [betahat] = spc_fitexp2gauss()
     else
         [betahat, curve] = Fitting.fit(beta_in, spc.fit(gui.spc.proChannel).fixtau, x, lifetime, 'flimage_double');
     end
-
     spc.fit(gui.spc.proChannel).curve = curve;
     spc.fit(gui.spc.proChannel).beta0 = betahat;
 
