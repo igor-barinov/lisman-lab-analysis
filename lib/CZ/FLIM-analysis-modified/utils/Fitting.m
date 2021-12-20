@@ -145,7 +145,7 @@ classdef Fitting
             sumY = sum(y);
             
             tau0 = sumY / maxY;
-            tauG = spc_nanoseconds(0.1);
+            tauG = spc_nanoseconds(0.1); % = 100 / psPerUnit
             
             pop1 = maxY / 2;
             tau1 = 1 / tau0 / 2;
