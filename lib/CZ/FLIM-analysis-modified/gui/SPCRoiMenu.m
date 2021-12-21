@@ -50,8 +50,10 @@ classdef SPCRoiMenu
         
         function RecoverRoi()
         %% ROI -> RECOVER ROI -------------------------------------------------------------------------------------
-        %
-            spc_recoverRois();
+%         global spc
+        global gui;%nicko 
+          set(gui.spc.spc_main.RecoverROI, 'Value', 1);
+          spc_recoverRois();
         end
         
         function ArbitraryShapedRoi()

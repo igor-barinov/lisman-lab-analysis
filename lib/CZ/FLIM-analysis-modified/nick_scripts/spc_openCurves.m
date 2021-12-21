@@ -1,7 +1,7 @@
 function spc_openCurves(fname)
 global spc gui fitsave;
 
-loadbar = waitbar(0, 'Opening file...');
+% loadbar = waitbar(0, 'Opening file...');
 
 no_lastProject = 0;
 try
@@ -73,8 +73,8 @@ else
     
 end
 
-waitbar(0.5, loadbar, 'Reading non SPC file...');
-%disp(['Reading.not SPC', filename]);
+% waitbar(0.5, loadbar, 'Reading non SPC file...');
+disp(['Reading.not SPC', filename]);
 
 spc.switches.redImg = 0;
 if exist(filename, 'file') == 2
@@ -99,7 +99,8 @@ end
 [filepath, basename, fileNum, ~, ~] = spc_AnalyzeFilename(spc.filename);
 savedFile = fullfile(filepath, [basename, '_ROI2.mat']);
 
-waitbar(0.75, loadbar, 'Reading ROI2 file...');
+% waitbar(0.75, loadbar, 'Reading ROI2 file...');
+disp('Reading ROI2 file...');
 try
     spc_loadROI2(basename, savedFile, fileNum);
 catch
@@ -147,7 +148,9 @@ if ~no_lastProject
             shift = 0;
         end
         spc.switches.spc_roi = {};
-        for i = 1:nRoi
+        nicktest=0;% start nicktest nicko
+      if nicktest
+         for i = 1:nRoi
             if ishandle(gui.spc.figure.roiB(i))
                 if strcmp(get(gui.spc.figure.roiB(i), 'Type'), 'rectangle')
                     spc.switches.spc_roi{i} = get(gui.spc.figure.roiB(i), 'Position');
@@ -184,7 +187,7 @@ if ~no_lastProject
                 
             end
         end
-        
+      end %end nicktest 
     end
     
     if isfield(gui.spc.figure, 'polyRoi')
@@ -226,5 +229,5 @@ if ~no_lastProject
         set(gui.spc.figure.polyLineB, 'XData', xx+shift(1), 'YData', yy+shift(2));
     end
 end %LAST_PROJECT
-waitbar(1.0, loadbar);
-close(loadbar);
+% waitbar(1.0, loadbar);
+% close(loadbar);

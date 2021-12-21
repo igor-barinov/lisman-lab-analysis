@@ -52,7 +52,9 @@ end
 
 graphfile = [graph_savePath, baseName, '_tau_all.fig'];
 
-if isfield(gui.spc, 'online')
+fracPlot=get(gui.spc.spc_main.fracCheck,'Value');%nick test 2 lines 
+if fracPlot
+   if isfield(gui.spc, 'online') 
      if ishandle(gui.spc.online)
         if strcmp(get(gui.spc.online, 'Tag'), 'Online_fig')
              fname_graph = get(gui.spc.online, 'filename');
@@ -67,115 +69,116 @@ if isfield(gui.spc, 'online')
      else
          mkfigure(str1);
      end
- else
+   else
       mkfigure (str1);
- end
+   end
+end 
+%end  
 
+    evalc(['tmp = ', baseName]);
 
-evalc(['tmp = ', baseName]);
-
-nChannels = spc.datainfo.scan_rx;
-if length(tmp) == nChannels
-    a = tmp;
-else
-    a = [];
-end
-
-try
-    a(1).textbox = get(gui.spc.textbox, 'String');
-end
-
-if flag == 0
-    fc = state.files.fileCounter - 1;
-else
-    fc = str2num(spc.filename(baseName_end+1:baseName_end+3));
-end
-
-
-nChannels = spc.datainfo.scan_rx;
-
-saveChannel = gui.spc.proChannel;
-for channelN = 1:nChannels
-    gui.spc.proChannel = channelN;
-    if flag
-        spc_redrawSetting(1);
+    nChannels = spc.datainfo.scan_rx;
+    if length(tmp) == nChannels
+        a = tmp;
     else
-        spc_redrawSetting(0, 1);
+        a = [];
     end
-    
-%     if gui.spc.spc_main.fit_eachtime, 'Value')==1;%nicko
-    if spc.fit_eachtime, 'Value'==1;%nicko
-        try
-            betahat=spc_fitexp2gauss;
+
+    try
+        a(1).textbox = get(gui.spc.textbox, 'String');
+    end
+
+    if flag == 0
+        fc = state.files.fileCounter - 1;
+    else
+        fc = str2num(spc.filename(baseName_end+1:baseName_end+3));
+    end
+
+
+    nChannels = spc.datainfo.scan_rx;
+
+    saveChannel = gui.spc.proChannel;
+    for channelN = 1:nChannels
+        gui.spc.proChannel = channelN;
+        if flag
             spc_redrawSetting(1);
-            fit_error = 0;
-        catch
+        else
+            spc_redrawSetting(0, 1);
+        end
+
+
+        if spc.fit_eachtime, 'Value' ==1;%nicko
+            try
+                betahat=spc_fitexp2gauss;
+                spc_redrawSetting(1);
+                fit_error = 0;
+            catch
+                fit_error = 1;
+            end
+        else
             fit_error = 1;
         end
-    else
-        fit_error = 1;
-    end
-    
-    pause(0.1);
-    
-    p1 = spc.fit(gui.spc.proChannel).beta0(1);
-    p2 = spc.fit(gui.spc.proChannel).beta0(3);
-    tau1 = spc.fit(gui.spc.proChannel).beta0(2)*spc.datainfo.psPerUnit/1000;
-    tau2 = spc.fit(gui.spc.proChannel).beta0(4)*spc.datainfo.psPerUnit/1000;
-    f = p2/(p1+p2);
 
-    a(channelN).fraction(fc) = f;
-    a(channelN).tau1(fc) = tau1;
-    a(channelN).tau2(fc) = tau2;
-    a(channelN).tau_m(fc) = sum(spc.lifetime)/max(spc.lifetime)*spc.datainfo.psPerUnit/1000;
-    range = spc.fit(gui.spc.proChannel).range;
-    t1 = (1:range(2)-range(1)+1); t1 = t1(:);
-    lifetime = spc.lifetime(range(1):range(2)); 
-    lifetime = lifetime(:);
-    
-    %pos_max2 = spc.fit(gui.spc.proChannel).beta0(5)*spc.datainfo.psPerUnit/1000;
-    %a(channelN).tau_m2(fc) = sum(lifetime.*t1)/sum(lifetime)*spc.datainfo.psPerUnit/1000 - pos_max2;
-   
-    %a(channelN).time(fc) = datenum(spc.state.internal.triggerTimeString); % 
-    a(channelN).time(fc) = datenum(spc.datainfo.triggerTime); %datenum([spc.datainfo.date, ',', spc.datainfo.time]);
+        pause(0.1);
 
-    a(channelN).tau_m2(fc) = sum(lifetime.*t1)/sum(lifetime)*spc.datainfo.psPerUnit/1000 - spc.fit(gui.spc.proChannel).t_offset;
-    tauD = spc.fit(gui.spc.proChannel).beta0(2)*spc.datainfo.psPerUnit/1000;
-    tauAD = spc.fit(gui.spc.proChannel).beta0(4)*spc.datainfo.psPerUnit/1000;
-    a(channelN).fraction2(fc) = tauD*(tauD-a(channelN).tau_m2(fc))/(tauD-tauAD) / (tauD + tauAD -a(channelN).tau_m2(fc));
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %a(channelN).fraction2(fc) = spc_getFraction(sum(lifetime.*t1)/sum(lifetime));
-    %pop2 = a(channelN).fraction2(fc);
-    %pop1 = 1 - pop2;
-    %a(channelN).tau_m2(fc) = (tauD*tauD*pop1+tauAD*tauAD*pop2)/(tauD*pop1 + tauAD*pop2);
-    %a(channelN).tau_m2(fc) = sum(lifetime.*t1)/sum(lifetime)*spc.datainfo.psPerUnit/1000 - spc.fit(gui.spc.proChannel).t_offset;
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    a(channelN).time(a(channelN).time<7.3e5) = a(channelN).time(fc);
-    a(channelN).fraction(a(channelN).fraction > 1) = 1;
-    a(channelN).fraction(a(channelN).fraction < -0.2) = -0.2;
-    a(channelN).fraction2(a(channelN).fraction2 > 1) = 1;
-    a(channelN).fraction2(a(channelN).fraction2 < -0.2) = -0.2;
+        p1 = spc.fit(gui.spc.proChannel).beta0(1);
+        p2 = spc.fit(gui.spc.proChannel).beta0(3);
+        tau1 = spc.fit(gui.spc.proChannel).beta0(2)*spc.datainfo.psPerUnit/1000;
+        tau2 = spc.fit(gui.spc.proChannel).beta0(4)*spc.datainfo.psPerUnit/1000;
+        f = p2/(p1+p2);
 
-    %a(channelN).time = a(channelN).time - min (a(channelN).time);
-    if isfield(spc, 'scanHeader')
-        if isfield(spc.scanHeader.motor, 'position')
-            a(channelN).position(fc) = spc.scanHeader.motor.position;
-        else    
-            a(channelN).position(fc) = state.motor.position;
-            spc.scanHeader.motor.position = state.motor.position;
+        a(channelN).fraction(fc) = f;
+        a(channelN).tau1(fc) = tau1;
+        a(channelN).tau2(fc) = tau2;
+        a(channelN).tau_m(fc) = sum(spc.lifetime)/max(spc.lifetime)*spc.datainfo.psPerUnit/1000;
+        range = spc.fit(gui.spc.proChannel).range;
+        t1 = (1:range(2)-range(1)+1); t1 = t1(:);
+        lifetime = spc.lifetime(range(1):range(2)); 
+        lifetime = lifetime(:);
+
+        %pos_max2 = spc.fit(gui.spc.proChannel).beta0(5)*spc.datainfo.psPerUnit/1000;
+        %a(channelN).tau_m2(fc) = sum(lifetime.*t1)/sum(lifetime)*spc.datainfo.psPerUnit/1000 - pos_max2;
+
+        %a(channelN).time(fc) = datenum(spc.state.internal.triggerTimeString); % 
+        a(channelN).time(fc) = datenum(spc.datainfo.triggerTime); %datenum([spc.datainfo.date, ',', spc.datainfo.time]);
+
+        a(channelN).tau_m2(fc) = sum(lifetime.*t1)/sum(lifetime)*spc.datainfo.psPerUnit/1000 - spc.fit(gui.spc.proChannel).t_offset;
+        tauD = spc.fit(gui.spc.proChannel).beta0(2)*spc.datainfo.psPerUnit/1000;
+        tauAD = spc.fit(gui.spc.proChannel).beta0(4)*spc.datainfo.psPerUnit/1000;
+        a(channelN).fraction2(fc) = tauD*(tauD-a(channelN).tau_m2(fc))/(tauD-tauAD) / (tauD + tauAD -a(channelN).tau_m2(fc));
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %a(channelN).fraction2(fc) = spc_getFraction(sum(lifetime.*t1)/sum(lifetime));
+        %pop2 = a(channelN).fraction2(fc);
+        %pop1 = 1 - pop2;
+        %a(channelN).tau_m2(fc) = (tauD*tauD*pop1+tauAD*tauAD*pop2)/(tauD*pop1 + tauAD*pop2);
+        %a(channelN).tau_m2(fc) = sum(lifetime.*t1)/sum(lifetime)*spc.datainfo.psPerUnit/1000 - spc.fit(gui.spc.proChannel).t_offset;
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        a(channelN).time(a(channelN).time<7.3e5) = a(channelN).time(fc);
+        a(channelN).fraction(a(channelN).fraction > 1) = 1;
+        a(channelN).fraction(a(channelN).fraction < -0.2) = -0.2;
+        a(channelN).fraction2(a(channelN).fraction2 > 1) = 1;
+        a(channelN).fraction2(a(channelN).fraction2 < -0.2) = -0.2;
+
+        %a(channelN).time = a(channelN).time - min (a(channelN).time);
+        if isfield(spc, 'scanHeader')
+            if isfield(spc.scanHeader.motor, 'position')
+                a(channelN).position(fc) = spc.scanHeader.motor.position;
+            else    
+                a(channelN).position(fc) = state.motor.position;
+                spc.scanHeader.motor.position = state.motor.position;
+            end
         end
     end
-end
 
-gui.spc.proChannel = saveChannel;
-spc_redrawSetting(1);
+    gui.spc.proChannel = saveChannel;
+    spc_redrawSetting(1);
+if fracPlot
+    figure (gui.spc.online);
+        subplot(2,3,3);
+        cstr = {'red', 'green', 'blue', 'green', 'magenta', 'cyan', 'black'};
 
-figure (gui.spc.online);
-    subplot(2,3,3);
-    cstr = {'red', 'green', 'blue', 'green', 'magenta', 'cyan', 'black'};
-    
-    fl1 = 0;
+        fl1 = 0;
     for channelN = 1:nChannels
             ptime = (a(channelN).time - min(a(channelN).time))*60*24 ;
             pfrac = a(channelN).fraction;
@@ -200,10 +203,10 @@ figure (gui.spc.online);
             end
     end
     hold off;
-ylabel('Fraction (tau2)');
-xlabel ('Time (min)');
+    ylabel('Fraction (tau2)');
+    xlabel ('Time (min)');
 
-subplot(2,3,[4,5]);
+    subplot(2,3,[4,5]);
     
     fl1 = 0;
     for channelN = 1:nChannels
@@ -217,25 +220,22 @@ subplot(2,3,[4,5]);
     end
     hold off;    
     
+    ylabel('mean photon emission time');
+    xlabel ('Time (min)');
+
+    %ylim([0, 0.5])
+    eval([baseName, '= a;']);
+    save([spc_savePath, baseName, '.mat'], baseName);
+    %saveas(gui.spc.online, graphfile);
+end
+end
+    function mkfigure (str1)
+    global gui;
+    gui.spc.online = figure;
+    gui.spc.textbox = uicontrol('Style', 'edit', 'Unit', 'Normalized', ...
+      'Position',[0.6607 0.1167 0.2893 0.3357], 'Max', 100, 'Min', 1, 'String', str1);
+    set(gui.spc.online, 'Tag', 'Online_fig', 'CloseRequestFcn', 'spc_autoSave');
+    set(gui.spc.textbox, 'BackgroundColor', 'White');
+    set(gui.spc.textbox, 'HorizontalAlignment', 'left')
+    end
     
-ylabel('mean photon emission time');
-xlabel ('Time (min)');
-
-
-
-
-%ylim([0, 0.5])
-eval([baseName, '= a;']);
-save([spc_savePath, baseName, '.mat'], baseName);
-%saveas(gui.spc.online, graphfile);
-
-
-
-function mkfigure (str1)
-global gui;
-gui.spc.online = figure;
-gui.spc.textbox = uicontrol('Style', 'edit', 'Unit', 'Normalized', ...
-  'Position',[0.6607 0.1167 0.2893 0.3357], 'Max', 100, 'Min', 1, 'String', str1);
-set(gui.spc.online, 'Tag', 'Online_fig', 'CloseRequestFcn', 'spc_autoSave');
-set(gui.spc.textbox, 'BackgroundColor', 'White');
-set(gui.spc.textbox, 'HorizontalAlignment', 'left')

@@ -145,7 +145,7 @@ classdef Fitting
             sumY = sum(y);
             
             tau0 = sumY / maxY;
-            tauG = spc_nanoseconds(0.1); % = 100 / psPerUnit
+            tauG = spc_nanoseconds(0.1);
             
             pop1 = maxY / 2;
             tau1 = 1 / tau0 / 2;
@@ -183,24 +183,7 @@ classdef Fitting
             [pop1, tau1, pop2, tau2, tau_d, tau_g, bg] = spc_unpackParams(beta);%nicko
             
             pulseI=spc.datainfo.pulseInt / spc.datainfo.psPerUnit*1000;
-            
-            %             % First Exp
-            %             y1 = pop1 * exp(tau_g^2/2/tau1^2 - (x-tau_d)/tau1);
-            %             y2 = erfc((tau_g^2-tau1*(x-tau_d))/(sqrt(2)*tau1*tau_g));
-            %             ya = y1.*y2 / 2;
-            %
-            %             % Second Exp
-            %             y1 = pop2*exp(tau_g^2/2/tau2^2 - (x-tau_d)/tau2);
-            %             y2 = erfc((tau_g^2-tau2*(x-tau_d))/(sqrt(2)*tau2*tau_g));
-            %             yb = y1.*y2 / 2;
-            %
-            %             % Pre-pulse
-            %             pulseI = spc.datainfo.pulseInt / spc.datainfo.psPerUnit*1000;
-            %             pre_y1 = pop1*exp(tau_g^2/2/tau1^2 - (x-tau_d+pulseI)/tau1);
-            %             pre_y2 = erfc((tau_g^2-tau1*(x-tau_d+pulseI))/(sqrt(2)*tau1*tau_g));
-            %             pre_y = pre_y1.*pre_y2;
-            %
-            %             y=(ya + yb + pre_y)/2 + bg;
+                        
             % First Exp
             y1 = pop1*exp(tau_g^2/2/tau1^2 - (x-tau_d)/tau1);
             y2 = erfc((tau_g^2-tau1*(x-tau_d))/(sqrt(2)*tau1*tau_g));
@@ -310,21 +293,17 @@ classdef Fitting
         
         function [betahat] = mle_fit_single_exp(beta0, x, y) %nicko
             fn = likelihood_fn('single', x, y);
-            betahMaxLkh = fminsearch(fn, beta0);
-            betahat = betahMaxLkh(1:7);
-            
-%             betahMaxLkh = fminsearch(@maxLkh_exp2gauss, [beta0,100000]); %nicko
-%             betahat = betahMaxLkh(1:7); %nicko
+            betahMaxLkh = fminsearch(fn, beta0); %nicko   Mle 1exp fit with NORM distr by Igor
+ %             betahMaxLkh = fminsearch(@maxLkh_exp2gauss, [beta0,100000]); %nicko   Mle 2 exp fit with NORM distr by Cong           
+            betahat = betahMaxLkh(1:7);    
         end %nicko
         
         function [betahat] = mle_fit_double_exp(beta0, x, y) %nicko
             fn = likelihood_fn('double', x, y);
-            betahMaxLkh = fminsearch(fn, beta0);
-            
-            %betahMaxLkh = fminsearch(@Mle_exp2gauss_negloglik2,(params)); %nicko
+            betahMaxLkh = fminsearch(fn, beta0); %nicko Mle 2 exp fit with P distr by Igor
+            %betahMaxLkh = fminsearch(@Mle_exp2gauss_negloglik2,(params)); %nicko Mle 2 exp fit with P distr by Vernon-Nick
             betahat = betahMaxLkh(1:7); %nickoMle_exp2gauss_negloglik2(params)%nicko
-            %                 betahat = Mle_exp2gauss_negloglik2(1:7); %nicko
-            
+            % betahat = Mle_exp2gauss_negloglik2(1:7) %nicko Mle 2 exp fit with P distr by Vernon-Nick
         end %nicko
         
         function set_fit_warnings(mode)
@@ -356,15 +335,13 @@ classdef Fitting
                 beta0 = Fitting.fix_params(beta0, beta_in, isFixed);
                 fittingMethod = @Fitting.flimage_fit_double_exp;
                 fittingModel = @Fitting.flimage_double_exp;
-            elseif strcmp(mode, 'mle_single')%nicko from here to end?
+            elseif strcmp(mode, 'mle_single')
                 beta_in = Fitting.convert_params(beta_in, 'spc2flimage');
-                %                 beta0 = Fitting.flimage_single_exp_initial_params(x, y);
-                beta0 = Fitting.flimage_double_exp_initial_params(x, y);
+                beta0 = Fitting.flimage_single_exp_initial_params(x, y);
+                %beta0 = Fitting.flimage_double_exp_initial_params(x, y); %nicko
                 beta0 = Fitting.fix_params(beta0, beta_in, isFixed);
-                fittingMethod = @Fitting.mle_fit_single_exp;%nicko next
-                %                 line replaces this line
-                %                 fittingMethod = @Mle_exp2gauss_negloglik2;
-                %                 fittingModel = @Fitting.flimage_single_exp;
+                fittingMethod = @Fitting.mle_fit_single_exp;
+                % fittingMethod = @Mle_exp2gauss_negloglik2;%nicko 
                 fittingModel = @Fitting.flimage_single_exp;
             elseif strcmp(mode, 'mle_double')
                 beta_in = Fitting.convert_params(beta_in, 'spc2flimage');

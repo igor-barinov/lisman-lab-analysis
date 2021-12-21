@@ -62,13 +62,7 @@ for channelN = 1:nChannels
         
         gui.spc.proChannel = channelN;
         spc_switchChannel;
-        
-        %exist gui.spc.fit_eachtime
-%         gui.spc.fit_eachtime = 1;%nicko
-
-%      if ~exist('gui.spc.spc_main.fit_eachtime')% nicko
-%         if get(gui.spc.spc_main.fit_eachtime,'value')==1
-%        if exist('spc.fit_eachtime')% nicko
+      if exist('spc.fit_eachtime','var')% nicko
          if spc.fit_eachtime
             try
                 if gui.spc.spc_main.new_old
@@ -96,7 +90,7 @@ for channelN = 1:nChannels
                 spc.badFits = [spc.badFits, fn];
             end
         end
-%       end
+      end
         
         nRoi = length(gui.spc.figure.roiB);
         if ~spc.switches.noSPC
@@ -233,8 +227,8 @@ for subP = 1:panelN  %Three figures
                     legstr = [legstr; str1];
                 end
             end
-        end
-        end
+       end
+      end
     if subP == panelN
         hl = legend(legstr);
         pos = get(hl, 'position');

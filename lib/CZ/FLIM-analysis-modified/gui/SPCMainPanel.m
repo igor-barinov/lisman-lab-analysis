@@ -28,10 +28,6 @@ classdef SPCMainPanel
             set(handles.greenCheck, 'Value', 1);
             set(handles.redCheck, 'Value', 1);
             set(handles.RatioCheck, 'Value', 0);
-            %set(handles.RatioCheck, 'Value', 0);
-%             set(handles.New_Old, 'Value', 0);
-%             set(handles.fit_eachtime, 'Value', 1);
-%             set(handles.fit_eachtime, 'Value', 0);
             set(handles.RecoverROI, 'Value', 1);
         end
         
@@ -78,12 +74,12 @@ classdef SPCMainPanel
         %% "calcRois Batch" BUTTON --------------------------------------------------------------------------------
         %
             global spc gui;
-%             gui.spc.fit_eachtime = 1;
             spc.fit_eachtime = 1;%nicko
             spc.badFits = [];
             fromVal = str2double(get(handles.calcRoiFrom, 'String'));
             toVal = str2double(get(handles.calcRoiTo, 'String'));
             for i = fromVal : toVal
+                RecoverROI=get(gui.spc.spc_main.RecoverROI, 'Value');
                 spc_openCurves(i);
                 if ~isempty(findobj('Tag', 'RoiA0'))
                     spc_calcRoi();
@@ -98,7 +94,6 @@ classdef SPCMainPanel
                 end
                 warndlg(errMsg, 'High Residuals', 'replace');
             end
-%              gui.spc.fit_eachtime = 0;
             spc.fit_eachtime = 0;%nicko
         end
         
