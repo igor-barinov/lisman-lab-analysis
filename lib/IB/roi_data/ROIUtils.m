@@ -551,12 +551,13 @@ classdef ROIUtils
         %
         function plot_values(time, ROIs)
             colors = {[0.7,0.7,0.7], 'red', 'blue', 'green', 'magenta', 'cyan', [1,0.5,0],'black'};
+            fills = {[0.7,0.7,0.7], 'red', 'blue', 'green', 'magenta', 'cyan', [1,0.5,0],'black'};
             for i = 1:size(ROIs, 2)
                 colorIdx = mod(i, numel(colors)) + 1;
                 if colorIdx == 0
                     colorIdx = numel(colors);
                 end
-                plotOpts = {'o-', 'color', colors{colorIdx}};
+                plotOpts = {'o-', 'MarkerEdgeColor', colors{colorIdx}, 'MarkerFaceColor', 'auto'};
                 plot(time, ROIs(:, i), plotOpts{:});
                 hold('on');
             end

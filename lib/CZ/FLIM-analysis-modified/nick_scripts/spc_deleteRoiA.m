@@ -1,4 +1,4 @@
-function spc_deleteRoiA;
+function spc_deleteRoiA
 global spc
 global gui
 
@@ -15,7 +15,8 @@ for j = 1:length(Rois)
 end
 
 exists = ishandle(gui.spc.figure.roiB);
-gui.spc.figure.roiB(~exists) = [];
+gui.spc.figure.roiB(~exists) = gobjects;
+spc.fit(gui.spc.proChannel).selectedROI(~exists) = false;
 
 
 

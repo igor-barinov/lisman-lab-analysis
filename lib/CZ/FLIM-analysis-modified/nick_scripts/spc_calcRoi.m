@@ -22,12 +22,12 @@ sSiz = get(0, 'ScreenSize');
 fpos = [50   100   500   sSiz(4)-200];
 
 if isfield(gui.spc, 'calcRoi')
-     if ishandle(gui.spc.calcRoi)
-     else
-         gui.spc.calcRoi = figure ('position', fpos);
-     end
- else
-      gui.spc.calcRoi = figure ('position', fpos);
+    if ishandle(gui.spc.calcRoi)
+    else
+        gui.spc.calcRoi = figure ('position', fpos);
+    end
+else
+    gui.spc.calcRoi = figure ('position', fpos);
 end
 
 spc_updateMainStrings;
@@ -54,16 +54,16 @@ else
 end
 
 for channelN = 1:nChannels
-        try
-            a = Ch(channelN).roiData;
-            bg = Ch(channelN).bgData;
-        end
-       
-        
-        gui.spc.proChannel = channelN;
-        spc_switchChannel;
-      if exist('spc.fit_eachtime','var')% nicko
-         if spc.fit_eachtime
+    try
+        a = Ch(channelN).roiData;
+        bg = Ch(channelN).bgData;
+    end
+    
+    
+    gui.spc.proChannel = channelN;
+    spc_switchChannel;
+    if exist('spc.fit_eachtime','var')% nicko
+        if spc.fit_eachtime
             try
                 if gui.spc.spc_main.new_old
                     set(gui.spc.spc_main.checkUseSpcFit, 'Value', 1);
@@ -72,16 +72,16 @@ for channelN = 1:nChannels
                     set(gui.spc.spc_main.checkUseSpcFit, 'Value', 0);
                     spc_fitexp2gauss();
                 else
-%                     spc_fitexpgauss();
+                    %                     spc_fitexpgauss();
                     spc_fitexp2gauss();
                 end
                 spc_redrawSetting(1);
-
+                
                 fitRange = spc.fit(gui.spc.proChannel).range;
                 x = fitRange(1):fitRange(2);
                 y = spc.lifetime(x);
                 yhat = spc.fit(channelN).curve;
-
+                
                 resid = (y(:) - yhat(:)) ./ sqrt(y(:));
                 if max(abs(resid)) > 10
                     spc.badFits = [spc.badFits, fn];
@@ -90,65 +90,68 @@ for channelN = 1:nChannels
                 spc.badFits = [spc.badFits, fn];
             end
         end
-      end
-        
-        nRoi = length(gui.spc.figure.roiB);
-        if ~spc.switches.noSPC
-            range = spc.fit(channelN).range;
+    end
+    
+    nRoi = length(gui.spc.figure.roiB);
+    if ~spc.switches.noSPC
+        range = spc.fit(channelN).range;
+    end
+    
+    [a, bg] = spc_calcRoi_internal(a, bg, fn);
+    for j=1:nRoi
+        if j > length(gui.spc.figure.roiB) || ~ishandle(gui.spc.figure.roiB(j))
+            a(j).time(fn) = NaN;
+            a(j).time3(fn) = NaN;
+        elseif spc.switches.noSPC
+            a(j).time(fn) = datenum(spc.state.internal.triggerTimeString);
+            a(j).time3(fn) = datenum(spc.state.internal.triggerTimeString);
+        else
+            a(j).time(fn) = datenum([spc.datainfo.date, ',', spc.datainfo.time]);
+            a(j).time3(fn) = datenum(spc.datainfo.triggerTime);
         end
-
-        [a, bg] = spc_calcRoi_internal(a, bg, fn);
-        for j=1:nRoi-1
-            if spc.switches.noSPC
-                a(j).time(fn) = datenum(spc.state.internal.triggerTimeString);
-                a(j).time3(fn) = datenum(spc.state.internal.triggerTimeString);
-            else
-                a(j).time(fn) = datenum([spc.datainfo.date, ',', spc.datainfo.time]);
-                a(j).time3(fn) = datenum(spc.datainfo.triggerTime);
-            end
-        end
-        
-        Ch(channelN).roiData = a(1:nRoi-1);
-        Ch(channelN).bgData = bg;
-        
-        spc_saveFitParams(fn);
-        Ch(channelN).fitsave = fitsave;
-        
-        if isfield(gui.spc.figure, 'polyRoi')
-                if ishandle(gui.spc.figure.polyRoi{1})
-                    nPoly = length(gui.spc.figure.polyRoi);
-                else
-                    nPoly = 0;
-                end
+    end
+    
+    Ch(channelN).roiData = a;
+    Ch(channelN).bgData = bg;
+    
+    spc_saveFitParams(fn);
+    Ch(channelN).fitsave = fitsave;
+    
+    if isfield(gui.spc.figure, 'polyRoi')
+        if ishandle(gui.spc.figure.polyRoi{1})
+            nPoly = length(gui.spc.figure.polyRoi);
         else
             nPoly = 0;
         end
-        if nPoly
-            la = spc_calcpolyLines();
-            %evalc([fname, '(', num2str(channelN) ,').polyLines{fn} = la']);
-            %evalc(['tmp=', fname, '(', num2str(channelN), ').polyLines']);
-            Ch(channelN).polyLines{fn} = la;
-            tmp = Ch(channelN).polyLines;
-            for i=1:length(tmp)
-                try
-                    dLen(i) = length(tmp{i}.fraction);
-                catch
-                    dLen(i) = nan;
-                end
+    else
+        nPoly = 0;
+    end
+    if nPoly
+        la = spc_calcpolyLines();
+        %evalc([fname, '(', num2str(channelN) ,').polyLines{fn} = la']);
+        %evalc(['tmp=', fname, '(', num2str(channelN), ').polyLines']);
+        Ch(channelN).polyLines{fn} = la;
+        tmp = Ch(channelN).polyLines;
+        for i=1:length(tmp)
+            try
+                dLen(i) = length(tmp{i}.fraction);
+            catch
+                dLen(i) = nan;
             end
-            len = min(dLen);
-            %for j=1:length(tmp{1}.fraction);
-                for i=1:length(tmp)
-                    try
-                        dend(i, 1:len) = tmp{i}.fraction(1:len);
-                    catch
-                        dend(i, 1:len) = nan(1, len);
-                    end
-                end
-            %end
-            %evalc([fname, '(', num2str(channelN), ').Dendrite = dend']);
-            Ch(channelN).Dendrite = dend;
         end
+        len = min(dLen);
+        %for j=1:length(tmp{1}.fraction);
+        for i=1:length(tmp)
+            try
+                dend(i, 1:len) = tmp{i}.fraction(1:len);
+            catch
+                dend(i, 1:len) = nan(1, len);
+            end
+        end
+        %end
+        %evalc([fname, '(', num2str(channelN), ').Dendrite = dend']);
+        Ch(channelN).Dendrite = dend;
+    end
 end
 
 Ch(1).filename = spc.filename;
@@ -174,10 +177,10 @@ fc(4) = get(gui.spc.spc_main.redCheck, 'Value');
 fc(5) = get(gui.spc.spc_main.RatioCheck, 'Value');
 
 if spc.switches.noSPC
-        fc(1) = 0;
-        fc(2) = 0;
-        set(gui.spc.spc_main.fracCheck, 'Value', 0);
-        set(gui.spc.spc_main.tauCheck, 'Value', 0);
+    fc(1) = 0;
+    fc(2) = 0;
+    set(gui.spc.spc_main.fracCheck, 'Value', 0);
+    set(gui.spc.spc_main.tauCheck, 'Value', 0);
 end
 
 k = 0;
@@ -198,44 +201,51 @@ figFormat = [panelN, 1]; %panelN by 1 subplot.
 basetime = 0;
 for subP = 1:panelN  %Three figures
     error = 0;
-
+    
     figure (gui.spc.calcRoi);
     subplot(figFormat(1), figFormat(2), subP);
     hold off;
     legstr = [];
-        for channelN = 1:nChannels
-        for j=1:nRoi-1
-            if ishandle(gui.spc.figure.roiB(j+1)) 
-                if (strcmp(get(gui.spc.figure.roiB(j+1), 'Type'), 'rectangle') || strcmp(get(gui.spc.figure.roiB(j+1), 'Type'), 'line'))
-                    k = mod(j, length(color_a))+1;
-                    time1 = a(j).time3;
-                    time1 = time1(a(j).time > 1000);
-                    if basetime == 0
-                        basetime = min(time1);
-                    end
-                    t = (time1 - basetime)*24*60;
-                    evalc(['val = Ch(channelN).roiData(j).', fig_content{subP}]);
-                    val = val(a(j).time > 1000);
-                    if length(t) == length(val)
-                        plot(t, val, '-o', 'color', color_a{k}, 'linewidth', channelN);
-                    else
-                        plot(val, '-o', 'color', color_a{k}, 'linewidth', channelN);
-                        error = 1;
-                    end
-                    hold on;
-                    str1 = sprintf('Ch%01d,ROI%02d', channelN, j);
-                    legstr = [legstr; str1];
+    for channelN = 1:nChannels
+        for j=2:length(a)
+            %if ishandle(gui.spc.figure.roiB(j+1))
+            %if (strcmp(get(gui.spc.figure.roiB(j+1), 'Type'), 'rectangle') || strcmp(get(gui.spc.figure.roiB(j+1), 'Type'), 'line'))
+                k = mod(j, length(color_a))+1;
+                time1 = a(j).time3;
+                %time1 = time1(a(j).time > 1000);
+                if basetime == 0
+                    basetime = min(time1);
                 end
-            end
-       end
-      end
+                t = (time1 - basetime)*24*60;
+                num_t = numel(t);
+                evalc(['val = Ch(channelN).roiData(j).', fig_content{subP}]);
+                val_t = NaN(1, num_t);
+                val_t(1:length(val)) = val;
+                val = val_t;
+                
+                val(isnan(a(j).time)) = NaN;
+                
+                %val = val(a(j).time(1:num_t) > 1000);
+                if length(t) == length(val)
+                    plot(t, val, '-o', 'color', color_a{k}, 'linewidth', channelN);
+                else
+                    plot(val, '-o', 'color', color_a{k}, 'linewidth', channelN);
+                    error = 1;
+                end
+                hold on;
+                str1 = sprintf('Ch%01d,ROI%02d', channelN, j-1);
+                legstr = [legstr; str1];
+            %end
+            %end
+        end
+    end
     if subP == panelN
         hl = legend(legstr);
         pos = get(hl, 'position');
         set(hl, 'position', [0, 0, pos(3), pos(4)]);
     end
     ylabel(['\fontsize{12} ', fig_yTitle{subP}]);
-
+    
     if ~error
         xlabel ('\fontsize{12} Time (min)');
     else

@@ -67,6 +67,20 @@ if spc_roi(2)+spc_roi(4) > Xlim(2)-1
     spc_roi(4) = Xlim(2)-spc_roi(2);
 end
 
+% Reset which ROI is selected
+for i = 1:length(gui.spc.figure.roiB)
+    if isa(gui.spc.figure.roiB(i), 'matlab.graphics.primitive.Rectangle')
+        set(gui.spc.figure.roiA(i), 'EdgeColor', 'cyan');
+        set(gui.spc.figure.roiB(i), 'EdgeColor', 'cyan');
+        set(gui.spc.figure.roiC(i), 'EdgeColor', 'cyan');
+    else
+        set(gui.spc.figure.roiA(i), 'color', 'cyan');
+        set(gui.spc.figure.roiB(i), 'color', 'cyan');
+        set(gui.spc.figure.roiC(i), 'color', 'cyan');
+    end
+    
+    spc.fit(gui.spc.proChannel).selectedROIs(i) = false;
+end
 
 
 tagA = get(gco, 'Tag');
@@ -80,11 +94,13 @@ if strcmp (get(gcf, 'SelectionType'), 'normal')
     for i = 1:length(Rois)
         if isa(Rois(i), 'matlab.graphics.primitive.Rectangle') %IB correction lines 83-90
             set(Rois(i), 'Position', spc_roi);
+            set(Rois(i), 'EdgeColor', 'red');
         else
             roiX = get(Rois(i), 'XData') + shift(1);
             roiY = get(Rois(i), 'YData') + shift(2);
             set(Rois(i), 'XData', roiX);
             set(Rois(i), 'YData', roiY);
+            set(Rois(i), 'color', 'red');
         end
         set(Texts(i), 'Position', [spc_roi(1)-2, spc_roi(2)-2, 0]);
     end
@@ -96,8 +112,11 @@ elseif strcmp(get(gcf, 'SelectionType'), 'extend')
                 spc.switches.spc_roi{i}(1:2) = spc.switches.spc_roi{i}(1:2) + shift;
                 set(gui.spc.figure.roiA(i), 'Position', spc.switches.spc_roi{i});
                 set(gui.spc.figure.roiB(i), 'Position', spc.switches.spc_roi{i});
+                set(gui.spc.figure.roiA(i), 'color', 'red');
+                set(gui.spc.figure.roiB(i), 'color', 'red');
                 try
                     set(gui.spc.figure.roiC(i), 'Position', spc.switches.spc_roi{i});
+                    set(gui.spc.figure.roiB(i), 'Color', 'red');
                 end
                 textRoi = spc.switches.spc_roi{i}(1:2)-[2,2];
                 set(gui.spc.figure.textA(i), 'Position', textRoi);

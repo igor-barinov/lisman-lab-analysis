@@ -17,7 +17,7 @@ function spc_initLifetimeMapWindow(screenSize)
     gui.spc.figure.mapRoi=rectangle('position', roi_pos, 'EdgeColor', [1,1,1], 'ButtonDownFcn', 'spc_dragRoi');
     gui.spc.figure.lifetimeMapColorbar = axes('Position', [0.82, 0.11, 0.05, 0.8150]);
     scale = 64:-1:1;
-    imRGB = spc_im2rgb(scale(:), [64, 1], 0);
+    imRGB = spc_im2rgb(scale(:), [64, 1]);%, 0);
     gui.spc.figure.lifetimeMapColorbarIm = image(imRGB);
     %colormap(jet);
     set(gui.spc.figure.lifetimeMapColorbar, 'XTick', []);

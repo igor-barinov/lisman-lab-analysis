@@ -105,6 +105,24 @@ RecoverROI=get(gui.spc.spc_main.RecoverROI, 'Value');
                     end
                 end
             end
+            
+            for i = nRoi+1:length(gui.spc.figure.roiB)
+                rectstr = ['RoiA', num2str(i)];
+                textstr = ['TextA', num2str(i)];
+                Rois = findobj('Tag', rectstr);
+                Texts = findobj('Tag', textstr);
+                
+                for j = 1:length(Rois)
+                    delete(Rois(j));
+                end
+                for j = 1:length(Rois)
+                    delete(Texts(j));
+                end
+                
+                gui.spc.figure.roiB(i) = gobjects;
+            end
+            
+            spc.fit(gui.spc.proChannel).selectedROIs = false(1, nRoi);
         end
     end
 
