@@ -14,7 +14,6 @@ classdef Fitting
             %
             [pop1, tau1, pop2, tau2, tau_d, tau_g, bg] = spc_unpackParams(beta0);
             
-            
             if strcmp(mode, 'spc2flimage')
                 tau1 = spc_picoseconds(1 / tau1);
                 tau2 = spc_picoseconds(1 / tau2);
@@ -160,11 +159,6 @@ classdef Fitting
         
         function [y] = spc_single_exp(beta, x)
             global spc;
-            pop = beta(1);
-            tau = beta(2);
-            tau_d = beta(3);
-            tau_g = beta(4);
-            bg = beta(5);
             [pop, tau, ~, ~, tau_d, tau_g, bg] = spc_unpackParams(beta);%nick
             
             % Pre-pulse interval
@@ -260,23 +254,17 @@ classdef Fitting
             pre_y2 = erfc((tau_g^2*tau2 - (x-tau_d+pulseI))/(sqrt(2) * tau_g));
             pre_yb = pre_y1.*pre_y2;
             
-            %y = (ya + yb) / 2;
-            
-            y = (ya + yb + pre_ya + pre_yb)/2 + bg;%nicko
-            %             y = (ya + yb + pre_ya + pre_yb); %nicko
-            %
-        end      
+            y = (ya + yb + pre_ya + pre_yb)/2 + bg;%nicko + prepulses +bg
+            %y = (ya + yb + pre_ya + pre_yb)/2; %nicko no bg
+            %y = (ya + yb)/2; %nicko no prepulse no bg
+            %y = (ya + yb)/2+bg; %nicko no prepulse +bg
+         end
         
         function [betahat] = spc_fit_single_exp(beta0, x, y)
             % Old SPC Single Exponential
             weight = sqrt(y)/sqrt(max(y));
             weight(y < 1)= 1/sqrt(max(y));
             opts = statset('Display', 'iter');
-            
-            %[pop, tau, ~, ~, tau_d, tau_g, bg] = spc_unpackParams(beta0);
-            %beta0_single = [pop, tau, tau_d, tau_g, bg];
-            %betahat_single = nlinfit(x, y, @Fitting.spc_single_exp, beta0_single, opts, 'Weights', weight);
-            %betahat = spc_packParams(betahat_single(1), betahat_single(2), 0, 0, betahat_single(3), betahat_single(4), betahat_single(5));
             betahat = nlinfit(x, y, @Fitting.spc_single_exp, beta0, opts, 'Weights', weight);
         end
         
@@ -305,38 +293,24 @@ classdef Fitting
         end
         
         function [betahat] = mle_fit_single_exp(beta0, x, y) %nicko
-            fn = likelihood_fn('gof_single', x, y);
+            fn = likelihood_fn('single', x, y);
             betahMaxLkh = fminsearch(fn, beta0); %nicko   Mle 1exp fit with NORM distr by Igor
-            %betahMaxLkh = fminsearch(@maxLkh_exp2gauss, [beta0,100000]); %nicko   Mle 2 exp fit with NORM distr by Cong           
+ %             betahMaxLkh = fminsearch(@maxLkh_exp2gauss, [beta0,100000]); %nicko   Mle 2 exp fit with NORM distr by Cong           
             betahat = betahMaxLkh(1:7);    
         end %nicko
         
         function [betahat] = mle_fit_double_exp(beta0, x, y) %nicko
-            fn = likelihood_fn('gof_double', x, y);
+            fn = likelihood_fn('double', x, y);
             betahMaxLkh = fminsearch(fn, beta0); %nicko Mle 2 exp fit with P distr by Igor
             %betahMaxLkh = fminsearch(@Mle_exp2gauss_negloglik2,(params)); %nicko Mle 2 exp fit with P distr by Vernon-Nick
             betahat = betahMaxLkh(1:7); %nickoMle_exp2gauss_negloglik2(params)%nicko
             % betahat = Mle_exp2gauss_negloglik2(1:7) %nicko Mle 2 exp fit with P distr by Vernon-Nick
-            
         end %nicko
         
         function set_fit_warnings(mode)
             warning(mode, 'MATLAB:rankDeficientMatrix');
             warning(mode, 'stats:nlinfit:ModelConstantWRTParam');
             warning(mode, 'stats:nlinfit:IterationLimitExceeded');
-        end
-        
-        function [sse, reducedChi, pearsonsChi, neymansChi, mleChi] = measure_fit(y, yhat)
-            N = numel(y);
-            
-            sq_err = (y - yhat) .* (y - yhat);
-            sse = sum(sq_err);
-            reducedChi = sum(sq_err ./ (N * (y + 1)));
-            pearsonsChi = sum(sq_err ./ yhat);
-            
-            yClamp = max(y, ones(size(y)));
-            neymansChi = sum(sq_err ./ yClamp);
-            mleChi = 2* (sum(yhat - y) - sum(yClamp .* log(yhat ./ yClamp))); % eqn 23
         end
         
         function [betahat, curve] = fit(beta_in, isFixed, x, y, mode)
@@ -368,8 +342,8 @@ classdef Fitting
                 %beta0 = Fitting.flimage_double_exp_initial_params(x, y); %nicko
                 beta0 = Fitting.fix_params(beta0, beta_in, isFixed);
                 fittingMethod = @Fitting.mle_fit_single_exp;
-                %fittingMethod = @Mle_exp2gauss_negloglik2;%nicko 
-                fittingModel = @Fitting.flimage_double_exp;
+                % fittingMethod = @Mle_exp2gauss_negloglik2;%nicko 
+                fittingModel = @Fitting.flimage_single_exp;
             elseif strcmp(mode, 'mle_double')
                 beta_in = Fitting.convert_params(beta_in, 'spc2flimage');
                 beta0 = Fitting.flimage_double_exp_initial_params(x, y);
@@ -380,35 +354,18 @@ classdef Fitting
             
             % (temporarily) Turn of warnings that can be ignored
             Fitting.set_fit_warnings('off');
-            
-            % Fit and get estimated betahat
             betahat = fittingMethod(beta0, x, y);
-            
             Fitting.set_fit_warnings('on');
             
-            
+            % Fit and get estimated betahat
             betahat = Fitting.fix_params(betahat, beta_in, isFixed);
-            
-            %betahat(7) = 0; 
-            
-            % Use betahat and model to get curve
             curve = fittingModel(betahat, x);
             
-            
-            [sse, reducedChi, pearsonsChi, neymansChi, mleChi] = Fitting.measure_fit(y, curve);
-            
-            fprintf('**************** Fit Metrics ******************\n');
-            fprintf('SSE: %.3f\n', sse);
-            fprintf('Reduced Chi-Square: %.3f\n', reducedChi);
-            fprintf('Pearsons Chi: %.3f\n', pearsonsChi);
-            fprintf('Neymans Chi: %.3f\n', neymansChi);
-            fprintf('Poisson MLE Chi: %.3f\n\n', mleChi);
-            
             % Convert parameters to correct units
-            if ~(strcmp(mode, 'spc_single') || strcmp(mode, 'spc_double'))
+            if strcmp(mode, 'flimage_single') || strcmp(mode, 'flimage_double') || strcmp(mode, 'mle_single') || strcmp(mode, 'mle_double')
                 betahat = Fitting.convert_params(betahat, 'flimage2spc');
             else
-                betahat = spc_picoseconds(betahat); % Converts units to ps
+                betahat = spc_picoseconds(betahat);
                 betahat = Fitting.fix_params(betahat, beta_in, isFixed);
             end
         end

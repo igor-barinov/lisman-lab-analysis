@@ -39,6 +39,5 @@ function spc_initGlobalParams()
         spc.fit(j).fixtau = false(1, 6);
         spc.fit(j).lutlim = [10, 30];
         spc.fit(j).lifetime_limit = [1.4, 2.7];
-        spc.fit(j).selectedROIs = [];
     end
 end
