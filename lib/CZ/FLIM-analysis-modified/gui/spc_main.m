@@ -6,7 +6,7 @@ function varargout = spc_main(varargin)
 %    FIG = SPC_MAIN launch spc_main GUI.
 %    SPC_MAIN('callback_name', ...) invoke the named callback.
 
-% Last Modified by GUIDE v2.5 23-Nov-2021 12:12:57
+% Last Modified by GUIDE v2.5 13-Jan-2022 13:46:22
 global gui;
 
 if nargin == 0  % LAUNCH GUI
@@ -429,3 +429,20 @@ function Saved_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of Saved
+
+
+% --- Executes on button press in use_all_rois.
+function use_all_rois_Callback(hObject, eventdata, handles)
+% hObject    handle to use_all_rois (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+tf = get(hObject, 'Value');
+
+if tf
+    spc_selectAllRois();
+else
+    spc_selectAll();
+end
+
+% Hint: get(hObject,'Value') returns toggle state of use_all_rois

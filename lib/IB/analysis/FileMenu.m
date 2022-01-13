@@ -10,6 +10,7 @@ classdef FileMenu
         % (IN) "hObject": handle to UI element that initiated callback
         %
             handles = guidata(hObject);
+            settingsMap = AppState.get_user_preferences();
     
             % Get file paths and store them in a cell
             fileFilter = {'*.mat', 'MATLAB ROI Files (*.mat)'; ...
@@ -98,22 +99,75 @@ classdef FileMenu
                 warndlg('This file has invalid experiment info. Please fix before loading');
                 return;
             end
+            
+            % Check which data should be loaded based on user preferences
+            if strcmp(settingsMap('green_is_int'), 'true')
+                greenIsIntegral = true;
+            else
+                greenIsIntegral = false;
+            end
+            
+            if strcmp(settingsMap('red_is_int'), 'true')
+                redIsIntegral = true;
+            else
+                redIsIntegral = false;
+            end
 
             % Get data values
             time = openFile.time();
             lifetime = openFile.lifetime();
-            int = openFile.green();
-            red = openFile.red();
+            
+            if greenIsIntegral
+                green = openFile.green_integral();
+            else
+                green = openFile.green();
+            end
+            
+            if redIsIntegral 
+                red = openFile.red_integral();
+            else
+                red = openFile.red();
+            end
 
             % Generate ROI data object
             switch openFile.type()
                 case ROIFileType.Averaged
                     normLt = openFile.normalized_lifetime();
-                    normInt = openFile.normalized_green();
-                    normRed = openFile.normalized_red();
-                    roiData = AverageTable(time, lifetime, normLt, int, normInt, red, normRed);
+                    
+                    if greenIsIntegral
+                        normGreen = openFile.norm_green_integral();
+                    else
+                        normGreen = openFile.normalized_green();
+                    end
+                    
+                    if redIsIntegral
+                        normRed = openFile.norm_red_integral();
+                    else
+                        normRed = openFile.normalized_red();
+                    end
+                    
+                    roiData = AverageTable(time, lifetime, normLt, green, normGreen, red, normRed, []);
+                case ROIFileType.Prepared
+                    roiData = ROITable(time, lifetime, green, red, openFile.is_integral());
+                case ROIFileType.Raw
+                    nROIs = openFile.roi_count();
+                    isIntegral = false(1, nROIs + 1);
+                    
+                    if greenIsIntegral
+                        isIntegral = [isIntegral, true(1, nROIs)];
+                    else
+                        isIntegral = [isIntegral, false(1, nROIs)];
+                    end
+                    
+                    if redIsIntegral
+                        isIntegral = [isIntegral, true(1, nROIs)];
+                    else
+                        isIntegral = [isIntegral, false(1, nROIs)];
+                    end
+                        
+                    roiData = ROITable(time, lifetime, green, red, isIntegral);
                 otherwise
-                    roiData = ROITable(time, lifetime, int, red);
+                    roiData = ROITable(time, lifetime, green, red);
             end
             
             % Load any user preferences
@@ -153,6 +207,31 @@ classdef FileMenu
                 %if GUI.menu_is_toggled(handles.('menuShowAnnots'))
                     %GUI.toggle_menu(handles.('menuShowAnnots'));
                 %end
+            end
+            
+            % Re-toggle normalization if necessary
+            if strcmp(settingsMap('lt_is_norm'), 'true')
+                ltIsNorm = true;
+            else
+                ltIsNorm = false;
+            end
+            
+            
+            if strcmp(settingsMap('green_is_norm'), 'true')
+                greenIsNorm = true;
+            else
+                greenIsNorm = false;
+            end
+            
+            if strcmp(settingsMap('red_is_norm'), 'true')
+                redIsNorm = true;
+            else
+                redIsNorm = false;
+            end
+            
+            if (ltIsNorm || greenIsNorm || redIsNorm) && ~GUI.values_are_normalized(handles)
+                GUI.toggle_button(handles.('btnToggleNormVals'));
+                GUI.toggle_menu(handles.('menuToggleNormVals'));
             end
 
             % Update data table
@@ -198,8 +277,20 @@ classdef FileMenu
                     case 'No'
                         % Leave only enabled ROIs
                         enabledLt = ROIUtils.select(saveData.lifetime(), enabledROIs);
-                        enabledInt = ROIUtils.select(saveData.green(), enabledROIs);
-                        enabledRed = ROIUtils.select(saveData.red(), enabledROIs);
+                        
+                        
+                        if saveData.green_is_integral()
+                            enabledInt = ROIUtils.select(saveData.green_integral(), enabledROIs);
+                        else
+                            enabledInt = ROIUtils.select(saveData.green(), enabledROIs);
+                        end
+                        
+                        if saveData.red_is_integral()
+                            enabledRed = ROIUtils.select(saveData.red_integral(), enabledROIs);
+                        else
+                            enabledRed = ROIUtils.select(saveData.red(), enabledROIs);
+                        end
+                        
                         saveData = ROITable(saveData.time(), enabledLt, enabledInt, enabledRed);
                     case 'Cancel'
                         return;
@@ -232,7 +323,7 @@ classdef FileMenu
                 case 1
                     RawFile.save(savepath, saveData);
                 case 2
-                    PreparedFile.save(savepath, saveData, dnaType, solutions, userPreferences);
+                    PreparedFile.save(savepath, saveData, dnaType, solutions, userPreferences, saveData.is_integral());
                 case 3
                     if openFile.type() == ROIFileType.Averaged()
                         optns = {'IsAveraged', 'true'};

@@ -37,7 +37,8 @@ classdef GUICallbacks
         end
         
         function menuToggleROI(hObject, ~)
-            GUI.try_callback(@DataMenu.toggle_roi, hObject);
+            %GUI.try_callback(@DataMenu.toggle_roi, hObject);
+            GUI.try_callback(@DataMenu.toggle_roi, @AppState.logdlg, hObject);%IB 1.5.22
         end
         
         function btnToggleAdjustedTime(hObject)

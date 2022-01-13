@@ -2,33 +2,39 @@ classdef AverageTable < ROIData
     properties
         roiData double
         normROIData double
+        isIntegral logical
     end
     
     methods
+        
+        function [this] = AverageTable(adjTime, lifetime, normLifetime, green, normGreen, red, normRed, isIntegral)
         %% --------------------------------------------------------------------------------------------------------
         % 'AverageTable' Constructor
         %
-        function [this] = AverageTable(adjTime, lifetime, normLifetime, green, normGreen, red, normRed)
             if nargin == 0
                 this.roiData = [];
                 this.normROIData = [];
+                this.isIntegral = [];
             else
                 this.roiData = [adjTime, lifetime, green, red];
                 this.normROIData = [adjTime, normLifetime, normGreen, normRed];
+                this.isIntegral = isIntegral;
             end
         end
         
+        
+        function [count] = roi_count(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'roi_count' Accessor
         %
-        function [count] = roi_count(obj)
             count = (size(obj.roiData, 2) - 1) / 6;
         end
         
+        
+        function [counts] = point_counts(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'point_counts' Accessor
         %
-        function [counts] = point_counts(obj)
             counts = zeros(1, obj.roi_count());
             for i = 1:numel(counts)
                 roi = obj.roiData(:, 2*i : 2*i + 1);
@@ -36,10 +42,11 @@ classdef AverageTable < ROIData
             end
         end
         
+        
+        function [labels] = roi_labels(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'roi_labels' Accessor
         %
-        function [labels] = roi_labels(obj)
             roiCount = obj.roi_count();
             labels = cell(roiCount * 2 * 3 + 1, 1);
             labels{1} = 'Time';
@@ -53,67 +60,134 @@ classdef AverageTable < ROIData
             end
         end
 
+        
+        function [values] = time(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'time' Accessor
         %
-        function [values] = time(obj)
             values = obj.roiData(:, 1);
         end
         
+        
+        function [adjVals] = adjusted_time(obj, nBaselinePts)
         %% --------------------------------------------------------------------------------------------------------
         % 'adjusted_time' Accessor
         %
-        function [adjVals] = adjusted_time(obj, nBaselinePts)
             adjVals = obj.time();
             adjVals = adjVals - adjVals(nBaselinePts);
         end
 
+        
+        function [values] = lifetime(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'lifetime' Accessor
         %
-        function [values] = lifetime(obj)
             values = obj.roiData(:, 2 : 2*obj.roi_count() + 1);
         end
         
+        
+        function [normVals] = normalized_lifetime(obj, ~)
         %% --------------------------------------------------------------------------------------------------------
         % 'normalized_lifetime' Accessor
         %
-        function [normVals] = normalized_lifetime(obj, ~)
             normVals = obj.normROIData(:, 2 : 2*obj.roi_count() + 1);
         end
         
+        function [tf] = green_is_integral(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'green_is_integral' Accessor
+        %
+            tf = all(isnan(obj.green()));
+        end
+        
+        
+        function [values] = green(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'green' Accessor
         %
-        function [values] = green(obj)
-            values = obj.roiData(:, 2*obj.roi_count() + 2 : 2*2*obj.roi_count() + 1);
+            allROIs = obj.roiData;
+            allROIs(:, obj.isIntegral) = NaN;
+            values = allROIs(:, 2*obj.roi_count() + 2 : 2*2*obj.roi_count() + 1);
         end
         
+        function [values] = green_integral(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'green_integral' Accessor
+        %
+            allROIs = obj.roiData;
+            allROIs(:, ~obj.isIntegral) = NaN;
+            values = allROIs(:, 2*obj.roi_count() + 2 : 2*2*obj.roi_count() + 1);
+        end
+        
+        
+        function [normVals] = normalized_green(obj, ~)
         %% --------------------------------------------------------------------------------------------------------
         % 'normalized_green' Accessor
         %
-        function [normVals] = normalized_green(obj, ~)
-            normVals = obj.normROIData(:, 2*obj.roi_count() + 2 : 2*2*obj.roi_count() + 1);
+            allROIs = obj.normROIData;
+            allROIs(:, obj.isIntegral) = NaN;
+            normVals = allROIs(:, 2*obj.roi_count() + 2 : 2*2*obj.roi_count() + 1);
         end
         
+        function [normVals] = norm_green_integral(obj, ~)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'norm_green_integral' Accessor
+        %
+            allROIs = obj.normROIData;
+            allROIs(:, ~obj.isIntegral) = NaN;
+            normVals = allROIs(:, 2*obj.roi_count() + 2 : 2*2*obj.roi_count() + 1);
+        end
+        
+        
+        function [tf] = red_is_integral(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'red_is_integral' Accessor
+        %
+            tf = all(isnan(obj.red()));
+        end
+        
+        function [values] = red(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'red' Accessor
         %
-        function [values] = red(obj)
-            values = obj.roiData(:, 2*2*obj.roi_count() + 2 : 3*2*obj.roi_count() + 1);
+            allROIs = obj.roiData;
+            allROIs(:, obj.isIntegral) = NaN;
+            values = allROIs(:, 2*2*obj.roi_count() + 2 : 3*2*obj.roi_count() + 1);
         end
         
+        function [values] = red_integral(obj)
         %% --------------------------------------------------------------------------------------------------------
-        % 'normalized_green' Accessor
+        % 'red_integral' Accessor
         %
-        function [normVals] = normalized_red(obj, ~)
-            normVals = obj.normROIData(:, 2*2*obj.roi_count() + 2 : 3*2*obj.roi_count() + 1);
+            allROIs = obj.roiData;
+            allROIs(:, ~obj.isIntegral) = NaN;
+            values = allROIs(:, 2*2*obj.roi_count() + 2 : 3*2*obj.roi_count() + 1);
         end
         
+        
+        function [normVals] = normalized_red(obj, ~)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'normalized_red' Accessor
+        %
+            allROIs = obj.normROIData;
+            allROIs(:, obj.isIntegral) = NaN;
+            normVals = allROIs(:, 2*2*obj.roi_count() + 2 : 3*2*obj.roi_count() + 1);
+        end
+        
+        function [normVals] = norm_red_integral(obj, ~)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'norm_red_integral' Accessor
+        %
+            allROIs = obj.normROIData;
+            allROIs(:, ~obj.isIntegral) = NaN;
+            normVals = allROIs(:, 2*2*obj.roi_count() + 2 : 3*2*obj.roi_count() + 1);
+        end
+        
+        
+        function [selectedROIs] = select_rois(obj, selection)
         %% --------------------------------------------------------------------------------------------------------
         % 'select_rois' Accessor
         %
-        function [selectedROIs] = select_rois(obj, selection)
             uniqueCols = unique(selection(:, 2));
             
             roiCount = obj.roi_count();
@@ -127,5 +201,7 @@ classdef AverageTable < ROIData
             
             selectedROIs = isLifetime | isGreen | isRed;
         end
+        
+        
     end
 end

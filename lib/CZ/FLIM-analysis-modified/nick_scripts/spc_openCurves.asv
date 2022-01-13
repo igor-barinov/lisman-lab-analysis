@@ -232,9 +232,4 @@ end %LAST_PROJECT
 % waitbar(1.0, loadbar);
 % close(loadbar);
 
-isSelectAllRois = get(gui.spc.spc_main.use_all_rois, 'Value');
-if isSelectAllRois
-    spc_selectAllRois();
-else
-    spc_selectAll();
-end
+isSelectAllRois = get(

@@ -22,7 +22,7 @@ function varargout = analysis_1_2_user_options(varargin)
 
 % Edit the above text to modify the response to help analysis_1_2_user_options
 
-% Last Modified by GUIDE v2.5 13-Jan-2022 13:16:19
+% Last Modified by GUIDE v2.5 09-Oct-2021 12:37:50
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -161,21 +161,6 @@ GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObje
 
 function red_y_max_Callback(hObject, ~, ~)
 GUI.try_callback(@PreferencesApp.textInputSetting, @PreferencesApp.logdlg, hObject, 'red_y_max');
-
-function green_is_norm_Callback(hObject, ~, ~)
-GUI.try_callback(@PreferencesApp.checkBoxSetting, @PreferencesApp.logdlg, hObject, 'green_is_norm');
-
-function green_is_int_Callback(hObject, ~, ~)
-GUI.try_callback(@PreferencesApp.checkBoxSetting, @PreferencesApp.logdlg, hObject, 'green_is_int');
-
-function red_is_norm_Callback(hObject, ~, ~)
-GUI.try_callback(@PreferencesApp.checkBoxSetting, @PreferencesApp.logdlg, hObject, 'red_is_norm');
-
-function red_is_int_Callback(hObject, ~, ~)
-GUI.try_callback(@PreferencesApp.checkBoxSetting, @PreferencesApp.logdlg, hObject, 'red_is_int');
-
-function lt_is_norm_Callback(hObject, ~, ~)
-GUI.try_callback(@PreferencesApp.checkBoxSetting, @PreferencesApp.logdlg, hObject, 'lt_is_norm');
 
 function savedDefsList_Callback(hObject, ~, ~)
 GUI.try_callback(@PreferencesApp.savedDefsList, @PreferencesApp.logdlg, hObject);

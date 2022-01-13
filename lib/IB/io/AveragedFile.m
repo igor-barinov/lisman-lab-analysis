@@ -5,10 +5,11 @@ classdef AveragedFile < ROIFile
     end
     
     methods
+        
+        function [this] = AveragedFile(filepaths)
         %% --------------------------------------------------------------------------------------------------------
         % 'AveragedFile' Constructor
         %
-        function [this] = AveragedFile(filepaths)
             if nargin == 0
                 this.filepaths = {};
                 this.filedata = [];
@@ -37,27 +38,30 @@ classdef AveragedFile < ROIFile
             end
         end
         
+        
+        function [fileType] = type(~)
         %% --------------------------------------------------------------------------------------------------------
         % 'type' Accessor
         %
-        function [fileType] = type(~)
             fileType = ROIFileType.Averaged;
         end
         
+        
+        function [filepaths] = source_files(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'source_files' Accessor
         %
-        function [filepaths] = source_files(obj)
             filepaths = {};
             for i = 1:numel(obj.filedata)
                 filepaths = [filepaths, obj.filedata(i).('filePath')];
             end
         end
         
+        
+        function [names] = experiment_names(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'experiment_names' Accessor
         %
-        function [names] = experiment_names(obj)
             srcFiles = obj.source_files();
             names = cell(numel(srcFiles), 1);
             for i = 1:numel(names)
@@ -65,44 +69,53 @@ classdef AveragedFile < ROIFile
             end
         end
         
+        
+        function [count] = file_count(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'file_count' Accessor
         %
-        function [count] = file_count(obj)
             count = numel(obj.filedata);
         end
         
+        
+        function [counts] = file_roi_counts(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'file_roi_counts' Accessor
         %
-        function [counts] = file_roi_counts(obj)
             counts = zeros(1, numel(obj.filedata));
             for i = 1:numel(counts)
                 counts(i) = obj.filedata(i).('numROI');
             end
         end
         
+        function [tf] = is_integral(~)
+            tf = [];
+        end
+        
+        
+        function [count] = roi_count(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'roi_count' Accessor
         %
-        function [count] = roi_count(obj)
             count = numel(obj.filedata);
         end
         
+        
+        function [counts] = point_counts(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'point_counts' Accessor
         %
-        function [counts] = point_counts(obj)
             counts = zeros(1, numel(obj.filedata));
             for i = 1:numel(counts)
                 counts(i) = numel(obj.filedata(i).('time'));
             end
         end
         
+        
+        function [values] = time(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'time' Accessor
         %
-        function [values] = time(obj)
             pointCounts = obj.point_counts();
             [~, targetFile] = max(pointCounts);
             values = obj.filedata(targetFile).('time');
@@ -252,6 +265,10 @@ classdef AveragedFile < ROIFile
             end
         end
         
+        function [tf] = green_is_integral(~)
+            tf = [];
+        end
+        
         %% --------------------------------------------------------------------------------------------------------
         % 'green' Accessor
         %
@@ -268,6 +285,10 @@ classdef AveragedFile < ROIFile
                 values(1:nPoints, 2*i - 1) = averages(1:nPoints);
                 values(1:nPoints, 2*i) = errors(1:nPoints);
             end
+        end
+        
+        function [values] = green_integral(obj)
+            values = obj.green();
         end
         
         %% --------------------------------------------------------------------------------------------------------
@@ -288,6 +309,14 @@ classdef AveragedFile < ROIFile
             end
         end
         
+        function [normVals] = norm_green_integral(obj)
+            normVals = obj.normalized_green();
+        end
+        
+        function [tf] = red_is_integral(~)
+            tf = [];
+        end
+        
         %% --------------------------------------------------------------------------------------------------------
         % 'red' Accessor
         %
@@ -306,6 +335,10 @@ classdef AveragedFile < ROIFile
             end
         end
         
+        function [values] = red_integral(obj)
+            values = obj.red();
+        end
+        
         %% --------------------------------------------------------------------------------------------------------
         % 'normalized_red' Accessor
         %
@@ -322,6 +355,10 @@ classdef AveragedFile < ROIFile
                 normVals(1:nPoints, 2*i - 1) = averages(1:nPoints);
                 normVals(1:nPoints, 2*i) = errors(1:nPoints);
             end
+        end
+        
+        function [normVals] = norm_red_integral(obj, ~)
+            normVals = obj.normalized_red();
         end
     end
     
@@ -370,11 +407,23 @@ classdef AveragedFile < ROIFile
             nBaselinePts = ROIUtils.number_of_baseline_pts(solutionInfo);
             adjTime = roiData.adjusted_time(nBaselinePts);
             lifetime = roiData.lifetime();
-            green = roiData.green();
-            red = roiData.red();
             normLifetime = roiData.normalized_lifetime(nBaselinePts);
-            normGreen = roiData.normalized_green(nBaselinePts);
-            normRed = roiData.normalized_red(nBaselinePts);
+            
+            if roiData.green_is_integral()
+                green = roiData.green_integral();
+                normGreen = roiData.norm_green_integral(nBaselinePts);
+            else
+                green = roiData.green();
+                normGreen = roiData.normalized_green(nBaselinePts);
+            end
+            
+            if roiData.red_is_integral()
+                red = roiData.red_integral();
+                normRed = roiData.norm_red_integral(nBaselinePts);
+            else
+                red = roiData.red();
+                normRed = roiData.normalized_red(nBaselinePts);
+            end            
             
             % Save mandatory data
             fileStruct = struct;
@@ -414,7 +463,7 @@ classdef AveragedFile < ROIFile
             fileStruct.('averages') = avgStruct;
             
             % Save optional data
-            if nargin >= 5
+            if nargin > 4
                 fileStruct.('userPref') = varargin{1};
             end
             

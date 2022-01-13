@@ -27,7 +27,9 @@ classdef RawFile < ROIFile
         %       'time': row vector
         %       'tau_m': row vector
         %       'mean_int': row vector
+        %       'int_int2': row vector
         %       'red_mean': row vector
+        %       'red_int': row vector
         %   }
         % }
             if nargin == 0
@@ -112,6 +114,17 @@ classdef RawFile < ROIFile
             for i = 1:numel(obj.filedata)
                 counts(i) = numel(obj.filedata(i).('roiData'));
             end
+        end
+        
+        function [tf] = is_integral(~)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'is_integral' Accessor
+        %
+        % Returns which ROIs contain integral series
+        %
+        % (OUT) "tf": Always empty
+        %
+            tf = [];
         end
         
         function [count] = roi_count(obj)
@@ -285,13 +298,15 @@ classdef RawFile < ROIFile
             positions = {};
         end
         
-        function [values] = lifetime(obj)
+        function [values] = get_time_series(obj, label)
         %% --------------------------------------------------------------------------------------------------------
-        % 'lifetime' Accessor
+        % 'get_time_series' Accessor
         %
-        % Returns the lifetime values for each data point, where lifetime is equal to mean tau
+        % Returns the aggregated time series data for all ROIs for a given label
         %
-        % (OUT) "values": A column vector containing lifetime values for each data point
+        % (IN) "label": The name of the field containing the time series data. This function assumes "label" is a valid field
+        %
+        % (OUT) "values": A m x n matrix containing the time series data, where n is the number of ROIs
         %
             pointCounts = obj.point_counts();
             maxPointCount = max(pointCounts);
@@ -303,11 +318,38 @@ classdef RawFile < ROIFile
                 ROIs = obj.filedata(i).('roiData');
                 for j = 1:numel(ROIs)
                     nPoints = pointCounts(roiIdx);
-                    roiValues = ROIs(j).('tau_m')';
+                    roiValues = ROIs(j).(label)';
                     values(1:nPoints, roiIdx) = roiValues(1:nPoints);
                     roiIdx = roiIdx + 1;
                 end
             end
+        end
+        
+        function [values] = lifetime(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'lifetime' Accessor
+        %
+        % Returns the lifetime values for each data point, where lifetime is equal to mean tau
+        %
+        % (OUT) "values": A column vector containing lifetime values for each data point
+        %
+%             pointCounts = obj.point_counts();
+%             maxPointCount = max(pointCounts);
+%             roiCount = obj.roi_count();
+%             
+%             values = NaN(maxPointCount, roiCount);
+%             roiIdx = 1;
+%             for i = 1:numel(obj.filedata)
+%                 ROIs = obj.filedata(i).('roiData');
+%                 for j = 1:numel(ROIs)
+%                     nPoints = pointCounts(roiIdx);
+%                     roiValues = ROIs(j).('tau_m')';
+%                     values(1:nPoints, roiIdx) = roiValues(1:nPoints);
+%                     roiIdx = roiIdx + 1;
+%                 end
+%             end
+
+            values = obj.get_time_series('tau_m');
         end
         
         function [normVals] = normalized_lifetime(obj, nBaselinePts)
@@ -325,6 +367,14 @@ classdef RawFile < ROIFile
             normVals = ROIUtils.normalize(obj.lifetime(), nBaselinePts);
         end
         
+        
+        function [tf] = green_is_integral(~)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'green_is_integral' Accessor
+        %
+            tf = [];
+        end
+        
         function [values] = green(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'green' Accessor
@@ -333,21 +383,18 @@ classdef RawFile < ROIFile
         %
         % (OUT) "values": A column vector containing green intensity values for each data point
         %
-            pointCounts = obj.point_counts();
-            maxPointCount = max(pointCounts);
-            roiCount = obj.roi_count();
-            
-            values = NaN(maxPointCount, roiCount);
-            roiIdx = 1;
-            for i = 1:numel(obj.filedata)
-                ROIs = obj.filedata(i).('roiData');
-                for j = 1:numel(ROIs)
-                    nPoints = pointCounts(roiIdx);
-                    roiValues = ROIs(j).('mean_int')';
-                    values(1:nPoints, roiIdx) = roiValues(1:nPoints);
-                    roiIdx = roiIdx + 1;
-                end
-            end
+            values = obj.get_time_series('mean_int');
+        end
+        
+        function [values] = green_integral(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'green_integral' Accessor
+        %
+        % Returns the integral green intensity values for each data point
+        %
+        % (OUT) "values": A column vector containing integral green intensity values for each data point
+        %
+            values = obj.get_time_series('int_int2');
         end
         
         function [normVals] = normalized_green(obj, nBaselinePts)
@@ -365,6 +412,30 @@ classdef RawFile < ROIFile
             normVals = ROIUtils.normalize(obj.green(), nBaselinePts);
         end
         
+        function [normVals] = norm_green_integral(obj, nBaselinePts)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'norm_green_integral' Accessor
+        %
+        % Returns the normalized integral green intensity values for each data point.
+        % Normalized values have an average of 1 over points up to the
+        % baseline.
+        %
+        % (IN) "nBaselinePts": The number of the data point that is at baseline
+        %
+        % (OUT) "normVals": A column vector containing the normalized integral green intensity values for each data point
+        %
+            normVals = ROIUtils.normalize(obj.green_integral(), nBaselinePts);
+        end
+        
+        
+        function [tf] = red_is_integral(~)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'red_is_integral' Accessor
+        %
+            tf = [];
+        end
+        
+        
         function [values] = red(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'red' Accessor
@@ -373,21 +444,18 @@ classdef RawFile < ROIFile
         %
         % (OUT) "values": A column vector containing red intensity values for each data point
         %
-            pointCounts = obj.point_counts();
-            maxPointCount = max(pointCounts);
-            roiCount = obj.roi_count();
-            
-            values = NaN(maxPointCount, roiCount);
-            roiIdx = 1;
-            for i = 1:numel(obj.filedata)
-                ROIs = obj.filedata(i).('roiData');
-                for j = 1:numel(ROIs)
-                    nPoints = pointCounts(roiIdx);
-                    roiValues = ROIs(j).('red_mean')';
-                    values(1:nPoints, roiIdx) = roiValues(1:nPoints);
-                    roiIdx = roiIdx + 1;
-                end
-            end
+            values = obj.get_time_series('red_mean');
+        end
+        
+        function [values] = red_integral(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'red_integral' Accessor
+        %
+        % Returns the integral red intensity values for each data point
+        %
+        % (OUT) "values": A column vector containing integral red intensity values for each data point
+        %
+            values = obj.get_time_series('red_int');
         end
         
         function [normVals] = normalized_red(obj, nBaselinePts)
@@ -403,6 +471,21 @@ classdef RawFile < ROIFile
         % (OUT) "normVals": A column vector containing the normalized red intensity values for each data point
         %
             normVals = ROIUtils.normalize(obj.red(), nBaselinePts);
+        end
+        
+        function [normVals] = norm_red_integral(obj, nBaselinePts)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'norm_red_integral' Accessor
+        %
+        % Returns the normalized, integral red intensity values for each data point.
+        % Normalized values have an average of 1 over points up to the
+        % baseline.
+        %
+        % (IN) "nBaselinePts": The number of the data point that is at baseline
+        %
+        % (OUT) "normVals": A column vector containing the normalized, integral red intensity values for each data point
+        %
+            normVals = ROIUtils.normalize(obj.red_integral(), nBaselinePts);
         end
     end
     
@@ -426,7 +509,7 @@ classdef RawFile < ROIFile
                         dataStruct = fileStruct.(fileFields{j});
                         if isfield(dataStruct, 'roiData')
                             ROIs = dataStruct.('roiData');
-                            if all(isfield(ROIs, {'time', 'tau_m', 'mean_int', 'red_mean'}))
+                            if all(isfield(ROIs, {'time', 'tau_m', 'mean_int', 'red_mean', 'int_int2', 'red_int'}))
                                 tf(i) = true;
                             end
                         end
@@ -450,7 +533,9 @@ classdef RawFile < ROIFile
             time = roiData.time();
             lifetime = roiData.lifetime();
             green = roiData.green();
+            greenInt = roiData.green_integral();
             red = roiData.red();
+            redInt = roiData.red_integral();
             
             rawData = struct;
             rawData.('roiData') = [];
@@ -459,7 +544,9 @@ classdef RawFile < ROIFile
                 roi.('time') = time';
                 roi.('tau_m') = lifetime(:, i)';
                 roi.('mean_int') = green(:, i)';
+                roi.('int_int2') = greenInt(:, i)';
                 roi.('red_mean') = red(:, i)';
+                roi.('red_int') = redInt(:, i)';
                 
                 rawData.('roiData') = [rawData.('roiData'), roi];
             end

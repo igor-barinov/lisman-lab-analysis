@@ -1,43 +1,16 @@
-[09-Oct-2021 13:29:44]: Dot indexing is not supported for variables of this type.
+[13-Jan-2022 17:20:47]: No appropriate method, property, or field 'green_internal' for class 'ROITable'.
 
-Error in PreferencesApp.set_edit_status (line 147)
-            setappdata(handles.('mainFig'), 'EDIT_STATUS', tf);
+Error in RawFile.save (line 536)
+            greenInt = roiData.green_internal();
 
-Error in PreferencesApp.btnEditDefault (line 414)
-                PreferencesApp.set_edit_status(true);
-
-Error in GUI.try_callback (line 5)
-                callback(varargin{:});
-
-Error in analysis_1_2_user_options>btnEditDefault_Callback (line 175)
-GUI.try_callback(@PreferencesApp.btnEditDefault, @PreferencesApp.logdlg, hObject);
-
-Error in gui_mainfcn (line 95)
-        feval(varargin{:});
-
-Error in analysis_1_2_user_options (line 42)
-    gui_mainfcn(gui_State, varargin{:});
-
-Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_user_options('btnEditDefault_Callback',hObject,eventdata,guidata(hObject))
-
-
-[09-Oct-2021 13:30:08]: Error using matlab.ui.container.Menu/get
-Invalid or deleted object.
-
-Error in GUI.menu_is_toggled (line 109)
-            enableState = get(handle, 'Checked');
-
-Error in GUI.update_plotting_options (line 444)
-            if GUI.menu_is_toggled(handles.('menuShowLifetime'))
-
-Error in GUICallbacks.menuPreferences (line 373)
-            GUI.update_plotting_options(handles);
+Error in FileMenu.save (line 324)
+                    RawFile.save(savepath, saveData);
 
 Error in GUI.try_callback (line 5)
                 callback(varargin{:});
 
-Error in analysis_1_2_IB_100921>menuPreferences_Callback (line 338)
-GUI.try_callback(@GUICallbacks.menuPreferences, @AppState.logdlg, hObject);
+Error in analysis_1_2_IB_100921>menuSave_Callback (line 133)
+GUI.try_callback(@FileMenu.save, @AppState.logdlg, hObject);
 
 Error in gui_mainfcn (line 95)
         feval(varargin{:});
@@ -45,22 +18,19 @@ Error in gui_mainfcn (line 95)
 Error in analysis_1_2_IB_100921 (line 43)
     gui_mainfcn(gui_State, varargin{:});
 
-Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuPreferences_Callback',hObject,eventdata,guidata(hObject))
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuSave_Callback',hObject,eventdata,guidata(hObject))
 
 
-[09-Oct-2021 13:44:38]: Index in position 2 exceeds array bounds.
+[13-Jan-2022 17:23:12]: Output argument "tf" (and maybe others) not assigned during call to "PreparedFile/has_preferences".
 
-Error in ROIUtils.split_solution_info (line 365)
-            solNames = solutionInfo(:, 1);
-
-Error in PlotMenu.plot_all (line 209)
-                    solutionInfo = ROIUtils.split_solution_info(allSolutions);
+Error in FileMenu.open (line 174)
+            if openFile.has_preferences()
 
 Error in GUI.try_callback (line 5)
                 callback(varargin{:});
 
-Error in analysis_1_2_IB_100921>menuPlotAll_Callback (line 255)
-GUI.try_callback(@PlotMenu.plot_all, @AppState.logdlg, hObject);
+Error in analysis_1_2_IB_100921>menuOpen_Callback (line 126)
+GUI.try_callback(@FileMenu.open, @AppState.logdlg, hObject)
 
 Error in gui_mainfcn (line 95)
         feval(varargin{:});
@@ -68,22 +38,25 @@ Error in gui_mainfcn (line 95)
 Error in analysis_1_2_IB_100921 (line 43)
     gui_mainfcn(gui_State, varargin{:});
 
-Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuOpen_Callback',hObject,eventdata,guidata(hObject))
 
 
-[09-Oct-2021 13:45:23]: Index in position 2 exceeds array bounds.
+[13-Jan-2022 17:24:43]: Not enough input arguments.
 
-Error in ROIUtils.split_solution_info (line 365)
-            solNames = solutionInfo(:, 1);
+Error in ROITable/norm_red_integral (line 173)
+            normVals = ROIUtils.normalize(obj.red_integral(), nBaselinePts);
 
-Error in PlotMenu.plot_all (line 209)
-                    solutionInfo = ROIUtils.split_solution_info(allSolutions);
+Error in AveragedFile.save (line 409)
+                normRed = roiData.norm_red_integral();
+
+Error in FileMenu.save (line 334)
+                    AveragedFile.save(savepath, saveData, ROIUtils.trim_dna_type(dnaType), solutions, userPreferences, optns{:});
 
 Error in GUI.try_callback (line 5)
                 callback(varargin{:});
 
-Error in analysis_1_2_IB_100921>menuPlotAll_Callback (line 255)
-GUI.try_callback(@PlotMenu.plot_all, @AppState.logdlg, hObject);
+Error in analysis_1_2_IB_100921>menuSave_Callback (line 133)
+GUI.try_callback(@FileMenu.save, @AppState.logdlg, hObject);
 
 Error in gui_mainfcn (line 95)
         feval(varargin{:});
@@ -91,22 +64,19 @@ Error in gui_mainfcn (line 95)
 Error in analysis_1_2_IB_100921 (line 43)
     gui_mainfcn(gui_State, varargin{:});
 
-Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuSave_Callback',hObject,eventdata,guidata(hObject))
 
 
-[09-Oct-2021 13:45:50]: Index in position 2 exceeds array bounds.
+[13-Jan-2022 17:26:26]: Abstract classes cannot be instantiated.  Class 'AveragedFile' inherits abstract methods or properties but does not implement them.  See the <a href="matlab:meta.abstractDetails('AveragedFile')">list of methods and properties</a> that 'AveragedFile' must implement if you do not intend the class to be abstract.
 
-Error in ROIUtils.split_solution_info (line 365)
-            solNames = solutionInfo(:, 1);
-
-Error in PlotMenu.plot_all (line 209)
-                    solutionInfo = ROIUtils.split_solution_info(allSolutions);
+Error in FileMenu.open (line 33)
+                openFile = AveragedFile(filepaths);
 
 Error in GUI.try_callback (line 5)
                 callback(varargin{:});
 
-Error in analysis_1_2_IB_100921>menuPlotAll_Callback (line 255)
-GUI.try_callback(@PlotMenu.plot_all, @AppState.logdlg, hObject);
+Error in analysis_1_2_IB_100921>menuOpen_Callback (line 126)
+GUI.try_callback(@FileMenu.open, @AppState.logdlg, hObject)
 
 Error in gui_mainfcn (line 95)
         feval(varargin{:});
@@ -114,6 +84,6 @@ Error in gui_mainfcn (line 95)
 Error in analysis_1_2_IB_100921 (line 43)
     gui_mainfcn(gui_State, varargin{:});
 
-Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuPlotAll_Callback',hObject,eventdata,guidata(hObject))
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuOpen_Callback',hObject,eventdata,guidata(hObject))
 
 

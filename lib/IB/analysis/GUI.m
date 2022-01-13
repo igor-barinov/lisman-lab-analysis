@@ -290,6 +290,7 @@ classdef GUI
             % Get new program state
             openFiles = AppState.get_open_files(handles);
             newTableData = AppState.get_roi_data(handles);
+            settingsMap = AppState.get_user_preferences();
 
             % Just clear table if necessary
             if isempty(newTableData)
@@ -321,14 +322,55 @@ classdef GUI
                     numBasePts = 1;
                 end
                 
+                if strcmp(settingsMap('lt_is_norm'), 'true')
+                    lifetime = newTableData.normalized_lifetime(numBasePts);
+                else
+                    lifetime = newTableData.lifetime();
+                end
                 
-                lifetime = newTableData.normalized_lifetime(numBasePts);
-                int = newTableData.normalized_green(numBasePts);
-                red = newTableData.normalized_red(numBasePts);
+                % Normalize green/red only if necessary, based on user pref
+                
+                if strcmp(settingsMap('green_is_norm'), 'true')
+                    if strcmp(settingsMap('green_is_int'), 'true')
+                        int = newTableData.norm_green_integral(numBasePts);
+                    else
+                        int = newTableData.normalized_green(numBasePts);
+                    end
+                else
+                    if strcmp(settingsMap('green_is_int'), 'true')
+                        int = newTableData.green_integral();
+                    else
+                        int = newTableData.green();
+                    end
+                end
+                
+                if strcmp(settingsMap('red_is_norm'), 'true')
+                    if strcmp(settingsMap('red_is_int'), 'true')
+                        red = newTableData.norm_red_integral(numBasePts);
+                    else
+                        red = newTableData.normalized_red(numBasePts);
+                    end
+                else
+                    if strcmp(settingsMap('red_is_int'), 'true')
+                        red = newTableData.red_integral();
+                    else
+                        red = newTableData.red();
+                    end
+                end
             else
                 lifetime = newTableData.lifetime();
-                int = newTableData.green();
-                red = newTableData.red();
+                
+                if strcmp(settingsMap('green_is_int'), 'true')
+                    int = newTableData.green_integral();
+                else
+                    int = newTableData.green();
+                end
+                
+                if strcmp(settingsMap('red_is_int'), 'true')
+                    red = newTableData.red_integral();
+                else
+                    red = newTableData.red();
+                end
             end
 
             % Enable/Disable ROIs if necessary

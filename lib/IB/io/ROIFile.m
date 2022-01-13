@@ -10,6 +10,7 @@ classdef (Abstract) ROIFile < ROIData
         [names] = experiment_names(obj);
         [count] = file_count(obj);
         [counts] = file_roi_counts(obj);
+        [tf] = is_integral(obj);
         
         [tf] = has_exp_info(obj);
         [dnaTypes] = dna_types(obj);

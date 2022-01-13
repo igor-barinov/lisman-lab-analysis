@@ -26,8 +26,6 @@ classdef PreferencesApp
             PreferencesApp.set_settings_map(handles, settingsMap);
             PreferencesApp.set_edit_status(handles, false);
             PreferencesApp.update_gui(handles);
-            PreferencesApp.reset_dbclick_timer(handles);
-            PreferencesApp.set_prev_selected_default(handles, 1);
         end
         
         function logdlg(lastErr)
@@ -110,8 +108,8 @@ classdef PreferencesApp
         % (OUT) "values": A cell of strings describing each option's default value
         %
             figureTypes = {'lt', 'green', 'red'};
-            figureSettings = {'x', 'y', 'h', 'w', 'x_min', 'x_max', 'y_min', 'y_max'};
-            figureValues = {'100', '100', '300', '400', '-inf', 'inf', '-inf', 'inf'};
+            figureSettings = {'x', 'y', 'h', 'w', 'x_min', 'x_max', 'y_min', 'y_max', 'is_norm'};
+            figureValues = {'100', '100', '300', '400', '-inf', 'inf', '-inf', 'inf', 'false'};
 
             settings = {};
             values = {};
@@ -123,6 +121,12 @@ classdef PreferencesApp
                     values{end+1} = figureValues{j};
                 end
             end
+            
+            % Additonal misc settings
+            settings{end+1} = 'green_is_int';
+            values{end+1} = 'false';
+            settings{end+1} = 'red_is_int';
+            values{end+1} = 'false';
         end
         
         function [settings, values] = initial_plotting_settings()
@@ -252,6 +256,11 @@ classdef PreferencesApp
             newValues = values(settingsMap, newSettings);
             iniFile = PreferencesApp.settings_filepath();
             IOUtils.create_ini_file(iniFile, newSettings, newValues);
+            
+            % Re-add figure settings to map
+            for i = 1:numel(figSettings)
+                 settingsMap(figSettings{i}) = figValues{i};
+            end
 
             % Update GUI
             PreferencesApp.update_gui(handles);
@@ -289,94 +298,30 @@ classdef PreferencesApp
             PreferencesApp.set_settings_map(handles, settingsMap);
         end
         
-        function reset_dbclick_timer(handles)
-            newTimer = tic;
-            setappdata(handles.('mainFig'), 'DBCLICK_TIMER', newTimer);
-        end
-        
-        function [time] = get_dbclick_time(handles)
-            time = toc(getappdata(handles.('mainFig'), 'DBCLICK_TIMER'));
-        end
-        
-        function set_prev_selected_default(handles, selection)
-            setappdata(handles.('mainFig'), 'PREV_SELECTED_DEF', selection);
-        end
-        
-        function [selection] = get_prev_selected_default(handles)
-            selection = getappdata(handles.('mainFig'), 'PREV_SELECTED_DEF');
-        end
-        
         function savedDefsList(handle)
             % Get program state
             handles = guidata(handle);
             settingsMap = PreferencesApp.get_settings_map(handles);
-            dbClickTime = PreferencesApp.get_dbclick_time(handles);
-            prevSelection = PreferencesApp.get_prev_selected_default(handles);
-            
 
             % Get list of defaults and current selection
             savedDefaults = get(handle, 'String');
             selection = get(handle, 'Value');
+
+            % Load file corresponding to selected default
             selectedDefault = savedDefaults{selection};
-            
-            % Check if there was a double-click
-            if prevSelection == selection && dbClickTime < 1
-                
-                % Let user input a new name
-                dlgOpts = {sprintf('Enter new name for default "%s"', selectedDefault), ...
-                           'Rename Default', ...
-                           [1 50], ...
-                           {selectedDefault}};
-                
-                userInput = inputdlg(dlgOpts{:});
-                if ~isempty(userInput)
-                    % Save new default name
-                    newDefaultName = userInput{1};
-                    prevIniFile = PreferencesApp.figure_default_filepath(selectedDefault);
-                    newIniFile = PreferencesApp.figure_default_filepath(newDefaultName);
-                    
-                    if exist(newIniFile, 'file') == 2
-                        warndlg('A default with this name already exists');
-                        return;
-                    end
-                    
-                    movefile(prevIniFile, newIniFile);
-                    
-                    settingsMap = PreferencesApp.get_settings_map(handles);
-                    settingsMap('plot_default') = newDefaultName;
-                    remove(settingsMap, selectedDefault);
-                    settingsMap(newDefaultName) = 'saved';
-                    
-                    savedDefaults{selection} = newDefaultName;
-                    set(handle, 'String', savedDefaults);
-                    
-                    [figSettings, ~] = PreferencesApp.initial_figure_settings();
-                    remove(settingsMap, figSettings);
-                    newSettings = keys(settingsMap);
-                    newValues = values(settingsMap, newSettings);
-                    iniFile = PreferencesApp.settings_filepath();
-                    IOUtils.create_ini_file(iniFile, newSettings, newValues);
-                end
-            else
-                % Load file corresponding to selected default
-                iniSelected = PreferencesApp.figure_default_filepath(selectedDefault);
-                [figSettings, figValues] = IOUtils.read_ini_file(iniSelected);
+            iniSelected = PreferencesApp.figure_default_filepath(selectedDefault);
+            [figSettings, figValues] = IOUtils.read_ini_file(iniSelected);
 
-                for i = 1:numel(figSettings)
-                    setting = figSettings{i};
-                    value = figValues{i};
+            for i = 1:numel(figSettings)
+                setting = figSettings{i};
+                value = figValues{i};
 
-                    settingsMap(setting) = value;
-                end
-                settingsMap('plot_default') = selectedDefault;
+                settingsMap(setting) = value;
             end
-            
+            settingsMap('plot_default') = selectedDefault;
+
             PreferencesApp.set_settings_map(handles, settingsMap);
             PreferencesApp.update_gui(handles);
-
-            
-            PreferencesApp.reset_dbclick_timer(handles);
-            PreferencesApp.set_prev_selected_default(handles, selection);
         end
         
         function btnAddDefault(handle)

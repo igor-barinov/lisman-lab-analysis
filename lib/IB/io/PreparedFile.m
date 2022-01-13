@@ -5,10 +5,10 @@ classdef PreparedFile < ROIFile
     end
     
     methods
+        function [this] = PreparedFile(filepaths)
         %% --------------------------------------------------------------------------------------------------------
         % 'PreparedFile' Constructor
         %
-        function [this] = PreparedFile(filepaths)
             if nargin == 0
                 this.filepaths = {};
                 this.filedata = [];
@@ -26,9 +26,19 @@ classdef PreparedFile < ROIFile
                     dataStruct.('dnaType') = prepData.('dnaType');
                     dataStruct.('solutions') = prepData.('solutions');
                     
-                    % Possible fields
+                    % Append user pref if exists
                     if isfield(prepData, 'userPref')
                         dataStruct.('userPref') = prepData.('userPref');
+                    else
+                        dataStruct.('userPref') = [];
+                    end
+                    
+                    % Append integral specification if exists, otherwise indicate as no integral data
+                    if isfield(prepData, 'isIntegral')
+                        isInt = prepData.('isIntegral');
+                        dataStruct.('isIntegral') = isInt(2:end); % exclude column for time series
+                    else
+                        dataStruct.('isIntegral') = false(1, dataStruct.('numROI'));
                     end
                     
                     this.filedata = [this.filedata, dataStruct];
@@ -36,58 +46,72 @@ classdef PreparedFile < ROIFile
             end
         end
         
+        
+        function [fileType] = type(~)
         %% --------------------------------------------------------------------------------------------------------
         % 'type' Accessor
         %
-        function [fileType] = type(~)
             fileType = ROIFileType.Prepared;
         end
         
+        
+        function [filepaths] = source_files(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'source_files' Accessor
         %
-        function [filepaths] = source_files(obj)
             filepaths = obj.filepaths;
         end
         
+        
+        function [names] = experiment_names(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'experiment_names' Accessor
         %
-        function [names] = experiment_names(obj)
             names = cell(numel(obj.filepaths), 1);
             for i = 1:numel(names)
                 [~, names{i}, ~] = fileparts(obj.filepaths{i});
             end
         end
         
+        
+        function [count] = file_count(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'file_count' Accessor
         %
-        function [count] = file_count(obj)
             count = numel(obj.filedata);
         end
         
+        
+        function [counts] = file_roi_counts(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'file_roi_counts' Accessor
         %
-        function [counts] = file_roi_counts(obj)
             counts = zeros(1, numel(obj.filedata));
             for i = 1:numel(obj.filedata)
                 counts(i) = obj.filedata(i).('numROI');
             end
         end
         
+        function [tf] = is_integral(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'is_integral' Accessor
+        %
+            tf = [obj.filedata.('isIntegral')];
+            tf = [false, tf];
+        end
+        
+        function [count] = roi_count(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'roi_count' Accessor
         %
-        function [count] = roi_count(obj)
             count = sum(obj.file_roi_counts());
         end
         
+        
+        function [counts] = point_counts(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'point_counts' Accessor
         %
-        function [counts] = point_counts(obj)
             counts = zeros(1, numel(obj.filedata));
             for i = 1:numel(obj.filedata)
                 ROIs = obj.filedata(i).('alladj');
@@ -95,10 +119,11 @@ classdef PreparedFile < ROIFile
             end
         end
         
+        
+        function [values] = time(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'time' Accessor
         %
-        function [values] = time(obj)
             pointCounts = obj.point_counts();
             [~, targetFile] = max(pointCounts);
             ROIs = obj.filedata(targetFile).('alladj');
@@ -106,49 +131,69 @@ classdef PreparedFile < ROIFile
             %values = values / 60 / 24;
         end
         
+        
+        function [adjVals] = adjusted_time(obj, nBaselinePts)
         %% --------------------------------------------------------------------------------------------------------
         % 'adjusted_time' Accessor
         %
-        function [adjVals] = adjusted_time(obj, nBaselinePts)
             time = obj.time() * 60 * 24;
             adjVals = time - time(nBaselinePts);
         end
         
+        
+        function [tf] = has_exp_info(~)
         %% --------------------------------------------------------------------------------------------------------
         % 'has_exp_info' Accessor
         %
-        function [tf] = has_exp_info(~)
             tf = true;
         end
         
+        
+        function [labels] = roi_labels(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'roi_labels' Accessor
         %
-        function [labels] = roi_labels(obj)
             roiCount = obj.roi_count();
+            isInt = obj.is_integral();
             labels = cell(roiCount * 3 + 1, 1);
             labels{1} = 'Time';
-            for i = 1:roiCount
-                labels{i+1}             = ['Tau #', num2str(i)];
-                labels{i+roiCount+1}    = ['Int #', num2str(i)];
-                labels{i+2*roiCount+1}  = ['Red #', num2str(i)];
+            for i = 1:roiCount                
+                if isInt(i+1)
+                    labels{i+1}             = ['Tau (Integral) #', num2str(i)];
+                else
+                    labels{i+1}             = ['Tau (Mean) #', num2str(i)];
+                end
+                
+                if isInt(i+roiCount+1)
+                    labels{i+roiCount+1}    = ['Int (Integral) #', num2str(i)];
+                else
+                    labels{i+roiCount+1}    = ['Int (Mean) #', num2str(i)];
+                end
+                
+                if isInt(i+2*roiCount+1)
+                    labels{i+2*roiCount+1}  = ['Red (Integral) #', num2str(i)];
+                else
+                    labels{i+2*roiCount+1}  = ['Red (Mean) #', num2str(i)];
+                end
             end
         end
         
+        
+        function [dnaTypes] = dna_types(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'dna_types' Accessor
         %
-        function [dnaTypes] = dna_types(obj)
             dnaTypes = cell(1, numel(obj.filedata));
             for i = 1:numel(dnaTypes)
                 dnaTypes{i} = obj.filedata(i).('dnaType');
             end
         end
         
+        
+        function [solutions] = solution_info(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'solution_info' Accessor
         %
-        function [solutions] = solution_info(obj)
             solutions = cell(1, numel(obj.filedata));
             for i = 1:numel(solutions)
                 solutions{i} = obj.filedata(i).('solutions');
@@ -163,7 +208,13 @@ classdef PreparedFile < ROIFile
         %
         % (OUT) "tf": True if any user preferences data is found, false otherwise
         %
-            tf = isfield(obj.filedata, 'userPref');
+            tf = false;
+            for i = 1:numel(obj.filedata)
+                if ~isempty(obj.filedata(i).('userPref'))
+                    tf = true;
+                    return;
+                end
+            end
         end
         
         function [defaults] = plotting_defaults(obj)
@@ -206,7 +257,8 @@ classdef PreparedFile < ROIFile
         end
         
         function [positions] = annotation_positions(~)
-        %% --------------------------------------------------------------------------------------------------------
+        %% NOT IMPLEMENTED --------------------------------------------------------------------------------------------------------
+        %
         % 'annotation_positions' Accessor
         %
         % Returns the saved annotation positions
@@ -216,10 +268,11 @@ classdef PreparedFile < ROIFile
             positions = {};
         end
         
+        
+        function [values] = lifetime(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'lifetime' Accessor
         %
-        function [values] = lifetime(obj)
             roiCounts = obj.file_roi_counts();
             pointCounts = obj.point_counts();
             maxPointCount = max(pointCounts);
@@ -237,17 +290,22 @@ classdef PreparedFile < ROIFile
             end
         end
         
+        
+        function [normVals] = normalized_lifetime(obj, nBaselinePts)
         %% --------------------------------------------------------------------------------------------------------
         % 'normalized_lifetime' Accessor
         %
-        function [normVals] = normalized_lifetime(obj, nBaselinePts)
             normVals = ROIUtils.normalize(obj.lifetime(), nBaselinePts);
         end
         
+        
+        function [values] = green(obj)
         %% --------------------------------------------------------------------------------------------------------
         % 'green' Accessor
         %
-        function [values] = green(obj)
+        % 
+        % Any integral values are replaced with NaNs
+        %
             roiCounts = obj.file_roi_counts();
             pointCounts = obj.point_counts();
             maxPointCount = max(pointCounts);
@@ -259,23 +317,23 @@ classdef PreparedFile < ROIFile
                 ROIs = obj.filedata(i).('alladj');
                 roiCount = roiCounts(i);
                 nPoints = pointCounts(i);
-                intVals = ROIs(:, 2+roiCount:2*roiCount+1);
-                values(1:nPoints, roiIdx:roiIdx+roiCount-1) = intVals;
+                
+                isIntegral = [false, obj.filedata(i).('isIntegral')];
+                ROIs(:, isIntegral) = NaN;
+                
+                greenVals = ROIs(:, 2+roiCount:2*roiCount+1);
+                values(1:nPoints, roiIdx:roiIdx+roiCount-1) = greenVals;
                 roiIdx = roiIdx + roiCount;
             end
         end
         
+        function [values] = green_integral(obj)
         %% --------------------------------------------------------------------------------------------------------
-        % 'normalized_green' Accessor
+        % 'green_integral' Accessor
         %
-        function [normVals] = normalized_green(obj, nBaselinePts)
-            normVals = ROIUtils.normalize(obj.green(), nBaselinePts);
-        end
+        % Any mean values are replaced with NaNs
+        %
         
-        %% --------------------------------------------------------------------------------------------------------
-        % 'red' Accessor
-        %
-        function [values] = red(obj)
             roiCounts = obj.file_roi_counts();
             pointCounts = obj.point_counts();
             maxPointCount = max(pointCounts);
@@ -287,25 +345,125 @@ classdef PreparedFile < ROIFile
                 ROIs = obj.filedata(i).('alladj');
                 roiCount = roiCounts(i);
                 nPoints = pointCounts(i);
+                
+                isIntegral = [false, obj.filedata(i).('isIntegral')];
+                ROIs(:, ~isIntegral) = NaN;
+                
+                greenVals = ROIs(:, 2+roiCount:2*roiCount+1);
+                values(1:nPoints, roiIdx:roiIdx+roiCount-1) = greenVals;
+                roiIdx = roiIdx + roiCount;
+            end
+        end
+        
+        function [tf] = green_is_integral(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'green_is_integral' Accessor
+        %
+        % Checks if all green values are integral
+        %
+        % (OUT) "tf": True if all green values are integral, false otherwise
+        %
+            tf = all(isnan(obj.green()));
+        end
+        
+        
+        function [normVals] = normalized_green(obj, nBaselinePts)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'normalized_green' Accessor
+        %
+            normVals = ROIUtils.normalize(obj.green(), nBaselinePts);
+        end
+        
+        function [normVals] = norm_green_integral(obj, nBaselinePts)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'norm_green_integral' Accessor
+        %
+            normVals = ROIUtils.normalize(obj.green_integral(), nBaselinePts);
+        end
+        
+        
+        function [values] = red(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'red' Accessor
+        %
+            roiCounts = obj.file_roi_counts();
+            pointCounts = obj.point_counts();
+            maxPointCount = max(pointCounts);
+            totalROICount = obj.roi_count();
+            
+            values = NaN(maxPointCount, totalROICount);
+            roiIdx = 1;
+            for i = 1:numel(obj.filedata)
+                ROIs = obj.filedata(i).('alladj');
+                roiCount = roiCounts(i);
+                nPoints = pointCounts(i);
+                
+                isIntegral = [false, obj.filedata(i).('isIntegral')];
+                ROIs(:, isIntegral) = NaN;
+                
                 redVals = ROIs(:, 2+2*roiCount:3*roiCount+1);
                 values(1:nPoints, roiIdx:roiIdx+roiCount-1) = redVals;
                 roiIdx = roiIdx + roiCount;
             end
         end
         
+        function [values] = red_integral(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'red_integral' Accessor
+        %
+            roiCounts = obj.file_roi_counts();
+            pointCounts = obj.point_counts();
+            maxPointCount = max(pointCounts);
+            totalROICount = obj.roi_count();
+            
+            values = NaN(maxPointCount, totalROICount);
+            roiIdx = 1;
+            for i = 1:numel(obj.filedata)
+                ROIs = obj.filedata(i).('alladj');
+                roiCount = roiCounts(i);
+                nPoints = pointCounts(i);
+                
+                isIntegral = [false, obj.filedata(i).('isIntegral')];
+                ROIs(:, ~isIntegral) = NaN;
+                
+                redVals = ROIs(:, 2+2*roiCount:3*roiCount+1);
+                values(1:nPoints, roiIdx:roiIdx+roiCount-1) = redVals;
+                roiIdx = roiIdx + roiCount;
+            end
+        end
+        
+        function [tf] = red_is_integral(obj)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'red_is_integral' Accessor
+        %
+        % Checks if all red values are integral
+        %
+        % (OUT) "tf": True if all red values are integral, false otherwise
+        %
+            tf = all(isnan(obj.red()));
+        end
+        
+        
+        function [normVals] = normalized_red(obj, nBaselinePts)
         %% --------------------------------------------------------------------------------------------------------
         % 'normalized_red' Accessor
         %
-        function [normVals] = normalized_red(obj, nBaselinePts)
             normVals = ROIUtils.normalize(obj.red(), nBaselinePts);
+        end
+        
+        function [normVals] = norm_red_integral(obj, nBaselinePts)
+        %% --------------------------------------------------------------------------------------------------------
+        % 'norm_red_integral' Accessor
+        %
+            normVals = ROIUtils.normalize(obj.red_integral(), nBaselinePts);
         end
     end
     
     methods (Static)
+        function [tf] = follows_format(filepaths)
         %% --------------------------------------------------------------------------------------------------------
         % 'follows_format' Method
         %
-        function [tf] = follows_format(filepaths)
             tf = false(1, numel(filepaths));
             for i = 1:numel(filepaths)
                 try
@@ -323,16 +481,26 @@ classdef PreparedFile < ROIFile
             end
         end
         
+        
+        function save(filepath, roiData, dnaType, solutionInfo, varargin)
         %% --------------------------------------------------------------------------------------------------------
         % 'save' Method
         %
-        function save(filepath, roiData, dnaType, solutionInfo, varargin)
+        % Saves given ROI data to the specified filepath, with options for saving user preferences
+        %
+        % (IN) "filepath": String specifying path where file will be saved
+        % (IN) "roiData": A ROIData object containing the data to be saved
+        % (IN) "dnaType": String labeling which DNA the ROI data corresponds to
+        % (IN) "solutionInfo": A n x 2 cell table containing the timings of solution applications, where each row is (data pt #, solution name)
+        % (OPT. IN) "userPref": A struct containing user preference data
+        % (OPT. IN) "isIntegral": A logical array specifying which timeseries data is integral. 
+        %                         True values indicate integral, and false indicate otherwise
+        %
             time = roiData.time();
-            adjTime = roiData.adjusted_time(ROIUtils.number_of_baseline_pts(solutionInfo));
+            %adjTime = roiData.adjusted_time(ROIUtils.number_of_baseline_pts(solutionInfo));
             lifetime = roiData.lifetime();
             green = roiData.green();
             red = roiData.red();
-            
             prepData = struct;
             
             % Save mandatory fields
@@ -341,8 +509,23 @@ classdef PreparedFile < ROIFile
             prepData.('dnaType') = dnaType;
             prepData.('solutions') = solutionInfo;
             
-            % Save any optional fields
-            if nargin >= 5
+            
+            
+            if nargin > 5 % Save integral data if necessary
+                isIntegral = varargin{2};
+                greenInt = roiData.green_integral();
+                redInt = roiData.red_integral();
+                meanData = [time, lifetime, green, red];
+                intData = [time, lifetime, greenInt, redInt];
+                
+                allData = NaN(size(prepData.('alladj')));
+                allData(:, isIntegral) = intData(:, isIntegral);
+                allData(:, ~isIntegral) = meanData(:, ~isIntegral);
+                
+                prepData.('isIntegral') = isIntegral;
+                prepData.('alladj') = allData;
+                
+            elseif nargin > 4 % Save user pref if necessary
                 prepData.('userPref') = varargin{1};
             end
             

@@ -33,14 +33,53 @@ classdef PlotMenu
                     nBaselinePts = 1;
                 end
                 
-
-                lifetime = roiData.normalized_lifetime(nBaselinePts);
-                int = roiData.normalized_green(nBaselinePts);
-                red = roiData.normalized_red(nBaselinePts);
+                if strcmp(settingsMap('lt_is_norm'), 'true')
+                    lifetime = roiData.normalized_lifetime(nBaselinePts);
+                else
+                    lifetime = roiData.lifetime();
+                end
+                
+                if strcmp(settingsMap('green_is_norm'), 'true')
+                    if strcmp(settingsMap('green_is_int'), 'true')
+                        int = roiData.norm_green_integral(nBaselinePts);
+                    else
+                        int = roiData.normalized_green(nBaselinePts);
+                    end
+                else
+                    if strcmp(settingsMap('green_is_int'), 'true')
+                        int = roiData.green_integral();
+                    else
+                        int = roiData.green();
+                    end
+                end
+                
+                if strcmp(settingsMap('red_is_norm'), 'true')
+                    if strcmp(settingsMap('red_is_int'), 'true')
+                        red = roiData.norm_red_integral(nBaselinePts);
+                    else
+                        red = roiData.normalized_red(nBaselinePts);
+                    end
+                else
+                    if strcmp(settingsMap('red_is_int'), 'true')
+                        red = roiData.red_integral();
+                    else
+                        red = roiData.red();
+                    end
+                end
+                
+                
             else
                 lifetime = roiData.lifetime();
-                int = roiData.green();
-                red = roiData.red();
+                if strcmp(settingsMap('green_is_int'), 'true')
+                    int = roiData.green_integral();
+                else
+                    int = roiData.green();
+                end
+                if strcmp(settingsMap('red_is_int'), 'true')
+                    red = roiData.red_integral();
+                else
+                    red = roiData.red();
+                end
             end
 
             % Check if necessary data exists
@@ -199,7 +238,12 @@ classdef PlotMenu
                 xlim([greenXMin, greenXMax]);
                 ylim([greenYMin, greenYMax]);
                 xlabel('Time');
-                ylabel('Mean Intensity (Ch #1)');
+                
+                if strcmp(settingsMap('green_is_int'), 'true')
+                    ylabel('Integral Intensity (Ch #1)');
+                else
+                    ylabel('Mean Intensity (Ch #1)');
+                end
                 legend(legendEntries);
                 legend('boxoff');
 
@@ -234,7 +278,11 @@ classdef PlotMenu
                 xlim([redXMin, redXMax]);
                 ylim([redYMin, redYMax]);
                 xlabel('Time');
-                ylabel('Mean Intensity (Ch #2)');
+                if strcmp(settingsMap('red_is_int'), 'true')
+                    ylabel('Integral Intensity (Ch #2)');
+                else
+                    ylabel('Mean Intensity (Ch #2)');
+                end
                 legend(legendEntries);
                 legend('boxoff');
 
@@ -299,15 +347,52 @@ classdef PlotMenu
                 else
                     nBaselinePts = 1;
                 end
-                
 
-                lifetime = roiData.normalized_lifetime(nBaselinePts);
-                int = roiData.normalized_green(nBaselinePts);
-                red = roiData.normalized_red(nBaselinePts);
+                if strcmp(settingsMap('lt_is_norm'), 'true')
+                    lifetime = roiData.normalized_lifetime(nBaselinePts);
+                else
+                    lifetime = roiData.lifetime();
+                end
+                
+                if strcmp(settingsMap('green_is_norm'), 'true')
+                    if strcmp(settingsMap('green_is_int'), 'true')
+                        int = roiData.norm_green_integral(nBaselinePts);
+                    else
+                        int = roiData.normalized_green(nBaselinePts);
+                    end
+                else
+                    if strcmp(settingsMap('green_is_int'), 'true')
+                        int = roiData.green_integral();
+                    else
+                        int = roiData.green();
+                    end
+                end
+                
+                if strcmp(settingsMap('red_is_norm'), 'true')
+                    if strcmp(settingsMap('red_is_int'), 'true')
+                        red = roiData.norm_red_integral(nBaselinePts);
+                    else
+                        red = roiData.normalized_red(nBaselinePts);
+                    end
+                else
+                    if strcmp(settingsMap('red_is_int'), 'true')
+                        red = roiData.red_integral();
+                    else
+                        red = roiData.red();
+                    end
+                end
             else
                 lifetime = roiData.lifetime();
-                int = roiData.green();
-                red = roiData.red();
+                if strcmp(settingsMap('green_is_int'), 'true')
+                    int = roiData.green_integral();
+                else
+                    int = roiData.green();
+                end
+                if strcmp(settingsMap('red_is_int'), 'true')
+                    red = roiData.red_integral();
+                else
+                    red = roiData.red();
+                end
             end
 
             % Check if necessary data exists
@@ -457,7 +542,11 @@ classdef PlotMenu
                 xlim([greenXMin, greenXMax]);
                 ylim([greenYMin, greenYMax]);
                 xlabel('Time');
-                ylabel('Mean Intensity (Ch #1)');
+                if strcmp(settingsMap('green_is_int'), 'true')
+                    ylabel('Integral Intensity (Ch #1)');
+                else
+                    ylabel('Mean Intensity (Ch #1)');
+                end
                 legend(legendEntries);
                 legend('boxoff');
 
@@ -493,7 +582,11 @@ classdef PlotMenu
                 xlim([redXMin, redXMax]);
                 ylim([redYMin, redYMax]);
                 xlabel('Time');
-                ylabel('Mean Intensity (Ch #1)');
+                if strcmp(settingsMap('red_is_int'), 'true')
+                    ylabel('Integral Intensity (Ch #2)');
+                else
+                    ylabel('Mean Intensity (Ch #2)');
+                end
                 legend(legendEntries);
                 legend('boxoff');
 
@@ -543,13 +636,51 @@ classdef PlotMenu
                 end
                 
 
-                lifetime = roiData.normalized_lifetime(nBaselinePts);
-                int = roiData.normalized_green(nBaselinePts);
-                red = roiData.normalized_red(nBaselinePts);
+                if strcmp(settingsMap('lt_is_norm'), 'true')
+                    lifetime = roiData.normalized_lifetime(nBaselinePts);
+                else
+                    lifetime = roiData.lifetime();
+                end
+                
+                if strcmp(settingsMap('green_is_norm'), 'true')
+                    if strcmp(settingsMap('green_is_int'), 'true')
+                        int = roiData.norm_green_integral(nBaselinePts);
+                    else
+                        int = roiData.normalized_green(nBaselinePts);
+                    end
+                else
+                    if strcmp(settingsMap('green_is_int'), 'true')
+                        int = roiData.green_integral();
+                    else
+                        int = roiData.green();
+                    end
+                end
+                
+                if strcmp(settingsMap('red_is_norm'), 'true')
+                    if strcmp(settingsMap('red_is_int'), 'true')
+                        red = roiData.norm_red_integral(nBaselinePts);
+                    else
+                        red = roiData.normalized_red(nBaselinePts);
+                    end
+                else
+                    if strcmp(settingsMap('red_is_int'), 'true')
+                        red = roiData.red_integral();
+                    else
+                        red = roiData.red();
+                    end
+                end
             else
                 lifetime = roiData.lifetime();
-                int = roiData.green();
-                red = roiData.red();
+                if strcmp(settingsMap('green_is_int'), 'true')
+                    int = roiData.green_integral();
+                else
+                    int = roiData.green();
+                end
+                if strcmp(settingsMap('red_is_int'), 'true')
+                    red = roiData.red_integral();
+                else
+                    red = roiData.red();
+                end
             end
 
             % Check if necessary data exists
@@ -675,7 +806,11 @@ classdef PlotMenu
                 xlim([greenXMin, greenXMax]);
                 ylim([greenYMin, greenYMax]);
                 xlabel('Time');
-                ylabel('Mean Intensity (Ch #1)');
+                if strcmp(settingsMap('green_is_int'), 'true')
+                    ylabel('Integral Intensity (Ch #1)');
+                else
+                    ylabel('Mean Intensity (Ch #1)');
+                end
                 legend(legendEntries, 'Location', 'south');
                 legend('boxoff');
 
@@ -701,7 +836,11 @@ classdef PlotMenu
                 xlim([redXMin, redXMax]);
                 ylim([redYMin, redYMax]);
                 xlabel('Time');
-                ylabel('Mean Intensity (Ch #2)');
+                if strcmp(settingsMap('red_is_int'), 'true')
+                    ylabel('Integral Intensity (Ch #2)');
+                else
+                    ylabel('Mean Intensity (Ch #2)');
+                end
                 legend(legendEntries, 'Location', 'south');
                 legend('boxoff');
 

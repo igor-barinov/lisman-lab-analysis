@@ -1,11 +1,10 @@
-function spc_selectAll()
+function spc_selectAllRois()
     global spc
     global gui
-
-    if isfield(spc, 'roipoly')
-        spc.roipoly = spc.project*0 + 1;    
-    end
     
+    spc.roipoly = spc.project * 0;
+
+    fullMask = spc.roipoly;
     for i = 1:length(gui.spc.figure.roiB)
         hA = gui.spc.figure.roiA(i);
         hB = gui.spc.figure.roiB(i);
@@ -15,12 +14,22 @@ function spc_selectAll()
             continue;
         end
 
-        if ~isa(hA, 'matlab.graphics.primitive.Rectangle')            
-            set(hA, 'color', 'cyan');
-            set(hB, 'color', 'cyan');
-            set(hC, 'color', 'cyan');
+        if ~isa(hA, 'matlab.graphics.primitive.Rectangle')
+            lineX = get(hA, 'XData');
+            lineY = get(hA, 'YData');
+
+            imgSize = size(spc.project);
+            roiMask = roipoly([1 imgSize(1)], [1 imgSize(2)], spc.project, lineX, lineY);
+
+            fullMask = fullMask | roiMask;
+            
+            set(hA, 'color', 'red');
+            set(hB, 'color', 'red');
+            set(hC, 'color', 'red');
         end
     end
+
+    spc.roipoly = fullMask;
 
     Xlim1 = get(gui.spc.figure.projectAxes, 'Xlim');
     Ylim1 = get(gui.spc.figure.projectAxes, 'Ylim');
