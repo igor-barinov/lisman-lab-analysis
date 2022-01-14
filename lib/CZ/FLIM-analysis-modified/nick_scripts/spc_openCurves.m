@@ -48,11 +48,20 @@ if error == 2
     spc.switches.noSPC = 1;
 end
 
+isSingleRoiSelection = get(gui.spc.spc_main.use_single_roi, 'Value');
+isSelectAllRois = get(gui.spc.spc_main.use_all_rois, 'Value');
+
 if ~error
     roiP = get(gui.spc.figure.mapRoi, 'position');
     
     if roiP(3)<=1 || roiP(4) <= 1 || (roiP(1)+roiP(3)) >= spc.datainfo.scan_x || (roiP(2) + roiP(4)) >= spc.datainfo.scan_y/spc.datainfo.scan_rx
-        spc_selectAll();
+        if ~isSingleRoiSelection
+            if isSelectAllRois
+                spc_selectAllRois();
+            else
+                spc_selectAll();
+            end
+        end
     end
     
 end
@@ -232,9 +241,8 @@ end %LAST_PROJECT
 % waitbar(1.0, loadbar);
 % close(loadbar);
 
-isSelectAllRois = get(gui.spc.spc_main.use_all_rois, 'Value');
-if isSelectAllRois
-    spc_selectAllRois();
-else
-    spc_selectAll();
-end
+
+
+
+
+

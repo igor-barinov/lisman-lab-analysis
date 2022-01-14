@@ -6,19 +6,21 @@ function spc_selectAll()
         spc.roipoly = spc.project*0 + 1;    
     end
     
-    for i = 1:length(gui.spc.figure.roiB)
-        hA = gui.spc.figure.roiA(i);
-        hB = gui.spc.figure.roiB(i);
-        hC = gui.spc.figure.roiC(i);
+    if isfield(gui.spc.figure, 'roiB')
+        for i = 1:length(gui.spc.figure.roiB)
+            hA = gui.spc.figure.roiA(i);
+            hB = gui.spc.figure.roiB(i);
+            hC = gui.spc.figure.roiC(i);
 
-        if ~ishandle(hA) || ~ishandle(hB) || ~ishandle(hC)
-            continue;
-        end
+            if ~ishandle(hA) || ~ishandle(hB) || ~ishandle(hC)
+                continue;
+            end
 
-        if ~isa(hA, 'matlab.graphics.primitive.Rectangle')            
-            set(hA, 'color', 'cyan');
-            set(hB, 'color', 'cyan');
-            set(hC, 'color', 'cyan');
+            if ~isa(hA, 'matlab.graphics.primitive.Rectangle')            
+                set(hA, 'color', 'cyan');
+                set(hB, 'color', 'cyan');
+                set(hC, 'color', 'cyan');
+            end
         end
     end
 

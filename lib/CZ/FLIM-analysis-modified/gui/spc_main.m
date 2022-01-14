@@ -6,7 +6,7 @@ function varargout = spc_main(varargin)
 %    FIG = SPC_MAIN launch spc_main GUI.
 %    SPC_MAIN('callback_name', ...) invoke the named callback.
 
-% Last Modified by GUIDE v2.5 13-Jan-2022 13:46:22
+% Last Modified by GUIDE v2.5 14-Jan-2022 14:29:43
 global gui;
 
 if nargin == 0  % LAUNCH GUI
@@ -415,20 +415,9 @@ function checkUseSpcFit_Callback(~, ~, ~)
 
 function RecoverROI_Callback(hObject, eventdata, handles)
 
-% hObject    handle to RecoverROI (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% RecoverROI=get(hObject,'Value');
-% Hint: get(hObject,'Value') returns toggle state of RecoverROI
-
 
 % --- Executes on button press in Saved.
 function Saved_Callback(hObject, eventdata, handles)
-% hObject    handle to Saved (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of Saved
 
 
 % --- Executes on button press in use_all_rois.
@@ -445,4 +434,20 @@ else
     spc_selectAll();
 end
 
-% Hint: get(hObject,'Value') returns toggle state of use_all_rois
+
+% --- Executes on button press in use_single_roi.
+function use_single_roi_Callback(hObject, eventdata, handles)
+% hObject    handle to use_single_roi (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of use_single_roi
+tf = get(hObject, 'Value');
+
+if tf
+    set(handles.use_all_rois, 'enable', 'off');
+else
+    set(handles.use_all_rois, 'enable', 'on');
+    
+    use_all_rois_Callback(handles.use_all_rois, [], handles);
+end

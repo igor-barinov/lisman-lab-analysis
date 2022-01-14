@@ -109,39 +109,40 @@ function spc_dragRoiA()
         end
     end
     
-    % Select ROI after shift
+    % Select ROI after shift if doing single ROI analysis
     %
     
-    for i = 1:length(gui.spc.figure.roiB) % Unmark all ROIs
-        hA = gui.spc.figure.roiA(i);
-        hB = gui.spc.figure.roiB(i);
-        hC = gui.spc.figure.roiC(i);
-        
-        if ~ishandle(hA) || ~ishandle(hB) || ~ishandle(hC)
-            continue;
-        end
-        
-        if isa(hA, 'matlab.graphics.primitive.Rectangle')
-            set(hA, 'EdgeColor', 'cyan');
-            set(hB, 'EdgeColor', 'cyan');
-            set(hC, 'EdgeColor', 'cyan');
-        else
-            set(hA, 'color', 'cyan');
-            set(hB, 'color', 'cyan');
-            set(hC, 'color', 'cyan');
-        end
-    end
-    
-    for i = 1:length(Rois) % Mark by setting color to red
-        h = Rois(i);
-        
-        if isa(h, 'matlab.graphics.primitive.Rectangle')
-            set(h, 'EdgeColor', 'red');
-        else
-            set(h, 'color', 'red');
-        end
-    end
-    
-    spc_selectRoi(Rois);
+    if get(gui.spc.spc_main.use_single_roi, 'Value')
+        for i = 1:length(gui.spc.figure.roiB) % Unmark all ROIs
+            hA = gui.spc.figure.roiA(i);
+            hB = gui.spc.figure.roiB(i);
+            hC = gui.spc.figure.roiC(i);
 
+            if ~ishandle(hA) || ~ishandle(hB) || ~ishandle(hC)
+                continue;
+            end
+
+            if isa(hA, 'matlab.graphics.primitive.Rectangle')
+                set(hA, 'EdgeColor', 'cyan');
+                set(hB, 'EdgeColor', 'cyan');
+                set(hC, 'EdgeColor', 'cyan');
+            else
+                set(hA, 'color', 'cyan');
+                set(hB, 'color', 'cyan');
+                set(hC, 'color', 'cyan');
+            end
+        end
+
+        for i = 1:length(Rois) % Mark by setting color to red
+            h = Rois(i);
+
+            if isa(h, 'matlab.graphics.primitive.Rectangle')
+                set(h, 'EdgeColor', 'red');
+            else
+                set(h, 'color', 'red');
+            end
+        end
+
+        spc_selectRoi(Rois);
+    end
 end

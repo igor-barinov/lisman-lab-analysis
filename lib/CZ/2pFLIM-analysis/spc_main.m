@@ -7,15 +7,15 @@ function varargout = spc_main(varargin)
 global gui spc;
 
 if nargin == 0  % LAUNCH GUI
-	fig = openfig(mfilename,'reuse');
-
-	% Generate a structure of handles to pass to callbacks, and store it. 
-	handles = guihandles(fig);
+    fig = openfig(mfilename,'reuse');
+    
+    % Generate a structure of handles to pass to callbacks, and store it.
+    handles = guihandles(fig);
     gui.spc.spc_main = handles;
-	guidata(fig, handles);
-
-	if nargout > 0
-		varargout{1} = fig;
+    guidata(fig, handles);
+    
+    if nargout > 0
+        varargout{1} = fig;
     end
     
     range = round(spc.fit(gui.spc.proChannel).range.*spc.datainfo.psPerUnit/100)/10;
@@ -34,27 +34,27 @@ if nargin == 0  % LAUNCH GUI
     set(handles.redCheck, 'Value', 1);
     set(handles.RatioCheck, 'Value', 0);
 elseif ischar(varargin{1}) % INVOKE NAMED SUBFUNCTION OR CALLBACK
-	try
-		if nargout
-			[varargout{1:nargout}] = feval(varargin{:}); % FEVAL switchyard
-		else
-			feval(varargin{:}); % FEVAL switchyard
-		end
+    try
+        if nargout
+            [varargout{1:nargout}] = feval(varargin{:}); % FEVAL switchyard
+        else
+            feval(varargin{:}); % FEVAL switchyard
+        end
     catch err
-		disp(err);
+        disp(err);
     end
 end
 
 
 %| ABOUT CALLBACKS:
-%| GUIDE automatically appends subfunction prototypes to this file, and 
-%| sets objects' callback properties to call them through the FEVAL 
+%| GUIDE automatically appends subfunction prototypes to this file, and
+%| sets objects' callback properties to call them through the FEVAL
 %| switchyard above. This comment describes that mechanism.
 %|
 %| Each callback subfunction declaration has the following form:
 %| <SUBFUNCTION_NAME>(H, EVENTDATA, HANDLES, VARARGIN)
 %|
-%| The subfunction name is composed using the object's Tag and the 
+%| The subfunction name is composed using the object's Tag and the
 %| callback type separated by '_', e.g. 'slider2_Callback',
 %| 'figure1_CloseRequestFcn', 'axis1_ButtondownFcn'.
 %|
@@ -646,7 +646,7 @@ function fit_single_prf_Callback(~, ~, ~)
 global spc;
 
 if ~isfield(spc.fit, 'prf')
-    spc_prfdefault(); 
+    spc_prfdefault();
 end
 if length(spc.fit.prf) ~= spc.lifetime
     spc_prfdefault();
@@ -660,7 +660,7 @@ function fit_double_prf_Callback(~, ~, ~)
 global spc;
 
 if ~isfield(spc.fit, 'prf')
-    spc_prfdefault(); 
+    spc_prfdefault();
 end
 if length(spc.fit.prf) ~= spc.lifetime
     spc_prfdefault();
@@ -823,7 +823,7 @@ if spc.page(1) < 1
         for i=1:length(spc.page)-1
             spc.page(i) = spc.page(i+1);
         end
-
+        
         spc.page = spc.page(1:end-1);
     else
         spc.page = 1;
@@ -852,7 +852,7 @@ if spc.page(1) < 1
         for i=1:length(spc.page)-1
             spc.page(i) = spc.page(i+1);
         end
-
+        
         spc.page = spc.page(1:end-1);
     else
         spc.page = 1;
