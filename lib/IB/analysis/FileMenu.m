@@ -323,6 +323,7 @@ classdef FileMenu
                 case 1
                     RawFile.save(savepath, saveData);
                 case 2
+                    RawFile.save(savepath, saveData);
                     PreparedFile.save(savepath, saveData, dnaType, solutions, userPreferences, saveData.is_integral());
                 case 3
                     if openFile.type() == ROIFileType.Averaged()

@@ -529,7 +529,13 @@ classdef PreparedFile < ROIFile
                 prepData.('userPref') = varargin{1};
             end
             
-            save(filepath, 'prepData');
+            if exist(filepath, 'file') == 2
+                save(filepath, 'prepData', '-append');
+            else
+                save(filepath, 'prepData');
+            end
+            
+            
         end
     end
 end

@@ -551,7 +551,13 @@ classdef RawFile < ROIFile
                 rawData.('roiData') = [rawData.('roiData'), roi];
             end
             
-            save(filepath, 'rawData');
+            if exist(filepath, 'file') == 2
+                save(filepath, 'rawData', '-append');
+            else
+                save(filepath, 'rawData');
+            end
+            
+            
         end
         
     end
