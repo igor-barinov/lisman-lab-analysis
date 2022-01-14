@@ -106,6 +106,11 @@ RecoverROI=get(gui.spc.spc_main.RecoverROI, 'Value');
                 end
             end
         end
+        
+        if get(gui.spc.spc_main.use_all_rois, 'Value')
+            spc_selectAllRois();
+        end
+        
     end
 
     if iscell(la)

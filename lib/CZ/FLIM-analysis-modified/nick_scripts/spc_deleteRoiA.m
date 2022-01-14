@@ -34,6 +34,10 @@ for j = 1:length(Rois)
     delete(Texts(j));
 end
 
+if get(gui.spc.spc_main.use_all_rois, 'Value')
+    spc_selectAllRois();
+end
+
 % exists = ishandle(gui.spc.figure.roiB);
 % gui.spc.figure.roiB(~exists) = [];
 
