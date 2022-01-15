@@ -87,3 +87,275 @@ Error in analysis_1_2_IB_100921 (line 43)
 Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuOpen_Callback',hObject,eventdata,guidata(hObject))
 
 
+[14-Jan-2022 17:39:13]: Output argument "values" (and maybe others) not assigned during call to "RawFile/time".
+
+Error in FileMenu.open (line 117)
+            time = openFile.time();
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_100921>menuOpen_Callback (line 126)
+GUI.try_callback(@FileMenu.open, @AppState.logdlg, hObject)
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_100921 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+
+[14-Jan-2022 17:41:45]: Output argument "values" (and maybe others) not assigned during call to "RawFile/time".
+
+Error in FileMenu.open (line 117)
+            time = openFile.time();
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_100921>menuOpen_Callback (line 126)
+GUI.try_callback(@FileMenu.open, @AppState.logdlg, hObject)
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_100921 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+
+[14-Jan-2022 17:42:35]: Output argument "values" (and maybe others) not assigned during call to "RawFile/time".
+
+Error in FileMenu.open (line 117)
+            time = openFile.time();
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_100921>menuOpen_Callback (line 126)
+GUI.try_callback(@FileMenu.open, @AppState.logdlg, hObject)
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_100921 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+
+[14-Jan-2022 17:43:04]: Output argument "values" (and maybe others) not assigned during call to "RawFile/time".
+
+Error in FileMenu.open (line 117)
+            time = openFile.time();
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_100921>menuOpen_Callback (line 126)
+GUI.try_callback(@FileMenu.open, @AppState.logdlg, hObject)
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_100921 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuOpen_Callback',hObject,eventdata,guidata(hObject))
+
+
+[14-Jan-2022 17:47:39]: Error using save
+Unable to write file Z:\Nick\DATA\2021\HeLa\NO121121B_Camui-Cal630-PIs-CaImEGTA_Hela\Position5\1_baseline\spc\NO121121B_ROI2_PREPRAW_TEST.mat: No such file or directory.
+
+Error in RawFile.save (line 554)
+            save(filepath, 'rawData', '-append');
+
+Error in FileMenu.save (line 326)
+                    RawFile.save(savepath, saveData);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_100921>menuSave_Callback (line 133)
+GUI.try_callback(@FileMenu.save, @AppState.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_100921 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuSave_Callback',hObject,eventdata,guidata(hObject))
+
+
+[14-Jan-2022 17:48:33]: Error using save
+Unable to write file Z:\Nick\DATA\2021\HeLa\NO121121B_Camui-Cal630-PIs-CaImEGTA_Hela\Position5\1_baseline\spc\NO121121B_ROI2_PREPRAW.mat: No such file or directory.
+
+Error in RawFile.save (line 554)
+            save(filepath, 'rawData', '-append');
+
+Error in FileMenu.save (line 326)
+                    RawFile.save(savepath, saveData);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_100921>menuSave_Callback (line 133)
+GUI.try_callback(@FileMenu.save, @AppState.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_100921 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuSave_Callback',hObject,eventdata,guidata(hObject))
+
+
+[14-Jan-2022 18:55:22]: Error using guidata (line 87)
+Object must be a figure or one of its child objects.
+
+Error in FileMenu.open (line 12)
+            handles = guidata(hObject);
+
+Error in PreferencesApp.btnSaveChanges (line 273)
+                FileMenu.open(hMainApp);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_user_options>btnSaveChanges_Callback (line 79)
+GUI.try_callback(@PreferencesApp.btnSaveChanges, @PreferencesApp.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_user_options (line 42)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_user_options('btnSaveChanges_Callback',hObject,eventdata,guidata(hObject))
+
+
+[14-Jan-2022 18:56:16]: Error using matlab.ui.container.Menu/get
+Invalid or deleted object.
+
+Error in GUI.menu_is_toggled (line 109)
+            enableState = get(handle, 'Checked');
+
+Error in GUI.update_plotting_options (line 486)
+            if GUI.menu_is_toggled(handles.('menuShowLifetime'))
+
+Error in GUICallbacks.menuPreferences (line 374)
+            GUI.update_plotting_options(handles);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_IB_100921>menuPreferences_Callback (line 338)
+GUI.try_callback(@GUICallbacks.menuPreferences, @AppState.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_IB_100921 (line 43)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_IB_100921('menuPreferences_Callback',hObject,eventdata,guidata(hObject))
+
+
+[14-Jan-2022 18:57:06]: Error using guidata (line 87)
+Object must be a figure or one of its child objects.
+
+Error in FileMenu.open (line 12)
+            handles = guidata(hObject);
+
+Error in PreferencesApp.btnSaveChanges (line 273)
+                FileMenu.open(hMainApp);
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_user_options>btnSaveChanges_Callback (line 79)
+GUI.try_callback(@PreferencesApp.btnSaveChanges, @PreferencesApp.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_user_options (line 42)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_user_options('btnSaveChanges_Callback',hObject,eventdata,guidata(hObject))
+
+
+[14-Jan-2022 19:00:06]: Undefined function or variable 'path'.
+
+Error in FileMenu.open (line 36)
+            cd(path);
+
+Error in PreferencesApp.btnSaveChanges (line 273)
+                FileMenu.open(hMainApp, 'reload');
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_user_options>btnSaveChanges_Callback (line 79)
+GUI.try_callback(@PreferencesApp.btnSaveChanges, @PreferencesApp.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_user_options (line 42)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_user_options('btnSaveChanges_Callback',hObject,eventdata,guidata(hObject))
+
+
+[14-Jan-2022 19:01:37]: Undefined function or variable 'path'.
+
+Error in FileMenu.open (line 36)
+            % Move to chosen directory
+
+Error in PreferencesApp.btnSaveChanges (line 273)
+                FileMenu.open(hMainApp, 'reload');
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_user_options>btnSaveChanges_Callback (line 79)
+GUI.try_callback(@PreferencesApp.btnSaveChanges, @PreferencesApp.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_user_options (line 42)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_user_options('btnSaveChanges_Callback',hObject,eventdata,guidata(hObject))
+
+
+[14-Jan-2022 19:02:16]: Undefined function or variable 'path'.
+
+Error in FileMenu.open (line 36)
+            % Move to chosen directory
+
+Error in PreferencesApp.btnSaveChanges (line 273)
+                FileMenu.open(hMainApp, 'reload');
+
+Error in GUI.try_callback (line 5)
+                callback(varargin{:});
+
+Error in analysis_1_2_user_options>btnSaveChanges_Callback (line 79)
+GUI.try_callback(@PreferencesApp.btnSaveChanges, @PreferencesApp.logdlg, hObject);
+
+Error in gui_mainfcn (line 95)
+        feval(varargin{:});
+
+Error in analysis_1_2_user_options (line 42)
+    gui_mainfcn(gui_State, varargin{:});
+
+Error in matlab.graphics.internal.figfile.FigFile/read>@(hObject,eventdata)analysis_1_2_user_options('btnSaveChanges_Callback',hObject,eventdata,guidata(hObject))
+
+

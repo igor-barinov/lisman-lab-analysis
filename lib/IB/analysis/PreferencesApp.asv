@@ -270,7 +270,7 @@ classdef PreferencesApp
             
             if strcmp(reloadChoice, 'Yes')
                 hMainApp = findobj(0, 'tag', 'mainFig', '-and', '-not', 'name', 'Preferences');
-                FileMenu.open(hMainApp, 'reload');
+                FileMenu.open(hMainApp, '');
             end
             
         end

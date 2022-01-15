@@ -11,13 +11,12 @@ classdef FileMenu
         %
             handles = guidata(hObject);
             settingsMap = AppState.get_user_preferences();
-            [prevFile] = AppState.get_open_files(handles);
+            [prevFile] = AppState.get_open_files(
             
             
             if nargin > 1
                 % If a filepath is given, don't open dialog
-                filepaths = prevFile.source_files();
-                [path, ~, ~] = fileparts(filepaths{1});
+                filepaths = varargin{1};
             else
                 % Get file paths and store them in a cell
                 fileFilter = {'*.mat', 'MATLAB ROI Files (*.mat)'; ...
@@ -42,26 +41,11 @@ classdef FileMenu
             elseif all(FLIMageFile.follows_format(filepaths))
                 openFile = FLIMageFile(filepaths);
             elseif all(PreparedFile.follows_format(filepaths))
-                
-                
                 % Prepared files have raw data as well, need user to choose
-                % However, if filepath is given, use previous preferences                
-                
                 dataChoice = questdlg('This file has raw and prepared ROI data. Which would you like to load?', ...
                                   'Select ROI Data', ...
                                   'Raw', 'Prepared', 'Cancel', ...
                                   'Cancel');
-                              
-                if nargin > 1
-                    switch prevFile.type()
-                        case ROIFileType.Raw
-                            dataChoice = 'Raw';
-                        case ROIFileType.Prepared
-                            dataChoice = 'Prepared';
-                        otherwise
-                            return;
-                    end
-                end
 
                 switch dataChoice
                     case 'Raw'
