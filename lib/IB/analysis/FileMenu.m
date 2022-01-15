@@ -45,13 +45,7 @@ classdef FileMenu
                 
                 
                 % Prepared files have raw data as well, need user to choose
-                % However, if filepath is given, use previous preferences                
-                
-                dataChoice = questdlg('This file has raw and prepared ROI data. Which would you like to load?', ...
-                                  'Select ROI Data', ...
-                                  'Raw', 'Prepared', 'Cancel', ...
-                                  'Cancel');
-                              
+                % However, if filepath is given, use previous preferences                                              
                 if nargin > 1
                     switch prevFile.type()
                         case ROIFileType.Raw
@@ -61,6 +55,11 @@ classdef FileMenu
                         otherwise
                             return;
                     end
+                else
+                    dataChoice = questdlg('This file has raw and prepared ROI data. Which would you like to load?', ...
+                                  'Select ROI Data', ...
+                                  'Raw', 'Prepared', 'Cancel', ...
+                                  'Cancel');
                 end
 
                 switch dataChoice
@@ -215,8 +214,14 @@ classdef FileMenu
             GUI.update_win_title(handles);
             GUI.update_ui_access(handles, openFile.type());
             handles = GUI.update_toggle_menu(handles, openFile.roi_count());
-            GUI.update_dna_type(handles, dnaType);
-            GUI.update_solution_info(handles, solutionInfo);
+            
+            % Updaate info only if new file
+            if nargin < 2
+                GUI.update_dna_type(handles, dnaType);
+                GUI.update_solution_info(handles, solutionInfo);
+            end
+            
+            
 
             % Disable info-dependent controls if necessary
             if ~openFile.has_exp_info()
