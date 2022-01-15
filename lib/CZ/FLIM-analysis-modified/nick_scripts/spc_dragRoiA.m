@@ -144,5 +144,7 @@ function spc_dragRoiA()
         end
 
         spc_selectRoi(Rois);
+    elseif get(gui.spc.spc_main.use_all_rois, 'Value')
+        spc_selectAllRois();
     end
 end
